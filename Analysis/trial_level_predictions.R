@@ -4,10 +4,10 @@ library(tidybayes)
 library(patchwork)
 library(ggrepel)
 
-source("../functions/get_model_params.R")
+source("functions/get_model_params.R")
 source("comp_weights.R")
 
-d <- read_csv("../reanalysis_data/clarke_2020_qjep.csv") %>%
+d <- read_csv("data/clarke_2020_qjep.csv") %>%
   mutate(condition = as_factor(condition),
          condition = fct_recode(condition, feature = "1", conjunction = "2"))
 
@@ -24,7 +24,7 @@ comp_trials <- function(obs, cond) {
 # a <- bind_rows(a_feat, a_conj)
 # rm(a_feat, a_conj)
 
-a <- readRDS("model_weights.rda")
+a <- readRDS("scratch/model_weights.rda")
 
 a %>% group_by(condition, observer, found) %>%
   summarise(meanb = mean(b),
@@ -55,7 +55,7 @@ ggplot(a_agg, aes(x = found, y = prop_best, colour = condition, fill = condition
   scale_y_continuous("proportion most likely was selected") -> plt_c
 
 plt_b + plt_c + plot_layout(guides = "collect")
-ggsave("qjep_preds.png", width = 9, height = 4)
+ggsave("../Figures/qjep_preds.png", width = 9, height = 4)
 
 a %>% mutate(b_bin = cut(b, breaks = 100, labels = FALSE)) %>%
   group_by(b_bin) %>% 
@@ -75,7 +75,7 @@ ggplot(filter(d, observer == 1, trial == 3, condition == "conjunction"), aes(x, 
 
 
 
-a %>% group_by(observer, condition, trial) %>%
+a %>% group_by(observer, condition) %>%
   summarise(acc = mean(bMax, na.rm = T)) %>%
   arrange((acc))
 

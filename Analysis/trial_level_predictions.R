@@ -7,6 +7,8 @@ library(ggrepel)
 source("functions/get_model_params.R")
 source("functions/compute_weights.R")
 
+
+
 # read in data
 d <- read_csv("data/clarke_2020_qjep.csv") %>%
   mutate(condition = as_factor(condition),
@@ -15,12 +17,6 @@ d <- read_csv("data/clarke_2020_qjep.csv") %>%
 # read in model and extract weights
 fit <- get_model_params("scratch/all_qjep_2020.rds") %>% rename(observer = "obs")
 
-## function to compute weights for all items in all trials for a participant
-comp_trials <- function(obs, cond) {
-  params <- filter(fit,  observer == obs, condition == cond )
-  a <- map_dfr(1:20, compute_weights, params = params, cond = cond, obs = obs)
-  return(a)
-}
 
 # run for all participants...
 a_feat <- map_dfr(unique(d$observer), comp_trials, cond = "feature")
@@ -63,16 +59,19 @@ plt_b + plt_c + plot_layout(guides = "collect")  &
         legend.direction = 'horizontal')
 ggsave("../Figures/qjep_preds.png", width = 9, height = 4)
 
-a %>% mutate(b_bin = cut(b, breaks = 100, labels = FALSE)) %>%
-  group_by(b_bin) %>% 
-  summarise(acc = mean(bMax)) %>%
+a %>% mutate(b_bin = cut(max_b, breaks = 100, labels = FALSE)) %>%
+  group_by(condition, b_bin) %>% 
+  summarise(acc = mean(selected_max)) %>%
   mutate(b_bin = as.numeric(b_bin)/100) %>%
-  ggplot(aes(b_bin, acc)) + geom_path() +
+  filter(is.finite(acc)) %>%
+  ggplot(aes(b_bin, acc, colour = condition)) + 
+  geom_point() + 
+  geom_line(stat = "smooth", method = "loess", alpha = 0.5, size = 2, se = F) +
   geom_abline(linetype = 2)
 
 
 
-mistakes <- filter(a, observer == 1, trial == 3, condition == "conjunction", err> 0.5) %>%
+mistakes <- filter(a, observer == 1, trial == 3, condition == "conjunction", err> 0.75) %>%
   select(x, y, found, err, model_pref)
 
 ggplot(filter(d, observer == 1, trial == 3, condition == "conjunction"), aes(x, y, colour = targ_type)) +

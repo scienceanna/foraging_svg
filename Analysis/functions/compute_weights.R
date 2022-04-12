@@ -71,7 +71,7 @@ compute_weights <- function(trl, params, cond, obs)
       # finally compute some stats about the item weights
       d_trl$b[t] <- d_remain$b[which(d_remain$found==t)]
       d_trl$selected_max[t] <- d_trl$b[t] == max(d_remain$b)
-      d_trl$max_b[t] <-  max(d_remain$b) - d_trl$b[t]
+      d_trl$max_b[t] <-  max(d_remain$b)
       d_trl$model_pref[t] <- d_remain$found[which(d_remain$b == max(d_remain$b) )]
       
     }

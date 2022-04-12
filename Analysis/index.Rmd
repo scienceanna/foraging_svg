@@ -2,10 +2,19 @@
 title: 'SVG: The Paper'
 author: "Alasdair and Anna"
 date: "11/04/2022"
-output: html_document
+output:
+  tufte::tufte_html:
+    toc: TRUE
+    number_sections: true
 ---
 
-```{r}
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+```{r, message=FALSE}
+# attach packages
 library(tidyverse)
 library(patchwork)
 library(tidybayes)
@@ -14,14 +23,14 @@ library(tidybayes)
 
 ```{r}
 # set ggplot2 options
-theme_set(theme_minimal())
+theme_set(ggthemes::theme_tufte())
 
 our_cols <- c("#1b9e77", "#7570b3")
 options(ggplot2.discrete.fill = our_cols ,
         ggplot2.discrete.colour = our_cols)
 ```
 
-# Trial Level Posterior Predictions
+# Trial Level Posterior Predictions{#label}
 
 ```{r echo = FALSE}
 source("functions/get_model_params.R")
@@ -34,7 +43,6 @@ source("functions/compute_weights.R")
 ```{r}
 a <- readRDS("scratch/qjep_model_weights.rda")
 
-
 a %>% group_by(condition, observer, found) %>%
   summarise(meanb = mean(b),
             prop_best = mean(selected_max), .groups = "drop") %>%
@@ -42,7 +50,8 @@ a %>% group_by(condition, observer, found) %>%
   mutate(chance = 1/(41-found))-> a_agg
 ```
 
-```{r, fig.cap = "(Left) The average weight assigned to each selected target by our model. (Right) The proportion of trials the item with the largest assigned weight as selected by the participant.  Each dot shows data from an individual particpant in a condition and the shaded region indicates the invertal in which we expect 67% of participants to fall."}
+
+```{r, fig.cap = "(*left*) The average weight assigned to each selected target by our model. (*right*) The proportion of trials the item with the largest assigned weight as selected by the participant.  Each dot shows data from an individual particpant in a condition and the shaded region indicates the invertal in which we expect 67% of participants to fall."}
 
 # plot target selected weights
 ggplot(a_agg, aes(x = found, y = meanb, colour = condition, fill = condition)) + 
@@ -69,6 +78,47 @@ plt_b + plt_c + plot_layout(guides = "collect")  &
 ggsave("../Figures/qjep_preds.png", width = 9, height = 4)
 ```
 
+From this figure we can see a few interesting things to note:
+
+- large individual differences in how well our model can capture and predict behaviour
+- feature search is more predictable than conjunction search
+- our model appears to be overly conservative
+
+
+### Individual Differences
+
+
+
+How often does each participant select the target with the largest weight? And is this explained by differences in proximity weighting?
+
+```{r, fig.cap = "Prediction scores for participants. Boxplots show quartile range and the grey lines indicate individual participants. (The dots indicate outliers.)"}
+a_agg %>% group_by(observer, condition) %>%
+  summarise(accuracy = mean(prop_best), .groups = "drop") %>%
+  ggplot(aes(x= condition, y = accuracy, fill = condition)) + 
+  geom_boxplot() +
+  geom_line(aes(group = observer), alpha = 0.25, colour = "sienna4") +
+  scale_y_continuous("model accuracy",  limits = c(0.3, 0.8), breaks = seq(0.3, 0.8, 0.1))
+
+
+```
+
+
+### Calibration
+
+```{r}
+a %>% mutate(b_bin = cut(max_b, breaks = 100, labels = FALSE)) %>%
+  group_by(condition, b_bin) %>% 
+  summarise(acc = mean(selected_max), .groups = "drop") %>%
+  mutate(b_bin = as.numeric(b_bin)/100) %>%
+  filter(is.finite(acc)) %>%
+  ggplot(aes(b_bin, acc, colour = condition)) + 
+  geom_point() + 
+  geom_line(stat = "smooth", method = "loess", formula = y ~ x, alpha = 0.65, size = 2, se = F) +
+  geom_abline(linetype = 2) +
+  scale_x_continuous("largest item weight") +
+  scale_y_continuous("proportion of times selected") + 
+  coord_fixed()
+```
 
 
 # Initial Selection

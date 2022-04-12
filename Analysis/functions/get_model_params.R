@@ -1,10 +1,9 @@
-get_model_params <- function() {
+get_model_params <- function(filename) {
   
   
   cond_levels = c("feature", "conjunction")
   
-  m <- readRDS("../saved_models/all_qjep_2020.rds")
-  
+  m <- readRDS(filename)
   
   m %>% spread_draws(b[cond], u[cond, obs]) %>%
     mutate(cond = as.factor(cond),

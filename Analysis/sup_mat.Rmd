@@ -14,7 +14,6 @@ library(patchwork)
 
 ## QJEP Dataset
 
-
 ```{r}
 d <- read_csv("data/clarke_2020_qjep.csv", show_col_types = FALSE) %>%
   filter(found == 1) %>%

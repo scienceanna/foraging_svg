@@ -5,26 +5,30 @@ library(patchwork)
 library(ggrepel)
 
 source("functions/get_model_params.R")
-source("comp_weights.R")
+source("functions/compute_weights.R")
 
+# read in data
 d <- read_csv("data/clarke_2020_qjep.csv") %>%
   mutate(condition = as_factor(condition),
          condition = fct_recode(condition, feature = "1", conjunction = "2"))
 
-fit <- get_model_params() %>% rename(observer = "obs")
+# read in model
+
+fit <- get_model_params("scratch/all_qjep_2020.rds") %>% rename(observer = "obs")
 
 comp_trials <- function(obs, cond) {
   params <- filter(fit,  observer == obs, condition == cond )
-  a <- map_dfr(1:20, comp_weights, params = params, cond = cond, obs = obs)
+  a <- map_dfr(1:20, compute_weights, params = params, cond = cond, obs = obs)
   return(a)
 }
 
-# a_feat <- map_dfr(unique(d$observer), comp_trials, cond = "feature")
-# a_conj <- map_dfr(unique(d$observer), comp_trials, cond = "conjunction")
-# a <- bind_rows(a_feat, a_conj)
-# rm(a_feat, a_conj)
+a_feat <- map_dfr(unique(d$observer), comp_trials, cond = "feature")
+a_conj <- map_dfr(unique(d$observer), comp_trials, cond = "conjunction")
+a <- bind_rows(a_feat, a_conj)
+rm(a_feat, a_conj)
 
-a <- readRDS("scratch/model_weights.rda")
+saveRDS(a, "scratch/qjep_model_weights.rda")
+a <- readRDS("scratch/qjep_model_weights.rda")
 
 a %>% group_by(condition, observer, found) %>%
   summarise(meanb = mean(b),

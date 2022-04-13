@@ -19,13 +19,17 @@ options(digits = 3)
 library(tidyverse)
 library(patchwork)
 library(tidybayes)
+library(ggrepel)
 ```
 
 
 ```{r}
 # set ggplot2 options
-theme_set(ggthemes::theme_tufte() + theme(plot.background = element_rect(fill = "grey95", colour = "grey95")))
+theme_set(ggthemes::theme_tufte() + theme(plot.background = element_rect(fill = "#fffff8", colour = "#fffff8")))
 
+# some more colours
+#Isfahan2 = list(c("#d7aca1", "#ddc000", "#79ad41", "#34b6c6", "#4063a3"), c(4, 2, 3, 5, 1), colo
+                
 our_cols <- c("#1b9e77", "#7570b3")
 options(ggplot2.discrete.fill = our_cols ,
         ggplot2.discrete.colour = our_cols)
@@ -49,6 +53,13 @@ source("functions/compute_weights.R")
 We will start by looking at the visual foraging data from Clarke et al (2022), QJEP. As the current version of our model only takes the $p_A$ bias into account for the initial taret selection, we will ignore these data points for now. 
 
 ```{r, echo = TRUE}
+# read in data
+d <- read_csv("data/clarke_2020_qjep.csv", show_col_types = FALSE) %>%
+  mutate(condition = as_factor(condition),
+         condition = fct_recode(condition, feature = "1", conjunction = "2"),
+         targ_type = as_factor(targ_type))
+
+
 # item weights pre-computed - see xxxxx.R
 a <- readRDS("scratch/qjep_model_weights.rda") %>%
   filter(found != 1) # remove initial selections
@@ -176,50 +187,44 @@ Furthermore, this appears to account for most of the difference between the *fea
 ```{r, echo = TRUE}
 summary(lm(accuracy ~ condition * bP, fit))
 ```
+### Examples of Trials
 
-# Initial Selection
-
-## QJEP Dataset
-
-```{r}
-d <- read_csv("data/clarke_2020_qjep.csv", show_col_types = FALSE) %>%
-  filter(found == 1) %>%
-  mutate(condition = as_factor(condition))
-
-ggplot(d, aes(x, y, colour = condition)) + geom_point(alpha = 0.25) +
-  coord_cartesian(xlim = c(0, 1), ylim = c(0, 1)) + 
-  facet_wrap(~observer)
-
-d %>% group_by(observer, condition) %>% 
-  summarise(x = median(x), y = median(y)) %>%
-  ggplot(aes(x, y, colour = condition)) + geom_point(alpha = 0.25) +
-  coord_cartesian(xlim = c(0, 1), ylim = c(0, 1))
+Let's score every trial by how well the model captures behaviour, and then plot some different examples
 
 
-plt_x <- ggplot(d, aes(x)) + geom_histogram(bins = 10) 
-plt_y <- ggplot(d, aes(y)) + geom_histogram(bins =  8) 
-plt_x + plt_y
+```{r, echo = TRUE}
+a %>% group_by(observer, condition, trial) %>% 
+  summarise(prop_max = mean(selected_max), .groups = "drop") %>% 
+  arrange(desc(prop_max)) %>%
+  ungroup() -> a_trl
 ```
 
 
-## Tagu dataset
+```{r, fig.cap = "Histogram of how predictiable indivuidual trials are, defined as how often the model assigned the largest weight to the target that was then selected."}
+ggplot(a_trl, aes(prop_max)) + 
+  geom_histogram(fill = "#34b6c6", breaks = seq(0, 1, 0.025)) +
+  scale_x_continuous("trial predictability")
+```
 
-```{r}
-d <- read_csv("data/tagu_2020_prox_mouse.csv", show_col_types = FALSE) %>%
-  filter(found == 1) %>%
-  mutate(condition = as_factor(condition))
-
-ggplot(d, aes(x, y, colour = condition)) + geom_point(alpha = 0.25) +
-  #coord_cartesian(xlim = c(0, 1), ylim = c(0, 1)) + 
-  facet_wrap(~observer)
-
-d %>% group_by(observer, condition) %>% 
-  summarise(x = median(x), y = median(y)) %>%
-  ggplot(aes(x, y, colour = condition)) + geom_point(alpha = 0.25) #+
-  #coord_cartesian(xlim = c(0, 1), ylim = c(0, 1))
+Let's plot some examples oh highly predictable (top 5%), and unpredictable (bottom 5%) trials.
 
 
-plt_x <- ggplot(d, aes(x)) + geom_histogram(bins = 10) 
-plt_y <- ggplot(d, aes(y)) + geom_histogram(bins =  8) 
-plt_x + plt_y
+
+
+```{r, echo = TRUE}
+qs <- quantile(a_trl$prop_max, c(0.05, 0.95))
+
+trls_hard <- filter(a_trl, prop_max < qs[1]) %>% sample_n(3)
+trls_easy <- filter(a_trl, prop_max > qs[2]) %>% sample_n(3)
+
+# 
+source("plot_trial.R")
+
+plts <- map(1:3, plot_trial, trls_easy, a, d)
+
+#plts[1] + plts[2] + plts[3]
+
+plot(plot_trial(1, trls_hard, a, d))
+
+
 ```

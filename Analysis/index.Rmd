@@ -10,6 +10,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+options(digits = 3)
 ```
 
 
@@ -23,12 +24,18 @@ library(tidybayes)
 
 ```{r}
 # set ggplot2 options
-theme_set(ggthemes::theme_tufte())
+theme_set(ggthemes::theme_tufte() + theme(plot.background = element_rect(fill = "grey95", colour = "grey95")))
 
 our_cols <- c("#1b9e77", "#7570b3")
 options(ggplot2.discrete.fill = our_cols ,
         ggplot2.discrete.colour = our_cols)
 ```
+
+
+Terminology questions:
+- item v target
+- participant v observer
+
 
 # Trial Level Posterior Predictions{#label}
 
@@ -39,14 +46,21 @@ source("functions/compute_weights.R")
 
 ## Clarke et al (2022)
 
+We will start by looking at the visual foraging data from Clarke et al (2022), QJEP. As the current version of our model only takes the $p_A$ bias into account for the initial taret selection, we will ignore these data points for now. 
 
-```{r}
-a <- readRDS("scratch/qjep_model_weights.rda")
+```{r, echo = TRUE}
+# item weights pre-computed - see xxxxx.R
+a <- readRDS("scratch/qjep_model_weights.rda") %>%
+  filter(found != 1) # remove initial selections
 
+# compute the average weight for each participant x condition x item selection
+# also compute the proportion of times in which the item selected by the 
+# participant was judged the most likely to be selected by our model.
+ 
 a %>% group_by(condition, observer, found) %>%
   summarise(meanb = mean(b),
             prop_best = mean(selected_max), .groups = "drop") %>%
-  filter(found > 1) %>%
+  # finally, also compute what we would expect under a null-model
   mutate(chance = 1/(41-found))-> a_agg
 ```
 
@@ -84,42 +98,84 @@ From this figure we can see a few interesting things to note:
 - feature search is more predictable than conjunction search
 - our model appears to be overly conservative
 
-
-### Individual Differences
-
-
-
-How often does each participant select the target with the largest weight? And is this explained by differences in proximity weighting?
-
-```{r, fig.cap = "Prediction scores for participants. Boxplots show quartile range and the grey lines indicate individual participants. (The dots indicate outliers.)"}
-a_agg %>% group_by(observer, condition) %>%
-  summarise(accuracy = mean(prop_best), .groups = "drop") %>%
-  ggplot(aes(x= condition, y = accuracy, fill = condition)) + 
-  geom_boxplot() +
-  geom_line(aes(group = observer), alpha = 0.25, colour = "sienna4") +
-  scale_y_continuous("model accuracy",  limits = c(0.3, 0.8), breaks = seq(0.3, 0.8, 0.1))
-
-
-```
-
-
 ### Calibration
 
-```{r}
-a %>% mutate(b_bin = cut(max_b, breaks = 100, labels = FALSE)) %>%
+Is our model calibrated? By this we mean, if our model assigns an item a probability $p$ of being selected next, then is it actually be selected (by the human participant) this often?
+
+We will calculate this as follows: for each target selection (on each trial, for each participant) we look at the weight assigned to the most likely item, and then look at whether it was selected or not. 
+
+```{r, echo = TRUE}
+n_breaks = 25
+
+a %>% mutate(b_bin = cut(max_b, breaks = n_breaks, labels = FALSE)) %>%
   group_by(condition, b_bin) %>% 
   summarise(acc = mean(selected_max), .groups = "drop") %>%
-  mutate(b_bin = as.numeric(b_bin)/100) %>%
-  filter(is.finite(acc)) %>%
-  ggplot(aes(b_bin, acc, colour = condition)) + 
+  mutate(b_bin = as.numeric(b_bin)/n_breaks) -> a_cut
+```
+
+We can see from the Figure below that our model is well-calibrated, (at least in terms of the target with the highest assigned weight).
+
+```{r, fig.cap = "Calibration plot for our foraging model. The *x*-axis gives the largest weight assigned by the model while the *y*-axis shows how often that target was actually selected by a human participant."}
+
+ggplot(a_cut, aes(b_bin, acc, colour = condition, shape = condition)) + 
   geom_point() + 
-  geom_line(stat = "smooth", method = "loess", formula = y ~ x, alpha = 0.65, size = 2, se = F) +
+  geom_line(stat = "smooth", method = "loess", 
+            formula = y ~ x, alpha = 0.65, size = 2, se = F) +
   geom_abline(linetype = 2) +
   scale_x_continuous("largest item weight") +
   scale_y_continuous("proportion of times selected") + 
   coord_fixed()
 ```
 
+If anything, our model is a little conservative: items are selected around 5% more often than we'd expect. 
+
+```{r, echo = TRUE}
+mean(a_cut$acc - a_cut$b_bin)
+```
+
+```{r}
+rm(a_cut)
+```
+
+
+We can also repeat this calculate for all other items during/in a trial - is our model accurate/calibrated in cases when 
+the participant did not select the item withe highest model weight? 
+
+<TODO>
+
+
+### Individual Differences
+
+How often does each participant select the target with the largest weight? 
+
+```{r, fig.cap = "Prediction scores for participants. Boxplots show quartile range and the grey lines indicate individual participants. (The dots indicate outliers.)", echo= TRUE}
+
+a_agg %>% group_by(observer, condition) %>%
+  summarise(accuracy = mean(prop_best), .groups = "drop") -> a_acc
+
+ggplot(a_acc, aes(x= condition, y = accuracy, fill = condition)) + 
+  geom_boxplot() +
+  geom_line(aes(group = observer), alpha = 0.25, colour = "sienna4") +
+  scale_y_continuous("model accuracy",  
+                     limits = c(0.3, 0.8), breaks = seq(0.3, 0.8, 0.1))
+```
+
+Is this explained by differences in proximity weighting? i.e., are participants with weaker proximity biases harder to predict? Yes! 
+
+```{r, fig.cap = "Accuracy of our model appears to vary with the strength of an individual's proximity bias."}
+# computed in xxxx.R
+fit <- readRDS("scratch/qjep_model_fit.rda") %>%
+  full_join(a_acc, by = c("observer", "condition"))
+
+ggplot(fit, aes(bP, accuracy, colour = condition)) + 
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE)
+```
+Furthermore, this appears to account for most of the difference between the *feature* and *conjunction* conditions.
+
+```{r, echo = TRUE}
+summary(lm(accuracy ~ condition * bP, fit))
+```
 
 # Initial Selection
 

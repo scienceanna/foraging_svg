@@ -1,7 +1,7 @@
 ---
 title: 'SVG: The Paper'
-author: "Alasdair and Anna"
-date: "11/04/2022"
+author: "Alasdair Clarke, Amelia Hunt &  Anna Hughes"
+date: "13/04/2022"
 output:
   tufte::tufte_html:
     toc: TRUE
@@ -162,7 +162,7 @@ ggplot(a_acc, aes(x= condition, y = accuracy, fill = condition)) +
 
 Is this explained by differences in proximity weighting? i.e., are participants with weaker proximity biases harder to predict? Yes! 
 
-```{r, fig.cap = "Accuracy of our model appears to vary with the strength of an individual's proximity bias."}
+```{r, fig.cap = "Accuracy of our model varies with the strength of an individual's proximity bias."}
 # computed in xxxx.R
 fit <- readRDS("scratch/qjep_model_fit.rda") %>%
   full_join(a_acc, by = c("observer", "condition"))

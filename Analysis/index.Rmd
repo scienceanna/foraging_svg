@@ -257,8 +257,9 @@ plts[[1]] + plts[[2]] +
 
 
 
+# Shortest Path Analysis
 
-
+It looks like some of the target selections that our model fails to capture are when participants select a further away target in order to mimimise overall path length. Here we will compare our model's predicted path length against the empirical paths. 
 
 
 # Initial Selection

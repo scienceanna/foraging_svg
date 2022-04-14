@@ -225,7 +225,10 @@ We can see that for these highly predictable trials, we make very few mistakes, 
 ```{r fig.cap = "A random selection of *good* trials."}
 plts <- map(1:3, plot_trial, trls_easy, a, d)
 
-plts[[1]] + plts[[2]] 
+plts[[1]] + plts[[2]] +
+  plot_layout(nrow = 1, widths = c(1,1)) &
+   theme(plot.margin = unit(c(.2,.2,.2,.2), "cm")) &
+   theme(plot.background = element_rect(color  = "#fffff8", size = 2,linetype = 'dotted', fill ="#fffff8"))
 ```
 
 
@@ -234,7 +237,10 @@ Here are some typical trials. Possible we have the path-length minimisation issu
 ```{r fig.cap = "A random selection of *typical* trials."}
 plts <- map(1:3, plot_trial, trls_mid, a, d)
 
-plts[[1]] + plts[[2]] 
+plts[[1]] + plts[[2]] +
+  plot_layout(nrow = 1, widths = c(1,1)) &
+   theme(plot.margin = unit(c(.2,.2,.2,.2), "cm")) &
+   theme(plot.background = element_rect(color  = "#fffff8", size = 2,linetype = 'dotted', fill ="#fffff8"))
 ```
 
 
@@ -243,7 +249,10 @@ Now let's look at less predictable trials:
 ```{r fig.cap = "A random selection of *hard* trials."}
 plts <- map(1:3, plot_trial, trls_hard, a, d)
 
-plts[[1]] + plts[[2]] 
+plts[[1]] + plts[[2]] +
+  plot_layout(nrow = 1, widths = c(1,1)) &
+   theme(plot.margin = unit(c(.2,.2,.2,.2), "cm")) &
+   theme(plot.background = element_rect(color  = "#fffff8", size = 2,linetype = 'dotted', fill ="#fffff8"))
 ```
 
 

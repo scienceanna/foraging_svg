@@ -1,3 +1,13 @@
+
+compute_weights_trials <- function(obs, cond) {
+  params <- filter(fit,  observer == obs, condition == cond )
+  a <- map_dfr(1:20, compute_weights, params = params, cond = cond, obs = obs)
+  a <- map_dfr(1:20, compute_weights, params = params, cond = cond, obs = obs)
+  return(a)
+}
+
+
+
 compute_weights <- function(trl, params, cond, obs)
 {
   
@@ -19,6 +29,8 @@ compute_weights <- function(trl, params, cond, obs)
     d_trl$b = NaN # weight of target next selected by participant
     d_trl$selected_max = NaN # did the participant select the most likely target?
     d_trl$max_b = NaN # weight of most likely target
+    d_trl$max_b2 = NaN # weight of 2nd most likely target
+    d_trl$max_b3 = NaN # weight of 3rd most likely target
     d_trl$model_pref = NaN # item ID for the most likely target
     
     # step through each target selection....
@@ -69,9 +81,12 @@ compute_weights <- function(trl, params, cond, obs)
         
    
       # finally compute some stats about the item weights
+      d_remain <- d_remain %>% arrange(desc(b))
       d_trl$b[t] <- d_remain$b[which(d_remain$found==t)]
       d_trl$selected_max[t] <- d_trl$b[t] == max(d_remain$b)
-      d_trl$max_b[t] <-  max(d_remain$b)
+      d_trl$max_b[t] <-  d_remain$b[1]
+      d_trl$max_b2[t] <- d_remain$b[2]
+      d_trl$max_b3[t] <- d_remain$b[3]
       d_trl$model_pref[t] <- d_remain$found[which(d_remain$b == max(d_remain$b) )]
       
     }

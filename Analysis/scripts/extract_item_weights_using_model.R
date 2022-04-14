@@ -18,9 +18,12 @@ d <- read_csv("../data/clarke_2020_qjep.csv") %>%
 fit <- get_model_params("../scratch/all_qjep_2020.rds") %>% rename(observer = "obs")
 saveRDS(fit, "../scratch/qjep_model_fit.rda")
 
+
+
+
 # run for all participants...
-a_feat <- map_dfr(unique(d$observer), comp_trials, cond = "feature")
-a_conj <- map_dfr(unique(d$observer), comp_trials, cond = "conjunction")
+a_feat <- map_dfr(unique(d$observer), compute_weights_trials, cond = "feature")
+a_conj <- map_dfr(unique(d$observer), compute_weights_trials, cond = "conjunction")
 a <- bind_rows(a_feat, a_conj)
 rm(a_feat, a_conj)
 

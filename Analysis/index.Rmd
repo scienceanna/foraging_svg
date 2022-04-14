@@ -50,7 +50,7 @@ source("functions/compute_weights.R")
 
 ## Clarke et al (2022)
 
-We will start by looking at the visual foraging data from Clarke et al (2022), QJEP. As the current version of our model only takes the $p_A$ bias into account for the initial taret selection, we will ignore these data points for now. 
+We will start by looking at the visual foraging data from Clarke et al (2022), QJEP. As the current version of our model only takes the $p_A$ bias into account for the initial target selection, we will ignore these data points for now. 
 
 ```{r, echo = TRUE}
 # read in data
@@ -76,7 +76,7 @@ a %>% group_by(condition, observer, found) %>%
 ```
 
 
-```{r, fig.cap = "(*left*) The average weight assigned to each selected target by our model. (*right*) The proportion of trials the item with the largest assigned weight as selected by the participant.  Each dot shows data from an individual particpant in a condition and the shaded region indicates the invertal in which we expect 67% of participants to fall."}
+```{r, fig.cap = "(*left*) The average weight assigned to each selected target by our model. (*right*) The proportion of trials the item with the largest assigned weight as selected by the participant.  Each dot shows data from an individual particpant in a condition and the shaded region indicates the interval in which we expect 67% of participants to fall."}
 
 # plot target selected weights
 ggplot(a_agg, aes(x = found, y = meanb, colour = condition, fill = condition)) + 
@@ -150,7 +150,7 @@ rm(a_cut)
 
 
 We can also repeat this calculate for all other items during/in a trial - is our model accurate/calibrated in cases when 
-the participant did not select the item withe highest model weight? 
+the participant did not select the item with the highest model weight? 
 
 <TODO>
 

@@ -60,7 +60,7 @@ d <- read_csv("data/clarke_2020_qjep.csv", show_col_types = FALSE) %>%
          targ_type = as_factor(targ_type))
 
 
-# item weights pre-computed - see xxxxx.R
+# item weights pre-computed - see scripts/extract_item_weights_using_model.R
 a <- readRDS("scratch/qjep_model_weights.rda") %>%
   filter(found != 1) # remove initial selections
 

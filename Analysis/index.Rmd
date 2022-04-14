@@ -139,16 +139,10 @@ ggplot(a_cut, aes(b_bin, acc, colour = condition, shape = condition)) +
   #coord_fixed()
 ```
 
-If anything, our model is a little conservative: items are selected around 5% more often than we'd expect. 
-
-```{r, echo = TRUE}
-mean(a_cut$acc - a_cut$b_bin)
-```
 
 ```{r}
 rm(a_cut)
 ```
-
 
 We can also repeat this calculate for the 2nd and 3rd ranked candidate items.
 
@@ -173,7 +167,7 @@ a %>% select(max_b2, max_b3, selected_max2, selected_max3) %>%
   coord_fixed()
 ```
 
-
+Here we can see that these candidate items are typically underweight. 
 
 ### Individual Differences
 

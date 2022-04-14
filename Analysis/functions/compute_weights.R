@@ -30,7 +30,9 @@ compute_weights <- function(trl, params, cond, obs)
     d_trl$selected_max = NaN # did the participant select the most likely target?
     d_trl$max_b = NaN # weight of most likely target
     d_trl$max_b2 = NaN # weight of 2nd most likely target
+    d_trl$selected_max2 = NaN # did the participant select the most likely target?
     d_trl$max_b3 = NaN # weight of 3rd most likely target
+    d_trl$selected_max3 = NaN # did the participant select the most likely target?
     d_trl$model_pref = NaN # item ID for the most likely target
     
     # step through each target selection....
@@ -86,7 +88,9 @@ compute_weights <- function(trl, params, cond, obs)
       d_trl$selected_max[t] <- d_trl$b[t] == max(d_remain$b)
       d_trl$max_b[t] <-  d_remain$b[1]
       d_trl$max_b2[t] <- d_remain$b[2]
+      d_trl$selected_max2[t] <- d_trl$b[t] == d_trl$max_b2[t]
       d_trl$max_b3[t] <- d_remain$b[3]
+      d_trl$selected_max3[t] <- d_trl$b[t] == d_trl$max_b3[t]
       d_trl$model_pref[t] <- d_remain$found[which(d_remain$b == max(d_remain$b) )]
       
     }

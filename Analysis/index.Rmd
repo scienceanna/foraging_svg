@@ -115,6 +115,7 @@ Is our model calibrated? By this we mean, if our model assigns an item a probabi
 
 We will calculate this as follows: for each target selection (on each trial, for each participant) we look at the weight assigned to the most likely item, and then look at whether it was selected or not. 
 
+
 ```{r, echo = TRUE}
 my_breaks = seq(0.0, 1, 0.05)
 
@@ -172,7 +173,6 @@ a %>% select(max_b2, max_b3, selected_max2, selected_max3) %>%
   coord_fixed()
 ```
 
-<TODO>
 
 
 ### Individual Differences

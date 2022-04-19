@@ -382,26 +382,19 @@ d <- read_csv("data/clarke_2020_qjep.csv", show_col_types = FALSE) %>%
   filter(found == 1) %>%
   mutate(condition = as_factor(condition))
 
-ggplot(d, aes(x, y, colour = condition)) + geom_point(alpha = 0.25) +
-  coord_cartesian(xlim = c(0, 1), ylim = c(0, 1)) + 
-  facet_wrap(~observer)
-
 ggplot(d, aes(x, y)) + geom_hex(bins = 12) +
-  scale_fill_viridis_c() -> plt_all
+  scale_fill_viridis_c()
+```
 
+```{r fig.cap="Distirbution of median intial selection."}
 
 d %>% group_by(observer, condition) %>% 
   summarise(x = median(x), y = median(y),
             .groups = "drop") %>%
   ggplot(aes(x, y)) + geom_hex(bins = 12) +
-  scale_fill_viridis_c() -> plt_med
+  scale_fill_viridis_c() 
 
-plt_all 
-plt_med 
 
-plt_x <- ggplot(d, aes(x)) + geom_histogram(bins = 10) 
-plt_y <- ggplot(d, aes(y)) + geom_histogram(bins =  8) 
-plt_x + plt_y
 ```
 
 
@@ -412,19 +405,6 @@ d <- read_csv("data/tagu_2020_prox_mouse.csv", show_col_types = FALSE) %>%
   filter(found == 1) %>%
   mutate(condition = as_factor(condition))
 
-ggplot(d, aes(x, y, colour = condition)) + geom_point(alpha = 0.25) +
-  #coord_cartesian(xlim = c(0, 1), ylim = c(0, 1)) + 
-  facet_wrap(~observer)
-
-d %>% group_by(observer, condition) %>% 
-  summarise(x = median(x), y = median(y)) %>%
-  ggplot(aes(x, y, colour = condition)) + geom_point(alpha = 0.25) #+
-#coord_cartesian(xlim = c(0, 1), ylim = c(0, 1))
-
-
-plt_x <- ggplot(d, aes(x)) + geom_histogram(bins = 10) 
-plt_y <- ggplot(d, aes(y)) + geom_histogram(bins =  8) 
-plt_x + plt_y
 ```
 
 

@@ -98,3 +98,4 @@ compute_weights <- function(trl, params, cond, obs)
   
   return(d_trl)
 }
+

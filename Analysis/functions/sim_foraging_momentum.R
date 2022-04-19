@@ -27,7 +27,7 @@ sim_momentum_post <- function(df_params, n_trials = 10, n = 40)
   return(d)
   
 }
-  
+
 get_runs <- function(d) {
   
   dout <- tibble()
@@ -74,7 +74,7 @@ sim_momentum_trials <- function(n = 10, m = 10, tune_prox = 1, tune_angle = 5, b
   )
   
   #dat <- sim_spatial_trial(params)
-  dat <- map_df(1:n_trials, sim_spatial_trial, params = params) %>%
+  dat <- map_df(1:n_trials, sim_momentumtrial, params = params) %>%
     rename(targ_type = "type") %>% 
     mutate(observer = 1, condition = 1) %>%
     select(observer, condition, trial, id, targ_type, found, x, y, phi, dist)
@@ -82,35 +82,46 @@ sim_momentum_trials <- function(n = 10, m = 10, tune_prox = 1, tune_angle = 5, b
   return(dat)
 }
 
-sim_spatial_trial <- function(params, trial = 1)
+sim_momentum_trial <- function(params, trial = 1, 
+                               d_trial = NULL, init_sel = NA)
 {
   
   # n is total number of targets
   # m is the number that we want to find
-
-  d_trial <- 
-    tibble(
-      trial = trial,
-          id = 1:params$n,
-          x  = runif(params$n),
-          y = runif(params$n),
-          type = sample(rep(c(0, 1), params$n/2)),
-          found = -1,
-          dist = NA,
-          phi = NA)
   
+  # if d_trial is null, create a random trial,
+  # otherwise, use the one we have been given
+  
+  if (is.null(d_trial)) {
+    d_trial <- 
+      tibble(
+        trial = trial,
+        id = 1:params$n,
+        x  = runif(params$n),
+        y = runif(params$n),
+        type = sample(rep(c(0, 1), params$n/2)),
+        found = -1,
+        dist = NA,
+        phi = NA)
+  }
+  
+  # convert d_trial$type from {0, 1} to {-1, 1}
+  # this is just for mathematical convenience 
   d_trial$type[which(d_trial$type == 0)] <- -1
   
-  if (params$spat_config==TRUE) 
+  # the spat_config toggle will set all items on one 
+  # side of the display to -1, and all items on the 
+  # other to 1.
+  # This is mainly used for simulation and testing
+  if (params$spat_config == TRUE) 
   {
-    
     d_trial %>% mutate(
-      type = if_else(x < 0.5, -1, 1)
-    ) -> d_trial
-    
+      type = if_else(x < 0.5, -1, 1)) -> d_trial
   }
-
   
+  # create tibble of remaining items
+  # as we are just getting started, this will contain
+  # all items
   d_remain <- d_trial %>% 
     mutate(
       dist = 0,
@@ -118,56 +129,31 @@ sim_spatial_trial <- function(params, trial = 1)
       b = boot::inv.logit(params$b_pref * type),
       b = b/sum(b))
   
-  # pick a first point at random
-  d_found <- sample_n(d_remain, 1, weight = b) %>%
-    mutate(t = 1)
-  
-  # remove this point from the stimuli
+  # if we have been provided an initial target selection, we will use that
+  # otherwise, pick one more or less at random (but taking bA into account)
+  if (is.na(init_sel)) {
+    
+    d_found <- sample_n(d_remain, 1, weight = b) %>%
+      mutate(t = 1)
+    
+  } else {
+    
+    d_found <- filter(d_remain, id == init_sel) %>%
+      mutate(t = 1)
+    
+  }
+    
+  # remove the initial point from the stimulus
   d_remain <- filter(d_remain, id != d_found$id)
   d_trial$found[d_found$id[1]] <- 1
-  
- # second target select.. add in distance...
-  t = 2
-  prev_targ <- d_found$type[t-1]
-  match_prev = if_else(d_remain$type == prev_targ, 1, -1)
-  # compute proximity of remaining targets from current target
-  d_remain %>% mutate(
-    dist = (d_found$x[t-1] - x)^2 + (d_found$y[t-1] - y)^2,
-    dist = sqrt(dist),
-    prox = exp(-params$tune_prox * dist),
-    b = params$b_pref * type + params$b_switch * match_prev,
-    b = boot::inv.logit(b) * prox,
-    b = b/sum(b)) -> d_remain
-  
-  # sample the next target
-  
-  d_found %>% add_row(
-    sample_n(d_remain, 1, weight = b) %>% mutate(t = t)) -> d_found
-  
-  d_remain <- filter(d_remain, id != d_found$id[t]) 
-  
-  d_trial$found[d_found$id[t]] <- t
-  d_trial$dist[d_found$id[t]] <- d_found$prox[t]
-  
-  for (t in 3:params$m) {
+
+  # now do other targets
+  for (t in 2:params$m) {
     
-    prev_targ <- d_found$type[t-1]
-    match_prev = if_else(d_remain$type == prev_targ, 1, -1)
-    # compute proximity of remaining targets from current target
-    d_remain %>% mutate(
-      dist = (d_found$x[t-1] - x)^2 + (d_found$y[t-1] - y)^2,
-      dist = sqrt(dist),
-      phi = atan2(( d_found$y[t-1] - d_found$y[t-2]), (d_found$x[t-1] - d_found$x[t-2])) * 180/pi,
-      phi = (atan2((y - d_found$y[t-1]), (x - d_found$x[t-1])) * 180/pi) - phi ,
-      phi = pmin(abs((phi %% 360)), abs((-phi %% 360))),
-      phi = phi/180,
-      prox = exp((-params$tune_prox * dist) - (params$tune_angle * phi)),
-      b = params$b_pref * type + params$b_switch * match_prev,
-      b = boot::inv.logit(b) * prox,
-      b = b/sum(b)) -> d_remain
+    # compute proximity of remaining targets from current target 
+    d_remain <- calc_weights(d_remain, d_found, t)
     
     # sample the next target
-    
     d_found %>% add_row(
       sample_n(d_remain, 1, weight = b) %>% mutate(t = t)) -> d_found
     
@@ -179,8 +165,41 @@ sim_spatial_trial <- function(params, trial = 1)
     
   } 
   
-  
   return(d_trial)
+}
+
+calc_weights <- function(d_remain, d_found, t) {
+  
+  prev_targ <- d_found$type[t-1]
+  match_prev <- if_else(d_remain$type == prev_targ, 1, -1)
+  
+  # calculate weights for all items left in trial
+  d_remain %>% mutate(
+    dist = (d_found$x[t-1] - x)^2 + (d_found$y[t-1] - y)^2,
+    dist = sqrt(dist)) -> d_remain
+  
+  if (t > 2) {
+    
+    d_remain %>% mutate(
+      phi = atan2(( d_found$y[t-1] - d_found$y[t-2]), (d_found$x[t-1] - d_found$x[t-2])) * 180/pi,
+      phi = (atan2((y - d_found$y[t-1]), (x - d_found$x[t-1])) * 180/pi) - phi ,
+      phi = pmin(abs((phi %% 360)), abs((-phi %% 360))),
+      phi = phi/180,
+      prox = exp((-params$tune_prox * dist) - (params$tune_angle * phi))) -> d_remain
+    
+  } else {
+    # if t == 2, we can't use direction
+    d_remain %>% mutate(
+      prox = exp((-params$tune_prox * dist))) -> d_remain
+  }
+  
+  d_remain %>% mutate(
+    b = params$b_pref * type + params$b_switch * match_prev,
+    b = boot::inv.logit(b) * prox,
+    b = b/sum(b)) -> d_remain
+  
+  return(d_remain)
+  
 }
 
 

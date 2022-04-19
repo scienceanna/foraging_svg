@@ -28,7 +28,7 @@ library(ggrepel)
 theme_set(ggthemes::theme_tufte() + theme(plot.background = element_rect(fill = "#fffff8", colour = "#fffff8")))
 
 # some more colours
-#Isfahan2 = list(c("#d7aca1", "#ddc000", "#79ad41", "#34b6c6", "#4063a3"), c(4, 2, 3, 5, 1), colo
+col3 = c("#d7aca1", "#ddc000","#34b6c6",  "#79ad41", "#4063a3")
                 
 our_cols <- c("#1b9e77", "#7570b3")
 options(ggplot2.discrete.fill = our_cols ,
@@ -294,9 +294,80 @@ plts[[1]] + plts[[2]] +
 
 
 
-# Shortest Path Analysis
+# Path Length Analysis
 
 It looks like some of the target selections that our model fails to capture are when participants select a further away target in order to mimimise overall path length. Here we will compare our model's predicted path length against the empirical paths. 
+
+- We will provide the model/simulation with the initial target selection.
+
+
+```{r, fig.cap = "(*left*) Histogram comparing the empirical path lengths to simulations from our fitted model. Difference indicates the human path length - the simulated path length. (*right*) Histogram comparing the median path lengths per participant."}
+path_lengths <- readRDS("scratch/path_lengths.rda") %>%
+  rename(observer = "obs",
+         condition = "cond",
+         human = "human_path_length",
+         model = "model_path_length") %>% 
+  mutate(difference  = human - model) %>%
+  pivot_longer(c(human, model, difference), names_to = "type", values_to = "path_length")
+
+ggplot(path_lengths, aes(path_length, fill = type)) + 
+  geom_histogram(bins = 25, alpha = 0.5, position = "identity") +
+  geom_vline(xintercept = 0, linetype = 2) + 
+  theme(legend.position = "bottom")  +
+  scale_x_continuous("path length")  +
+  scale_x_continuous("median path length") +
+  scale_fill_manual(values = col3) -> plt1
+
+path_lengths %>% group_by(observer, type) %>%
+  summarise(path_length = median(path_length), .groups = "drop") %>%
+  ggplot(aes(path_length, fill = type)) + 
+  geom_histogram(bins = 25, alpha = 0.5, position = "identity") +
+  geom_vline(xintercept = 0, linetype = 2) + 
+  theme(legend.position = "bottom") +
+  scale_x_continuous("median path length") +
+  scale_fill_manual(values = col3) -> plt2
+
+plt1 + plt2 + plot_layout(guides = "collect")  &
+  theme(legend.position = 'bottom', legend.title = element_blank())
+```
+
+We can see that overall, the model is not making substantially longer paths through the items than our human participants. However, there is some variability in that some participants routinely select paths shorter than our model would, and others do not.
+
+Perhaps this is related to predictability (i.e., how well the model can predict a participant's trial level behaviour)?
+
+```{r fig.cap = "(*left*) A histogram showing the proportion of trials each participant managed a shorter path through the targets than the model's prediction. (*right*) Scatter plot showing the relationship between predictability (accuracy) and whether the model over or under estimates path length. Xs mark the outlier participants discussed above."}
+path_lengths %>% filter(type == "difference") %>%
+  mutate(shorter = path_length < 0) %>%
+  group_by(observer, condition) %>%
+  summarise(prop_shorter = mean(shorter), .groups = "drop") -> path_lengths_obs
+
+path_lengths_obs %>%
+  ggplot(aes(prop_shorter, fill = condition)) + 
+  geom_histogram(alpha = 0.5, breaks = seq(0, 1, 0.2), position = "identity") +
+  scale_x_continuous("prop. shorter than model", breaks = seq(0, 1, 0.2)) -> plt1
+
+path_lengths <- full_join(path_lengths_obs, fit,
+                          by = c("observer", "condition"))
+
+
+ggplot(path_lengths, aes(accuracy, prop_shorter, colour = condition)) + 
+  geom_point(aes(shape = is_outlier)) +
+  geom_smooth(data = filter(path_lengths, is_outlier == 0), 
+              method = "lm", formula = y ~ x, se = FALSE) + 
+  scale_shape_manual(values = c(19, 4), guide = "none") + 
+  scale_y_continuous("prop. shorter than model", breaks = seq(0, 1, 0.2)) +
+  coord_cartesian(ylim = c(0, 1)) -> plt2 
+
+plt1 + plt2 + plot_layout(guides = "collect")  &
+  theme(legend.position = 'bottom')
+
+```
+
+
+```{r}
+
+
+```
 
 
 # Initial Selection

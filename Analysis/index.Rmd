@@ -28,7 +28,7 @@ library(ggrepel)
 theme_set(ggthemes::theme_tufte() + theme(plot.background = element_rect(fill = "#fffff8", colour = "#fffff8")))
 
 # some more colours
-col3 = c("#d7aca1", "#ddc000","#34b6c6",  "#79ad41", "#4063a3")
+col3 = c("#d04e00", "#ddc000","#34b6c6",  "#79ad41", "#4063a3")
                 
 our_cols <- c("#1b9e77", "#7570b3")
 options(ggplot2.discrete.fill = our_cols ,
@@ -76,7 +76,7 @@ a %>% group_by(condition, observer, found) %>%
 ```
 
 
-```{r, fig.cap = "(*left*) The average weight assigned to each selected target by our model. (*right*) The proportion of trials the item with the largest assigned weight as selected by the participant.  Each dot shows data from an individual particpant in a condition and the shaded region indicates the interval in which we expect 67% of participants to fall."}
+```{r, fig.cap = "(*left*) The average weight assigned to each selected target by our model. (*right*) The proportion of trials the item with the largest assigned weight was selected by the participant.  Each dot shows data from an individual particpant in a condition and the shaded region indicates the interval in which we expect 67% of participants to fall."}
 
 # plot target selected weights
 ggplot(a_agg, aes(x = found, y = meanb, colour = condition, fill = condition)) + 
@@ -111,7 +111,7 @@ From this figure we can see a few interesting things to note:
 
 ### Calibration
 
-Is our model calibrated? By this we mean, if our model assigns an item a probability $p$ of being selected next, then is it actually be selected (by the human participant) this often?
+Is our model calibrated? By this we mean, if our model assigns an item a probability $p$ of being selected next, then is it actually selected (by the human participant) this often?
 
 We will calculate this as follows: for each target selection (on each trial, for each participant) we look at the weight assigned to the most likely item, and then look at whether it was selected or not. 
 
@@ -125,9 +125,9 @@ a %>% mutate(b_bin = cut(max_b, breaks = my_breaks, labels = FALSE)) %>%
   mutate(b_bin = as.numeric(b_bin)/(length(my_breaks)-1)) -> a_cut
 ```
 
-We can see from the Figure below that our model is well-calibrated, (at least in terms of the target with the highest assigned weight).
+We can see from the Figure below that our model is well-calibrated (at least in terms of the target with the highest assigned weight).
 
-We can also repeat this calculate for the 2nd and 3rd ranked candidate items.
+We can also repeat this calculation for the 2nd and 3rd ranked candidate items.
 
 
 ```{r, fig.height=3.5, fig.cap = "(*left*) Calibration plot for our foraging model. The *x*-axis gives the largest weight assigned by the model while the *y*-axis shows how often that target was actually selected by a human participant. (*right*) This plot shows how often the 2nd and 3rd ranked items are selected based on the weights assigned by the model."}
@@ -237,7 +237,7 @@ a %>% filter(!(observer %in% c(35, 45))) %>%
 ```
 
 
-```{r fig.height=3.5, fig.cap = "Histogram of how predictiable indivuidual trials are, defined as how often the model assigned the largest weight to the target that was then selected."}
+```{r fig.height=3.5, fig.cap = "Histogram of how predictiable individual trials are, defined as how often the model assigned the largest weight to the target that was then selected."}
 ggplot(a_trl, aes(prop_max)) + 
   geom_histogram(fill = "#34b6c6", breaks = seq(0, 1, 0.025)) +
   scale_x_continuous("trial predictability")
@@ -299,7 +299,7 @@ plts[[1]] + plts[[2]] +
 
 # Path Length Analysis
 
-It looks like some of the target selections that our model fails to capture are when participants select a further away target in order to mimimise overall path length. Here we will compare our model's predicted path length against the empirical paths. 
+It looks like some of the target selections that our model fails to capture are when participants select a further away target in order to minimise overall path length. Here we will compare our model's predicted path length against the empirical paths. 
 
 - We will provide the model/simulation with the initial target selection.
 

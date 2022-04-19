@@ -127,7 +127,10 @@ a %>% mutate(b_bin = cut(max_b, breaks = my_breaks, labels = FALSE)) %>%
 
 We can see from the Figure below that our model is well-calibrated, (at least in terms of the target with the highest assigned weight).
 
-```{r, fig.cap = "Calibration plot for our foraging model. The *x*-axis gives the largest weight assigned by the model while the *y*-axis shows how often that target was actually selected by a human participant."}
+We can also repeat this calculate for the 2nd and 3rd ranked candidate items.
+
+
+```{r, fig.height=3.5, fig.cap = "(*left*) Calibration plot for our foraging model. The *x*-axis gives the largest weight assigned by the model while the *y*-axis shows how often that target was actually selected by a human participant. (*right*) This plot shows how often the 2nd and 3rd ranked items are selected based on the weights assigned by the model."}
 
 ggplot(a_cut, aes(b_bin, acc, colour = condition, shape = condition)) + 
   geom_point() + 
@@ -135,18 +138,9 @@ ggplot(a_cut, aes(b_bin, acc, colour = condition, shape = condition)) +
             formula = y ~ x, alpha = 0.65, size = 2, se = F) +
   geom_abline(linetype = 2) +
   scale_x_continuous("largest item weight") +
-  scale_y_continuous("proportion of times selected") #+ 
-  #coord_fixed()
-```
+  scale_y_continuous("proportion of times selected") +
+  theme(legend.position = "bottom") -> plt1
 
-
-```{r}
-rm(a_cut)
-```
-
-We can also repeat this calculate for the 2nd and 3rd ranked candidate items.
-
-```{r fig.cap = "This plot shows how often the 2nd and 3rd ranked items are selected based on the weights assigned by the model."}
 a %>% select(max_b2, max_b3, selected_max2, selected_max3) %>%
   unite(`2`, max_b2, selected_max2) %>%
   unite(`3`, max_b3, selected_max3) %>%
@@ -163,9 +157,18 @@ a %>% select(max_b2, max_b3, selected_max2, selected_max3) %>%
             formula = y ~ x, alpha = 0.65, size = 2, se = F) +
   geom_abline(linetype = 2) +
   scale_x_continuous("runner up item weights") +
-  scale_y_continuous("proportion of times selected") + 
-  coord_fixed()
+  scale_y_continuous("proportion of times selected") -> plt2
+
+plt1 + plt2
+
 ```
+
+
+```{r}
+rm(a_cut)
+```
+
+
 
 Here we can see that these candidate items are typically underweight. 
 
@@ -173,7 +176,7 @@ Here we can see that these candidate items are typically underweight.
 
 How often does each participant select the target with the largest weight? 
 
-```{r, fig.cap = "Prediction scores for participants. Boxplots show quartile range and the grey lines indicate individual participants. (The dots indicate outliers.)", echo= TRUE}
+```{r, fig.height=3.5, fig.cap = "Prediction scores for participants. Boxplots show quartile range and the grey lines indicate individual participants. (The dots indicate outliers.)", echo= TRUE}
 
 a_agg %>% group_by(observer, condition) %>%
   summarise(accuracy = mean(prop_best), .groups = "drop") -> a_acc
@@ -234,7 +237,7 @@ a %>% filter(!(observer %in% c(35, 45))) %>%
 ```
 
 
-```{r, fig.cap = "Histogram of how predictiable indivuidual trials are, defined as how often the model assigned the largest weight to the target that was then selected."}
+```{r fig.height=3.5, fig.cap = "Histogram of how predictiable indivuidual trials are, defined as how often the model assigned the largest weight to the target that was then selected."}
 ggplot(a_trl, aes(prop_max)) + 
   geom_histogram(fill = "#34b6c6", breaks = seq(0, 1, 0.025)) +
   scale_x_continuous("trial predictability")
@@ -301,7 +304,7 @@ It looks like some of the target selections that our model fails to capture are 
 - We will provide the model/simulation with the initial target selection.
 
 
-```{r, fig.cap = "(*left*) Histogram comparing the empirical path lengths to simulations from our fitted model. Difference indicates the human path length - the simulated path length. (*right*) Histogram comparing the median path lengths per participant."}
+```{r, fig.height=3.5, fig.cap = "(*left*) Histogram comparing the empirical path lengths to simulations from our fitted model. Difference indicates the human path length - the simulated path length. (*right*) Histogram comparing the median path lengths per participant."}
 path_lengths <- readRDS("scratch/path_lengths.rda") %>%
   rename(observer = "obs",
          condition = "cond",
@@ -335,7 +338,7 @@ We can see that overall, the model is not making substantially longer paths thro
 
 Perhaps this is related to predictability (i.e., how well the model can predict a participant's trial level behaviour)?
 
-```{r fig.cap = "(*left*) A histogram showing the proportion of trials each participant managed a shorter path through the targets than the model's prediction. (*right*) Scatter plot showing the relationship between predictability (accuracy) and whether the model over or under estimates path length. Xs mark the outlier participants discussed above."}
+```{r fig.height=3, fig.cap = "(*left*) A histogram showing the proportion of trials each participant managed a shorter path through the targets than the model's prediction. (*right*) Scatter plot showing the relationship between predictability (accuracy) and whether the model over or under estimates path length. Xs mark the outlier participants discussed above."}
 path_lengths %>% filter(type == "difference") %>%
   mutate(shorter = path_length < 0) %>%
   group_by(observer, condition) %>%

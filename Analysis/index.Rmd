@@ -6,6 +6,7 @@ output:
   tufte::tufte_html:
     toc: TRUE
     number_sections: true
+    fig_height: 4 
 ---
 
 ```{r setup, include=FALSE}
@@ -420,14 +421,13 @@ obs_fits_x <- pmap_dfc(filter(am,  dim == "x") %>% select(mean, sd), dtruncnorm,
   mutate(z = z) %>%
   pivot_longer(-z, names_to = "observer", values_to = "v") %>%
   ggplot(aes(x = z, y = v, group = observer)) + geom_path(alpha = 0.25) +
-  scale_x_continuous("x")
+  scale_x_continuous("x") + scale_y_continuous("likelihood")
 
 obs_fits_y <- pmap_dfc(filter(am,  dim == "y") %>% select(mean, sd), dtruncnorm, a = 0, b= 1, x = z) %>%
   mutate(z = z) %>%
   pivot_longer(-z, names_to = "observer", values_to = "v") %>%
   ggplot(aes(x = z, y = v, group = observer)) + geom_path(alpha = 0.25) +
-  scale_x_continuous("y") + 
-  coord_flip()
+  scale_x_continuous("y") + scale_y_continuous("likelihood")
 
 
 obs_fits_x + obs_fits_y

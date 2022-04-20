@@ -48,8 +48,6 @@ source("functions/get_model_params.R")
 source("functions/compute_weights.R")
 ```
 
-## Clarke et al (2022)
-
 We will start by looking at the visual foraging data from Clarke et al (2022), QJEP. As the current version of our model only takes the $p_A$ bias into account for the initial target selection, we will ignore these data points for now. 
 
 ```{r, echo = TRUE}
@@ -106,7 +104,7 @@ From this figure we can see a few interesting things to note:
 - feature search is more predictable than conjunction search
 - our model appears to be overly conservative
 
-### Calibration
+## Calibration
 
 Is our model calibrated? By this we mean, if our model assigns an item a probability $p$ of being selected next, then is it actually selected (by the human participant) this often?
 
@@ -212,7 +210,7 @@ summary(lm(accuracy ~ bP + pS + bM + bP,
 rm(dm)
 ```
 
-### Examples of Trials
+## Examples of Trials
 
 Let's score every trial by how well the model captures behaviour, and then plot some different examples
 
@@ -354,10 +352,10 @@ rm(path_lengths, plt1, plt2)
 
 # Initial Selection
 
-## QJEP Dataset
+Previous work (cite Clarke and Tatler etc) has demonstrated that the initial fixation in scene viewing can be well described with truncated Gaussian distribution. Here we explore using a similar idea to account for starting locations. 
 
 ```{r echo = TRUE}
-# Reimport data again (as we removed the inital target selection earlier)
+# Reimport data again (as we removed the initial target selection earlier)
 d <- read_csv("data/clarke_2020_qjep.csv", show_col_types = FALSE) %>%
   filter(found == 1) %>%
   mutate(condition = as_factor(condition))
@@ -390,9 +388,9 @@ plt_all + plt_med
 rm(plt_all, plt_med)
 ```
 
-We can model this as multi-level Gaussian?
+We can model this as multi-level Gaussian? Yes, although it seems like people are in one of two clusters. 
 
-```{r fig.cap=3.5}
+```{r fig.cap = "The mean posterior plot for the truncated normal distriubtions for (*left*) $x$ and (*right*) $y$. We can see that a two component mixture model will capture most of the variance in intial target selection."}
 
 m <- readRDS("scratch/init_sel_model.rds")
 z <- seq(0, 1, 0.01)
@@ -401,61 +399,39 @@ gather_draws(m, u[dim, observer]) %>%
   ungroup() %>%
   select(-.variable) %>%
   rename(obs_b = ".value") %>%
-  full_join(gather_draws(m, b[dim])) %>%
+  full_join(gather_draws(m, b[dim]),
+             by = c("dim", ".chain", ".iteration", ".draw")) %>%
   mutate(obs_b = .value + obs_b,
          .variable = if_else(dim %in% c(1,2), "mu", "sd"),
          dim = if_else(dim %in% c(1,3), "x", "y")) %>%
   select(observer, dim, .iteration, obs_b, param = ".variable") %>%
   mutate(obs_b = if_else(param == "sd", exp(obs_b), obs_b)) -> a 
 
-ggplot(a, aes(obs_b, group = observer)) + 
-  geom_density(alpha = 0.25) +
-  facet_grid(param ~ dim, scales = "free")
- 
 a %>% group_by(observer, param, dim) %>%
   summarise(value = mean(obs_b) , .groups = "drop") %>%
   pivot_wider(names_from = param, values_from = value) %>%
   rename(mean = "mu") -> am
 
-obs_fits_x <- pmap_dfc(filter(am,  dim == "x") %>% select(mean, sd), dtruncnorm, a = 0, b= 1, x = z) %>%
-  mutate(z = z) %>%
-  pivot_longer(-z, names_to = "observer", values_to = "v") %>%
-  ggplot(aes(x = z, y = v, group = observer)) + geom_path(alpha = 0.25) +
-  scale_x_continuous("x") + scale_y_continuous("likelihood")
+create_post_plot <- function(dm) {
+  
+  pmap(filter(am,  dim == dm) %>% select(mean, sd), dtruncnorm, a = 0, b= 1, x = z) %>%
+    set_names(rownames(filter(am,  dim == dm))) %>%
+    bind_rows() %>%
+    mutate(z = z) %>%
+    pivot_longer(-z, names_to = "observer", values_to = "v") %>%
+    ggplot(aes(x = z, y = v, group = observer)) + geom_path(alpha = 0.25) +
+    scale_x_continuous(dm) + scale_y_continuous("likelihood") -> plt
+  
+  return(plt)
+}
 
-obs_fits_y <- pmap_dfc(filter(am,  dim == "y") %>% select(mean, sd), dtruncnorm, a = 0, b= 1, x = z) %>%
-  mutate(z = z) %>%
-  pivot_longer(-z, names_to = "observer", values_to = "v") %>%
-  ggplot(aes(x = z, y = v, group = observer)) + geom_path(alpha = 0.25) +
-  scale_x_continuous("y") + scale_y_continuous("likelihood")
-
-
-obs_fits_x + obs_fits_y
-
+create_post_plot("x") + create_post_plot("y")
 ```
 
-## Tagu dataset
-
-```{r}
-d <- read_csv("data/tagu_2020_prox_mouse.csv", show_col_types = FALSE) %>%
-  filter(found == 1) %>%
-  mutate(condition = as_factor(condition))
-
-ggplot(d, aes(x, y)) + geom_hex(aes(colour = ..count..), bins = 12) +
-  scale_fill_viridis_c() + scale_color_viridis_c() +
-  my_theme -> plt_all
+Do we want to simplify this model to something in which people have some mix of a (fixed) centre and corner bias?
 
 
-d %>% group_by(observer, condition) %>% 
-  summarise(x = median(x), y = median(y),
-            .groups = "drop") %>%
-  ggplot(aes(x, y)) + geom_hex(bins = 12) +
-  scale_fill_viridis_c()+ scale_color_viridis_c() +
-  my_theme -> plt_med
-
-plt_all + plt_med 
-```
 
 
-## Item Density
+# Item Density
 

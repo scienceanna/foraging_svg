@@ -61,3 +61,12 @@ obs_fits_y <- pmap_dfc(filter(am,  dim == "y") %>% select(mean, sd), dtruncnorm,
 
 obs_fits_x + obs_fits_y
 
+
+
+m <- stan("../models/initial_selection_models/init_sel2.stan",
+          data = stan_data,
+          chains = 4,
+          iter = 1000,
+          refresh = 100)
+
+

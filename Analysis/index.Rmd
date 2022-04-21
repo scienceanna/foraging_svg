@@ -428,9 +428,22 @@ create_post_plot <- function(dm) {
 create_post_plot("x") + create_post_plot("y")
 ```
 
-Do we want to simplify this model to something in which people have some mix of a (fixed) centre and corner bias?
+- Do we want to simplify this model to something in which people have some mix of a (fixed) centre and corner bias?
 
+Do participants who differ in terms of their initial target selection differ in other ways too?
 
+```{r echo = TRUE, fig.cap = "Whether participants have a central or corner bias for the intiial target selection appears to be largely independent of their other model parameters."}
+full_join(fit, filter(am, dim == "x"), by = "observer") %>%
+  pivot_longer(c(pA, pS, bP, bM, accuracy), 
+               names_to = "statistic", values_to = "value") %>%
+  mutate(intial_sel = if_else(mean < 0, "corner", "central")) %>%
+  ggplot(aes(statistic, value, fill = intial_sel)) +
+  geom_boxplot(alpha = 0.5) + 
+  facet_wrap(~statistic, scales = "free", nrow = 1) +
+  theme(legend.position = "bottom") + 
+   scale_fill_manual("intial target selection",
+                     values = c(col3[2], col3[3]))
+```
 
 
 # Item Density

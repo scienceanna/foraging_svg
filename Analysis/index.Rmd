@@ -6,6 +6,7 @@ output:
   tufte::tufte_html:
     toc: TRUE
     number_sections: true
+    fig_height: 4 
 ---
 
 ```{r setup, include=FALSE}
@@ -20,6 +21,7 @@ library(tidyverse)
 library(patchwork)
 library(tidybayes)
 library(ggrepel)
+library(truncnorm)
 ```
 
 
@@ -35,11 +37,9 @@ options(ggplot2.discrete.fill = our_cols ,
         ggplot2.discrete.colour = our_cols)
 ```
 
-
 Terminology questions:
 - item v target
 - participant v observer
-
 
 # Trial Level Posterior Predictions{#label}
 
@@ -47,8 +47,6 @@ Terminology questions:
 source("functions/get_model_params.R")
 source("functions/compute_weights.R")
 ```
-
-## Clarke et al (2022)
 
 We will start by looking at the visual foraging data from Clarke et al (2022), QJEP. As the current version of our model only takes the $p_A$ bias into account for the initial target selection, we will ignore these data points for now. 
 
@@ -59,7 +57,6 @@ d <- read_csv("data/clarke_2020_qjep.csv", show_col_types = FALSE) %>%
          condition = fct_recode(condition, feature = "1", conjunction = "2"),
          targ_type = as_factor(targ_type))
 
-
 # item weights pre-computed - see scripts/extract_item_weights_using_model.R
 a <- readRDS("scratch/qjep_model_weights.rda") %>%
   filter(found != 1) # remove initial selections
@@ -67,14 +64,12 @@ a <- readRDS("scratch/qjep_model_weights.rda") %>%
 # compute the average weight for each participant x condition x item selection
 # also compute the proportion of times in which the item selected by the 
 # participant was judged the most likely to be selected by our model.
- 
 a %>% group_by(condition, observer, found) %>%
   summarise(meanb = mean(b),
             prop_best = mean(selected_max), .groups = "drop") %>%
   # finally, also compute what we would expect under a null-model
   mutate(chance = 1/(41-found))-> a_agg
 ```
-
 
 ```{r, fig.cap = "(*left*) The average weight assigned to each selected target by our model. (*right*) The proportion of trials the item with the largest assigned weight was selected by the participant.  Each dot shows data from an individual particpant in a condition and the shaded region indicates the interval in which we expect 67% of participants to fall."}
 
@@ -109,7 +104,7 @@ From this figure we can see a few interesting things to note:
 - feature search is more predictable than conjunction search
 - our model appears to be overly conservative
 
-### Calibration
+## Calibration
 
 Is our model calibrated? By this we mean, if our model assigns an item a probability $p$ of being selected next, then is it actually selected (by the human participant) this often?
 
@@ -117,7 +112,7 @@ We will calculate this as follows: for each target selection (on each trial, for
 
 
 ```{r, echo = TRUE}
-my_breaks = seq(0.0, 1, 0.05)
+my_breaks <- seq(0.0, 1, 0.05)
 
 a %>% mutate(b_bin = cut(max_b, breaks = my_breaks, labels = FALSE)) %>%
   group_by(condition, b_bin) %>% 
@@ -125,10 +120,7 @@ a %>% mutate(b_bin = cut(max_b, breaks = my_breaks, labels = FALSE)) %>%
   mutate(b_bin = as.numeric(b_bin)/(length(my_breaks)-1)) -> a_cut
 ```
 
-We can see from the Figure below that our model is well-calibrated (at least in terms of the target with the highest assigned weight).
-
-We can also repeat this calculation for the 2nd and 3rd ranked candidate items.
-
+We can see from the Figure below that our model is well-calibrated (at least in terms of the target with the highest assigned weight). If we repeat this calculation for the 2nd and 3rd ranked candidate items we can see that we slightly underweight these items, but we are still pretty accurate. 
 
 ```{r, fig.height=3.5, fig.cap = "(*left*) Calibration plot for our foraging model. The *x*-axis gives the largest weight assigned by the model while the *y*-axis shows how often that target was actually selected by a human participant. (*right*) This plot shows how often the 2nd and 3rd ranked items are selected based on the weights assigned by the model."}
 
@@ -160,17 +152,11 @@ a %>% select(max_b2, max_b3, selected_max2, selected_max3) %>%
   scale_y_continuous("proportion of times selected") -> plt2
 
 plt1 + plt2
-
 ```
-
 
 ```{r}
-rm(a_cut)
+rm(a_cut, my_breaks, plt1, plt2)
 ```
-
-
-
-Here we can see that these candidate items are typically underweight. 
 
 ### Individual Differences
 
@@ -212,21 +198,21 @@ As the two outlier participants appear to be doing something different, not capt
 After removing them, we can see that individual differences in proximity tuning account for nearly all of the differences in predictability from person to person, and also between the *feature* and *conjunction* conditions.
 
 ```{r, echo = TRUE}
-summary(lm(accuracy ~ condition * bP, 
-           data = filter(fit, is_outlier == 0)))
+dm <- filter(fit, is_outlier == 0)
 
+summary(lm(accuracy ~ condition * bP, 
+           data = dm))
 
 
 summary(lm(accuracy ~ bP + pS + bM + bP, 
-           data = filter(fit, is_outlier == 0)))
+           data = dm))
 
+rm(dm)
 ```
 
-
-### Examples of Trials
+## Examples of Trials
 
 Let's score every trial by how well the model captures behaviour, and then plot some different examples
-
 
 ```{r, echo = TRUE}
 a %>% filter(!(observer %in% c(35, 45))) %>%
@@ -236,7 +222,6 @@ a %>% filter(!(observer %in% c(35, 45))) %>%
   ungroup() -> a_trl
 ```
 
-
 ```{r fig.height=3.5, fig.cap = "Histogram of how predictiable individual trials are, defined as how often the model assigned the largest weight to the target that was then selected."}
 ggplot(a_trl, aes(prop_max)) + 
   geom_histogram(fill = "#34b6c6", breaks = seq(0, 1, 0.025)) +
@@ -245,21 +230,19 @@ ggplot(a_trl, aes(prop_max)) +
 
 Let's plot some examples oh highly predictable (top 5%), typical (middle 10%) and unpredictable (bottom 5%) trials.
 
-
 ```{r, echo = TRUE}
 qs <- quantile(a_trl$prop_max, c(0.05, 0.40, 0.60, 0.95))
 
 trls_hard <- filter(a_trl, prop_max < qs[1]) %>% sample_n(3)
 trls_mid  <- filter(a_trl, prop_max > qs[2], prop_max < qs[3]) %>% sample_n(3)
 trls_easy <- filter(a_trl, prop_max > qs[4]) %>% sample_n(3)
-
-# 
-source("functions/plot_trial.R")
 ```
 
 We can see that for these highly predictable trials, we make very few mistakes, and those that we do make appear to be related to some sort of shortest-path optimization on the part of the participant. 
 
 ```{r fig.cap = "A random selection of *good* trials. When participants diverge from the model's prediction, it appears to be due to some form of path-length optimisation."}
+
+source("functions/plot_trial.R")
 plts <- map(1:3, plot_trial, trls_easy, a, d)
 
 plts[[1]] + plts[[2]] +
@@ -268,7 +251,6 @@ plts[[1]] + plts[[2]] +
    theme(plot.background = element_rect(color  = "#fffff8", size = 2,linetype = 'dotted', fill ="#fffff8")) &
    theme(text=element_text(size=14,  family="serif"))
 ```
-
 
 Here are some typical trials. Possible we have the path-length minimization issue again. 
 
@@ -282,7 +264,6 @@ plts[[1]] + plts[[2]] +
    theme(text=element_text(size=14,  family="serif"))
 ```
 
-
 Now let's look at less predictable (bottom 5%-tile) trials. Even here, the model does a relatively good job. 
 
 ```{r fig.cap = "A random selection of *hard* trials. It is harder to make out much of a pattern here, but we can see that the human participants jump around more."}
@@ -295,14 +276,15 @@ plts[[1]] + plts[[2]] +
    theme(text=element_text(size=14,  family="serif"))
 ```
 
-
+```{r}
+rm(trls_easy, trls_mid, trls_hard, plts, qs)
+```
 
 # Path Length Analysis
 
 It looks like some of the target selections that our model fails to capture are when participants select a further away target in order to minimise overall path length. Here we will compare our model's predicted path length against the empirical paths. 
 
 - We will provide the model/simulation with the initial target selection.
-
 
 ```{r, fig.height=3.5, fig.cap = "(*left*) Histogram comparing the empirical path lengths to simulations from our fitted model. Difference indicates the human path length - the simulated path length. (*right*) Histogram comparing the median path lengths per participant."}
 path_lengths <- readRDS("scratch/path_lengths.rda") %>%
@@ -352,7 +334,6 @@ path_lengths_obs %>%
 path_lengths <- full_join(path_lengths_obs, fit,
                           by = c("observer", "condition"))
 
-
 ggplot(path_lengths, aes(accuracy, prop_shorter, colour = condition)) + 
   geom_point(aes(shape = is_outlier)) +
   geom_smooth(data = filter(path_lengths, is_outlier == 0), 
@@ -363,50 +344,94 @@ ggplot(path_lengths, aes(accuracy, prop_shorter, colour = condition)) +
 
 plt1 + plt2 + plot_layout(guides = "collect")  &
   theme(legend.position = 'bottom')
-
 ```
-
 
 ```{r}
-
-
+rm(path_lengths, plt1, plt2)
 ```
-
 
 # Initial Selection
 
-## QJEP Dataset
+Previous work (cite Clarke and Tatler etc) has demonstrated that the initial fixation in scene viewing can be well described with truncated Gaussian distribution. Here we explore using a similar idea to account for starting locations. 
 
-```{r}
+```{r echo = TRUE}
+# Reimport data again (as we removed the initial target selection earlier)
 d <- read_csv("data/clarke_2020_qjep.csv", show_col_types = FALSE) %>%
   filter(found == 1) %>%
   mutate(condition = as_factor(condition))
-
-ggplot(d, aes(x, y)) + geom_hex(bins = 12) +
-  scale_fill_viridis_c()
 ```
 
-```{r fig.cap="Distirbution of median intial selection."}
+```{r fig.height = 3.5, fig.cap="(*left*) Density plot for initial target selections, over all participants and all trials. (*right*) Median $x$ and $y$ coordinates for the initial target selection for each participant."}
+my_theme <- theme(axis.line=element_blank(),axis.text.x=element_blank(),
+          axis.text.y=element_blank(),axis.ticks=element_blank(),
+          axis.title.x=element_blank(),
+          axis.title.y=element_blank(),legend.position="none",
+          panel.background=element_rect(color  = "#808080", size = 2,linetype = 'dotted', fill ="#808080"),
+        panel.border= element_rect(colour = "black", fill=NA, size=5),
+        panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank())
+
+ggplot(d, aes(x, y)) + geom_hex(aes(colour = ..count..), bins = 12) +
+  scale_fill_viridis_c() + scale_color_viridis_c() +
+  my_theme -> plt_all
+
 
 d %>% group_by(observer, condition) %>% 
   summarise(x = median(x), y = median(y),
             .groups = "drop") %>%
   ggplot(aes(x, y)) + geom_hex(bins = 12) +
-  scale_fill_viridis_c() 
+  scale_fill_viridis_c()+ scale_color_viridis_c() +
+  my_theme -> plt_med
 
+plt_all + plt_med 
 
+rm(plt_all, plt_med)
 ```
 
+We can model this as multi-level Gaussian? Yes, although it seems like people are in one of two clusters. 
 
-## Tagu dataset
+```{r fig.cap = "The mean posterior plot for the truncated normal distriubtions for (*left*) $x$ and (*right*) $y$. We can see that a two component mixture model will capture most of the variance in intial target selection."}
 
-```{r}
-d <- read_csv("data/tagu_2020_prox_mouse.csv", show_col_types = FALSE) %>%
-  filter(found == 1) %>%
-  mutate(condition = as_factor(condition))
+m <- readRDS("scratch/init_sel_model.rds")
+z <- seq(0, 1, 0.01)
 
+gather_draws(m, u[dim, observer]) %>% 
+  ungroup() %>%
+  select(-.variable) %>%
+  rename(obs_b = ".value") %>%
+  full_join(gather_draws(m, b[dim]),
+             by = c("dim", ".chain", ".iteration", ".draw")) %>%
+  mutate(obs_b = .value + obs_b,
+         .variable = if_else(dim %in% c(1,2), "mu", "sd"),
+         dim = if_else(dim %in% c(1,3), "x", "y")) %>%
+  select(observer, dim, .iteration, obs_b, param = ".variable") %>%
+  mutate(obs_b = if_else(param == "sd", exp(obs_b), obs_b)) -> a 
+
+a %>% group_by(observer, param, dim) %>%
+  summarise(value = mean(obs_b) , .groups = "drop") %>%
+  pivot_wider(names_from = param, values_from = value) %>%
+  rename(mean = "mu") -> am
+
+create_post_plot <- function(dm) {
+  
+  pmap(filter(am,  dim == dm) %>% select(mean, sd), dtruncnorm, a = 0, b= 1, x = z) %>%
+    set_names(rownames(filter(am,  dim == dm))) %>%
+    bind_rows() %>%
+    mutate(z = z) %>%
+    pivot_longer(-z, names_to = "observer", values_to = "v") %>%
+    ggplot(aes(x = z, y = v, group = observer)) + geom_path(alpha = 0.25) +
+    scale_x_continuous(dm) + scale_y_continuous("likelihood") -> plt
+  
+  return(plt)
+}
+
+create_post_plot("x") + create_post_plot("y")
 ```
 
+Do we want to simplify this model to something in which people have some mix of a (fixed) centre and corner bias?
 
-## Item Density
+
+
+
+# Item Density
 

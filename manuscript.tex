@@ -104,44 +104,79 @@ While our model is able to do a good job of allowing us to understand biases at 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Materials and Methods}
 
-Briefly overview model and datasets using.
+\subsection{Datasets}
 
-Materials and Methods should be described with sufficient details to allow others to replicate and build on published results. Please note that publication of your manuscript implicates that you must make all materials, data, computer code, and protocols associated with the publication available to readers. Please disclose at the submission stage any restrictions on the availability of materials or information. New methods and protocols should be described in detail while well-established methods can be briefly described and appropriately cited.
+We will use two previously published datasets to explore how well our model can account for trial-level behaviour. We will start with the visual foraging data from \cite{clarke2022qjep}. This is an attractive dataset for our needs as it is very close to the ``classic'' visual foraging paradigm \citep{kristjansson2014}, yet with a substantially larger sample of participants. (The key difference between paradigms is that \cite{kristjansson2014} used an ipad and finger foraging, while \cite{clarke2022qjep} used a desktop computer and mouse clicks). Furthermore, we have already demonstrated that our model can capture individual differences in foraging behaviour \citep{clarke2022foraging}. As such, we will only give a brief overview of the data here and refer the reader to these earlier papers for a more details.
 
-Research manuscripts reporting large datasets that are deposited in a publicly avail-able database should specify where the data have been deposited and provide the relevant accession numbers. If the accession numbers have not yet been obtained at the time of submission, please state that they will be provided during review. They must be provided prior to publication.
+To test how well our methods generalise, we will introduce a new dataset that was not analysed in our previous modelling paper. This \cite{prpic2019} data comes from a study in which participants played a simple computer game in which they controlled a squirrel hunting for acorns. The game makes us a 3D virtual world and player are provided with a 1st person (2nd??) view. This differs from the top down displays typically used in other visual foraging studies and so makes a good test of generalisability. 
 
-Interventionary studies involving animals or humans, and other studies require ethical approval must list the authority that provided approval and the corresponding ethical approval code.
-\begin{quote}
-This is an example of a quote.
-\end{quote}
+\subsubsection{Clarke et al 2022}
+
+
+
+\subsubsection{Ppric et al}
+
+\subsection{A Model for Visual Foraging}
+
+We will make use of the foraging model from \cite{clarke2022foraging}. This treats foraging as a sampling without replacement process in which each item $i$ has probability $p_i$ of being selected as the next target. The $p_i$ depend on four parameters:
+
+\begin{itemize}
+    \item $b_A$ - preference for selecting items of type $A$ rather than $B$.
+    \item $b_S$ - preference for selections items of the same type as the previously selected item.
+    \item $\sigma_d$ - preference for selecting items close to the previously selected item.
+    \item $\sigma_{\theta}$ - preference to keep selecting items along a straight line versus changing direction.
+\end{itemize}
+
+These combine to give:
+
+\begin{equation}
+    w_i = g\left(b_at_i + b_sm(t_i, t_{i-1})\right) \times \rho_d(i, i-1) \rho_{\theta}(i, i-1)
+\end{equation}
+
+where $t_i = 1$ if item $i$ is of class $A$ and 0 otherwise, $m(t_i, t_{i-1}) =1$ if item $i$ is the same class as the previously selected item. $\rho_d$ and $\rho_{\theta}$ measures proximity and the effect of direction:
+
+\begin{equation}
+    \rho_d = e^{-\sigma_dd(i,j)}
+\end{equation}
+\begin{equation}
+    \rho_{\theta} = e^{-\sigma_d\theta(i,j)}
+\end{equation}
+
+$d(i,j)$ is simply the Euclidean distance between items $i$ and $j$, while $\theta$ is defined as:
+\begin{equation}
+    \theta(i,j) = \frac{f(\text{atan2}(i, j) - \text{atan2}(i-1, i))}{\pi}
+\end{equation}
+
+with $f(\phi_1, \phi_2) = \text{min}((\phi_1 - \phi_2) \% 2\pi, (\phi_2 - \phi_1) \% 2\pi)$. This model is implemented in a multi-level framework, allowing each of the four parameters to vary from participant to participant. Further details including priors and full code can be found with \cite{clarke2022foraging}.
+
+Note: while our model returns estimates of full posterior probability distribution for each parameter, to reduce computational complexity and make it easier to compare to the empirical data, we will work with the means of these distributions for our parameter values. 
+
+\subsection{Software environment}
+ 
+ We used R, Stan, tidyverse version etc. 
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results}
 
-This section may be divided by subheadings. It should provide a concise and precise description of the experimental results, their interpretation as well as the experimental conclusions that can be drawn.
-
 \subsection{Initial target selection}
 
+
 \subsection{Trial-level predictions}
+
+To assess how well our model can account for behaviour at the level of individual trials, we start by stepping through each trial in the data from \cite{clarke2022qjep}. For each target selection, we can estimate how likely each of the remaining items are to be selected using the parameters from our posterior model. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=12 cm]{Figures/qjep_preds.png}
+\caption{Posterior probabilities for target selections during a visual foraging task. Each dot represents...}
+\end{figure}   
+
 
 \subsection{Improvement: Adaptive distance? Absolute direction?}
 
 
-\subsubsection{Subsubsection}
-
-Bulleted lists look like this:
-\begin{itemize}
-\item	First bullet;
-\item	Second bullet;
-\item	Third bullet.
-\end{itemize}
-
-Numbered lists can be added as follows:
-\begin{enumerate}
-\item	First item; 
-\item	Second item;
-\item	Third item.
-\end{enumerate}
 
 The text continues here. 
 
@@ -149,10 +184,7 @@ The text continues here.
 
 All figures and tables should be cited in the main text as Figure~\ref{fig1}, Table~\ref{tab1}, Table~\ref{tab2}, etc.
 
-\begin{figure}[H]
-\includegraphics[width=10.5 cm]{Figures/qjep_preds.png}
-\caption{This is a figure. Schemes follow the same formatting. If there are multiple panels, they should be listed as: (\textbf{a}) Description of what is contained in the first panel. (\textbf{b}) Description of what is contained in the second panel. Figures should be placed in the main text near to the first time they are cited. A caption on a single line should be centered.\label{fig1}}
-\end{figure}   
+
 \unskip
 
 \begin{table}[H] 

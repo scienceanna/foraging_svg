@@ -95,6 +95,8 @@ ggplot(a_agg, aes(x = found, y = meanb, colour = condition, fill = condition)) +
   scale_x_continuous(breaks = c(2, 10, 20, 40), "target selection", expand = c(0.01, 0.01)) + 
   scale_y_continuous("average weight from model", expand = c(0.01, 0.01)) -> plt_b
 
+ggsave("../Figures/qjep_preds.png", width = 8, height = 4)
+
 ggplot(a_agg, aes(x = found, y = prop_best, colour = condition, fill = condition)) + 
   geom_jitter(data = filter(a_agg, found<40), width = 0.1, height = 0.00, alpha = 0.2) + 
   stat_lineribbon(.width = 0.67, alpha = 0.50) +
@@ -107,7 +109,7 @@ ggplot(a_agg, aes(x = found, y = prop_best, colour = condition, fill = condition
 plt_b + plt_c + plot_layout(guides = "collect")  &
   theme(legend.position = 'bottom',
         legend.direction = 'horizontal')
-ggsave("../Figures/qjep_preds.png", width = 9, height = 4)
+
 ```
 
 

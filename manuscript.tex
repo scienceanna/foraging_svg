@@ -165,14 +165,16 @@ Note: while our model returns estimates of full posterior probability distributi
 
 \subsection{Trial-level predictions}
 
-To assess how well our model can account for behaviour at the level of individual trials, we start by stepping through each trial in the data from \cite{clarke2022qjep}. For each target selection, we can estimate how likely each of the remaining items are to be selected using the parameters from our posterior model. 
+To assess how well our model can account for behaviour at the level of individual trials, we start by stepping through each trial in the data from \cite{clarke2022qjep}. For each target selection, we can estimate how likely each of the remaining items are to be selected using the parameters from our posterior model. As can be seen in Figure \ref{fig:cal}, the model is putting somewhere between 25\% and 75\% of the weight on the target that is selected next easily outperforming a chance $1/n$ baseline. We can also see  that the model is well calibrated in that the probabilities assigned to the largest target manage to capture how well often that target is actually selected. However, we can see a decrease in accuracy when it comes to how often ``runner-up`` candidate items are selected as our model appears to systematically undervalue these (presumably by putting too much of the probabilistic weight on low chance items).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=12 cm]{Figures/qjep_preds.png}
-\caption{Posterior probabilities for target selections during a visual foraging task. Each dot shows the  data from an individual participant, avewraged over trials, in a condition and the shaded region indicates the interval in which we expect 67% of participants to fall.}
+\caption{(\textit{left}) Posterior probabilities for target selections during a visual foraging task. Each dot shows the  data from an individual participant, averaged over trials, in a condition and the shaded region indicates the interval in which we expect 67\% of participants to fall. The dashed line indicates chance performance. (\textit{centre})  Calibration plot for our foraging model. The *x*-axis gives the largest weight assigned by the model while the *y*-axis shows how often that target was actually selected by a human participant. (\textit{right}) This plot shows how often the 2nd and 3rd ranked items are selected based on the weights assigned by the model.}
+\label{fig:cal}
 \end{figure}   
 
+Figure \ref{fig:cal} hints at some individual differences when it comes to how predictable the model is: we can see a lot of variation in the size of the weights 
 
 \subsection{Improvement: Adaptive distance? Absolute direction?}
 

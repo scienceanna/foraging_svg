@@ -83,7 +83,7 @@ a %>% group_by(condition, observer, found) %>%
 
 We can then plot this data to show how our ability to predict which target will be selected next varies throughout a trial. We can see a difference between *feature* and *conjunction* foraging, with *feature* foraging being more predictable. 
 
-```{r, fig.cap = "(*left*) The average weight assigned to each selected target by our model. (*right*) The proportion of trials the item with the largest assigned weight was selected by the participant.  Each dot shows data from an individual particpant in a condition and the shaded region indicates the interval in which we expect 67% of participants to fall."}
+```{r, fig.cap = "(*left*) The average weight assigned to each selected target by our model. (*right*) The proportion of trials the item with the largest assigned weight was selected by the participant.  Each dot shows data from an individual participant in a condition and the shaded region indicates the interval in which we expect 67% of participants to fall."}
 
 # plot target selected weights
 ggplot(a_agg, aes(x = found, y = meanb, colour = condition, fill = condition)) + 
@@ -95,7 +95,7 @@ ggplot(a_agg, aes(x = found, y = meanb, colour = condition, fill = condition)) +
   scale_x_continuous(breaks = c(2, 10, 20, 40), "target selection", expand = c(0.01, 0.01)) + 
   scale_y_continuous("average weight from model", expand = c(0.01, 0.01)) -> plt_b
 
-ggsave("../Figures/qjep_preds.png", width = 8, height = 4)
+
 
 ggplot(a_agg, aes(x = found, y = prop_best, colour = condition, fill = condition)) + 
   geom_jitter(data = filter(a_agg, found<40), width = 0.1, height = 0.00, alpha = 0.2) + 
@@ -109,6 +109,8 @@ ggplot(a_agg, aes(x = found, y = prop_best, colour = condition, fill = condition
 plt_b + plt_c + plot_layout(guides = "collect")  &
   theme(legend.position = 'bottom',
         legend.direction = 'horizontal')
+
+rm(plt_c)
 
 ```
 
@@ -133,7 +135,7 @@ We can see from the Figure below that our model is well-calibrated (at least in 
 
 ```{r, fig.height=3.5, fig.cap = "(*left*) Calibration plot for our foraging model. The *x*-axis gives the largest weight assigned by the model while the *y*-axis shows how often that target was actually selected by a human participant. (*right*) This plot shows how often the 2nd and 3rd ranked items are selected based on the weights assigned by the model."}
 
-ggplot(a_cut, aes(b_bin, acc, colour = condition, shape = condition)) + 
+ggplot(a_cut, aes(b_bin, acc, colour = condition, fill = condition, shape = condition)) + 
   geom_point() + 
   geom_line(stat = "smooth", method = "loess", 
             formula = y ~ x, alpha = 0.65, size = 2, se = F) +
@@ -160,7 +162,12 @@ a %>% select(max_b2, max_b3, selected_max2, selected_max3) %>%
   scale_x_continuous("runner up item weights") +
   scale_y_continuous("proportion of times selected") -> plt2
 
-plt1 + plt2
+ plt1 + plt2
+
+ggsave("../Figures/qjep_preds.png", 
+       plt_b + plt1 + plt2 + plot_layout(guides = "collect") & theme(legend.position = "bottom"),
+       width = 10, height = 4)
+
 ```
 
 ```{r}

@@ -165,9 +165,12 @@ a %>% select(max_b2, max_b3, selected_max2, selected_max3) %>%
  plt1 + plt2
 
 ggsave("../Figures/qjep_preds.png", 
-       plt_b + plt1 + plt2 + plot_layout(guides = "collect") & theme(legend.position = "bottom"),
+       plt_b + plt1 + plt2 + 
+         plot_layout(guides = "collect") & theme(legend.position = "bottom"),
        width = 10, height = 4)
 
+
+rm(plt1, plt2, plt_a)
 ```
 
 ```{r}
@@ -187,7 +190,9 @@ ggplot(a_acc, aes(x= condition, y = accuracy, fill = condition)) +
   geom_boxplot() +
   geom_line(aes(group = observer), alpha = 0.25, colour = "sienna4") +
   scale_y_continuous("model accuracy",  
-                     limits = c(0.3, 0.8), breaks = seq(0.3, 0.8, 0.1))
+                     limits = c(0.3, 0.8), breaks = seq(0.3, 0.8, 0.1)) -> plt_a
+
+plt_a
 ```
 
 Is this explained by differences in proximity weighting? i.e., are participants with weaker proximity biases harder to predict? Yes! 
@@ -208,6 +213,17 @@ ggplot(fit_plt, aes(value, accuracy, colour = condition)) +
   scale_shape_manual(values = c(19, 4), guide = "none") + 
   facet_wrap(~parameter, scales = "free") +
   theme(legend.position = "bottom")
+
+plt_b <- ggplot(filter(fit_plt, parameter == "bP"), 
+                aes(value, accuracy, colour = condition)) + 
+  geom_point(aes(shape = is_outlier)) +
+  geom_smooth(data = filter(fit_plt, is_outlier == 0, parameter == "bP"), method = "lm", formula = y ~ x, se = FALSE) + 
+  scale_shape_manual(values = c(19, 4), guide = "none") + 
+  theme(legend.position = "bottom")
+
+ggsave("../Figures/qjep_indiv_diff.png", 
+       plt_a + plt_b + 
+         plot_layout(guides = "collect") & theme(legend.position = "bottom"), width = 8, height = 4)
 ```
 
 As the two outlier participants appear to be doing something different, not captured especially well by our model, we will remove them from the rest of this analysis.

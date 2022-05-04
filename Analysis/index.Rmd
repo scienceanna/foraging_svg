@@ -107,7 +107,7 @@ ggplot(a_agg, aes(x = found, y = prop_best, colour = condition, fill = condition
   scale_y_continuous("proportion most likely was selected", expand = c(0.01, 0.01)) -> plt_c
 
 plt_b + plt_c + plot_layout(guides = "collect")  &
-  theme(legend.position = 'bottom',
+  theme(legend.position = 'right',
         legend.direction = 'horizontal')
 
 rm(plt_c)
@@ -190,7 +190,7 @@ ggplot(a_acc, aes(x= condition, y = accuracy, fill = condition)) +
   geom_boxplot() +
   geom_line(aes(group = observer), alpha = 0.25, colour = "sienna4") +
   scale_y_continuous("model accuracy",  
-                     limits = c(0.3, 0.8), breaks = seq(0.3, 0.8, 0.1)) -> plt_a
+                     limits = c(0.35, 0.8), breaks = seq(0.3, 0.8, 0.1)) -> plt_a
 
 plt_a
 ```
@@ -219,11 +219,13 @@ plt_b <- ggplot(filter(fit_plt, parameter == "bP"),
   geom_point(aes(shape = is_outlier)) +
   geom_smooth(data = filter(fit_plt, is_outlier == 0, parameter == "bP"), method = "lm", formula = y ~ x, se = FALSE) + 
   scale_shape_manual(values = c(19, 4), guide = "none") + 
-  theme(legend.position = "bottom")
+  theme(legend.position = "none") + 
+   scale_y_continuous("model accuracy",  
+                     limits = c(0.35, 0.8), breaks = seq(0.3, 0.8, 0.1))
 
 ggsave("../Figures/qjep_indiv_diff.png", 
        plt_a + plt_b + 
-         plot_layout(guides = "collect") & theme(legend.position = "bottom"), width = 8, height = 4)
+         plot_layout(guides = "collect") & theme(legend.position = "right"), width = 8, height = 4)
 ```
 
 As the two outlier participants appear to be doing something different, not captured especially well by our model, we will remove them from the rest of this analysis.

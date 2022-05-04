@@ -96,8 +96,6 @@ ggplot(a_agg, aes(x = found, y = meanb, colour = condition, fill = condition)) +
   scale_x_continuous(breaks = c(2, 10, 20, 40), "target selection", expand = c(0.01, 0.01)) + 
   scale_y_continuous("average weight from model", expand = c(0.01, 0.01)) -> plt_b
 
-
-
 ggplot(a_agg, aes(x = found, y = prop_best, colour = condition, fill = condition)) + 
   geom_jitter(data = filter(a_agg, found<40), width = 0.1, height = 0.00, alpha = 0.2) + 
   stat_lineribbon(.width = 0.67, alpha = 0.50) +
@@ -251,6 +249,28 @@ summary(lm(accuracy ~ pA + pS + bM + bP,
 ```
 
 Both $p_A$ and $b_M$ also have an effect on our model's accuracy, but note there is only a small increases in $R^2$ from just using $b_P$.
+
+## Are more predictable people faster at the task?
+
+```{r}
+drt <- filter(d, found == 40) %>% group_by(observer, condition) %>%
+  summarise(median_rt = median(RT), .groups = "drop") %>% 
+  full_join(dm, by = c("observer", "condition"))
+
+ggplot(drt, aes(accuracy, median_rt, colour = condition)) +
+         geom_point(alpha = 0.5) + 
+  geom_smooth(method = "lm") -> plt1
+
+ggplot(drt, aes(bP, median_rt, colour = condition)) +
+         geom_point(alpha = 0.5) + 
+  geom_smooth(method = "lm") -> plt2
+
+plt1 + plt2 + plot_layout(guides = "collect")
+
+summary(lm(median_rt ~ accuracy*condition, data = drt))
+summary(lm(median_rt ~ bP*condition, data = drt))
+
+```
 
 
 ```{r}

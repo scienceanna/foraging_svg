@@ -1,9 +1,11 @@
 
-compute_weights_trials <- function(obs, cond) {
+compute_weights_trials <- function(obs, cond, n_trials = 20) {
+  
   params <- filter(fit,  observer == obs, condition == cond )
-  a <- map_dfr(1:20, compute_weights, params = params, cond = cond, obs = obs)
-  a <- map_dfr(1:20, compute_weights, params = params, cond = cond, obs = obs)
+  a <- map_dfr(1:n_trial, compute_weights, params = params, cond = cond, obs = obs)
+  
   return(a)
+  
 }
 
 
@@ -14,8 +16,9 @@ compute_weights <- function(trl, params, cond, obs)
   # function to step through empirical foraging data and compute the item weights
   # for every target selection
   
-  # select the revelant trial
+  # select the relevant trial
   d_trl <- filter(d, observer == obs, condition == cond, trial == trl)
+  n_targ <- max(d_trl$found)
   
   if (nrow(d_trl) == 0) {
     
@@ -36,7 +39,7 @@ compute_weights <- function(trl, params, cond, obs)
     d_trl$model_pref = NaN # item ID for the most likely target
     
     # step through each target selection....
-    for (t in 2:40) {
+    for (t in 2:n_targ) {
       
       # get info about the previously selected item
       prev_targ <- d_trl$targ_type[t-1]

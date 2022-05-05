@@ -97,7 +97,7 @@ $^{2}$ \quad Affiliation 2; e-mail@e-mail.com}
 
 \section{Introduction}
 
-Foraging, the act of searching for and gathering multiple targets (such as food), has been studied in both non-human animal contexts \cite{dawkins1971} and in human psychology studies \cite{kristjansson2014}. In many cases, the pattern of foraging behaviour has been studied using aggregate measures calculated on the level of a trial, such as the mean number of 'runs' (where the same type of target is selected multiple times in a row) or the total number of targets found during the longest run. However, we have recently developed a new model to analyse foraging data, based on a sampling without replacement procedure \cite{clarke2022foraging}. By using this model, we demonstrated that we were able to break down foraging into a number of different cognitive biases, such as a preference to stick to the same target type, or a preference for nearby targets, and used this model to successfully re-analyse data from a number of open access datasets \cite{kristjansson2014, thornton2020, clarke2018, tagu2020}. 
+Foraging, the act of searching for and gathering multiple targets (such as food), has been studied in both non-human animal contexts \cite{dawkins1971} and in human psychology studies \cite{kristjansson2014}. In many cases, the pattern of foraging behaviour has been studied using aggregate measures calculated on the level of a trial, such as the mean number of 'runs' (where the same type of target is selected multiple times in a row) or the total number of targets found during the longest run. However, we have recently developed a new model to analyse foraging data, based on a sampling without replacement procedure \cite{clarke2022}. By using this model, we demonstrated that we were able to break down foraging into a number of different cognitive biases, such as a preference to stick to the same target type, or a preference for nearby targets, and used this model to successfully re-analyse data from a number of open access datasets \cite{kristjansson2014, thornton2020, clarke2022, tagu2020}. 
 
 While our model is able to do a good job of allowing us to understand biases at the level of a trial (e.g. conjunction vs. feature search differences \cite{kristjansson2014} or the influence of high value targets compared to low value targets \cite{tagu2020}), we did not originally investigate to what extent our model was able to predict target-by-target behaviour in any given trial. However, as the model is based on target-by-target level information, it is possible for us to use this information to ask: to what extent does our model predict foraging behaviour within a trial? Can it predict exactly which target a participant will pick next? And if the model makes mistakes, can we understand where it is failing, in order to improve our understanding of how human foraging behaviour operates?
 
@@ -106,7 +106,7 @@ While our model is able to do a good job of allowing us to understand biases at 
 
 \subsection{Datasets}
 
-We will use two previously published datasets to explore how well our model can account for trial-level behaviour. We will start with the visual foraging data from \cite{clarke2022qjep}. This is an attractive dataset for our needs as it is very close to the ``classic'' visual foraging paradigm \citep{kristjansson2014}, yet with a substantially larger sample of participants. (The key difference between paradigms is that \cite{kristjansson2014} used an ipad and finger foraging, while \cite{clarke2022qjep} used a desktop computer and mouse clicks). Furthermore, we have already demonstrated that our model can capture individual differences in foraging behaviour \citep{clarke2022foraging}. As such, we will only give a brief overview of the data here and refer the reader to these earlier papers for a more details.
+We will use two previously published datasets to explore how well our model can account for trial-level behaviour. We will start with the visual foraging data from \cite{clarke2022}. This is an attractive dataset for our needs as it is very close to the ``classic'' visual foraging paradigm \citep{kristjansson2014}, yet with a substantially larger sample of participants. (The key difference between paradigms is that \cite{kristjansson2014} used an ipad and finger foraging, while \cite{clarke2022} used a desktop computer and mouse clicks). Furthermore, we have already demonstrated that our model can capture individual differences in foraging behaviour \citep{clarke2022}. As such, we will only give a brief overview of the data here and refer the reader to these earlier papers for a more details.
 
 To test how well our methods generalise, we will introduce a new dataset that was not analysed in our previous modelling paper. This \cite{prpic2019} data comes from a study in which participants played a simple computer game in which they controlled a squirrel hunting for acorns. The game makes us a 3D virtual world and player are provided with a 1st person (2nd??) view. This differs from the top down displays typically used in other visual foraging studies and so makes a good test of generalisability. 
 
@@ -118,7 +118,7 @@ To test how well our methods generalise, we will introduce a new dataset that wa
 
 \subsection{A Model for Visual Foraging}
 
-We will make use of the foraging model from \cite{clarke2022foraging}. This treats foraging as a sampling without replacement process in which each item $i$ has probability $p_i$ of being selected as the next target. The $p_i$ depend on four parameters:
+We will make use of the foraging model from \cite{clarke2022}. This treats foraging as a sampling without replacement process in which each item $i$ has probability $p_i$ of being selected as the next target. The $p_i$ depend on four parameters:
 
 \begin{itemize}
     \item $b_A$ - preference for selecting items of type $A$ rather than $B$.
@@ -165,7 +165,7 @@ Note: while our model returns estimates of full posterior probability distributi
 
 \subsection{Trial-level predictions}
 
-To assess how well our model can account for behaviour at the level of individual trials, we start by stepping through each trial in the data from \cite{clarke2022qjep}. For each target selection, we can estimate how likely each of the remaining items are to be selected using the parameters from our posterior model. As can be seen in Figure \ref{fig:cal}, the model is putting somewhere between 25\% and 75\% of the weight on the target that is selected next easily outperforming a chance $1/n$ baseline. We can also see  that the model is well calibrated in that the probabilities assigned to the largest target manage to capture how well often that target is actually selected. However, we can see a decrease in accuracy when it comes to how often ``runner-up`` candidate items are selected as our model appears to systematically undervalue these (presumably by putting too much of the probabilistic weight on low chance items).
+To assess how well our model can account for behaviour at the level of individual trials, we start by stepping through each trial in the data from \cite{clarke2022}. For each target selection, we can estimate how likely each of the remaining items are to be selected using the parameters from our posterior model. As can be seen in Figure \ref{fig:cal}, the model is putting somewhere between 25\% and 75\% of the weight on the target that is selected next easily outperforming a chance $1/n$ baseline. We can also see  that the model is well calibrated in that the probabilities assigned to the largest target manage to capture how well often that target is actually selected. However, we can see a decrease in accuracy when it comes to how often ``runner-up`` candidate items are selected as our model appears to systematically undervalue these (presumably by putting too much of the probabilistic weight on low chance items).
 
 \begin{figure}[H]
 \centering
@@ -183,6 +183,13 @@ Figure \ref{fig:cal} hints at some individual differences when it comes to how p
 \label{fig:cal}
 \end{figure}   
 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=12 cm]{Figures/qjep_ex_paths.pdf}
+\caption{(\textit{top}) Two randomly selected trials in which the model does a good job in accounting for human behaviour. When participants diverge from the model's prediction, it appears to be due to some form of path-length optimisation. (\textit{bottom}) Two randomly selected examples in which the model does a less good job in accounting for the order in which human participants selected the items.}
+\label{fig:qjep_paths}
+\end{figure} 
 
 \subsection{Improvement: Adaptive distance? Absolute direction?}
 

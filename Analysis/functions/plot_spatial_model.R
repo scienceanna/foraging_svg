@@ -163,7 +163,7 @@ plot_fixed_effects <- function(fit, cond_levels = c("feature", "conjunction"), f
    scale_x_continuous("weight", limits = c(0.4, 1), breaks = seq(0.5, 1, 0.25)) +
     geom_vline(xintercept = 0.5, linetype = 2) + 
     theme_bw() + 
-   theme(legend.position = "top") -> plt_AS
+   theme(legend.position = "right") -> plt_AS
   
   f <- filter(fit, param == "bP") 
   

@@ -38,9 +38,22 @@ options(ggplot2.discrete.fill = our_cols ,
         ggplot2.discrete.colour = our_cols)
 ```
 
-Terminology questions:
-- item v target
-- participant v observer
+# Ppric Model
+
+```{r, echo = TRUE}
+# read in data
+d <- read_csv("data/squirrel_spatial.csv", show_col_types = FALSE) %>%
+  mutate(condition = as_factor(condition),
+         condition = fct_recode(condition, feature = "1", conjunction = "2"),
+         targ_type = as_factor(targ_type))
+```
+
+```{r}
+m <- readRDS("scratch/squirrel.model")
+source("functions/plot_spatial_model.R")
+plot_fixed_effects(m) + theme(legend.position = "right")
+ggsave("../Figures/prpic_model_params.pdf",  width = 8, height = 8)
+```
 
 # Trial Level Posterior Predictions{#label}
 
@@ -51,13 +64,7 @@ source("functions/compute_weights.R")
 
 We will use the visual foraging data from @clarke2022 to assess the model's trial level performance. As the current version of our model only takes the $p_A$ bias into account for the initial target selection, we will ignore these data points for now. 
 
-```{r, echo = TRUE}
-# read in data
-d <- read_csv("data/squirrel_spatial.csv", show_col_types = FALSE) %>%
-  mutate(condition = as_factor(condition),
-         condition = fct_recode(condition, feature = "1", conjunction = "2"),
-         targ_type = as_factor(targ_type))
-```
+
 
 We will use the model fit as detailed in @clarke2020compbio. For simplicity sake, we will characterise all of our estimated posterior probability densities with just the mean value. This gives us four parameters per participant: $b_S, b_A, b_P, b_D$. 
 

@@ -52,7 +52,7 @@ d <- read_csv("data/squirrel_spatial.csv", show_col_types = FALSE) %>%
 m <- readRDS("scratch/squirrel.model")
 source("functions/plot_spatial_model.R")
 plot_fixed_effects(m) + theme(legend.position = "right")
-ggsave("../Figures/prpic_model_params.pdf",  width = 8, height = 8)
+ggsave("../Figures/prpic_model_params.pdf",  width = 8, height = 6)
 ```
 
 # Trial Level Posterior Predictions{#label}
@@ -84,9 +84,7 @@ a <- readRDS("scratch/prpic_model_weights.rda") %>%
 # participant was judged the most likely to be selected by our model.
 a %>% group_by(condition, observer, found) %>%
   summarise(meanb = mean(b),
-            prop_best = mean(selected_max), .groups = "drop") %>%
-  # finally, also compute what we would expect under a null-model
-  mutate(chance = 1/(41-found))-> a_agg
+            prop_best = mean(selected_max), .groups = "drop") -> a_agg
 ```
 
 We can then plot this data to show how our ability to predict which target will be selected next varies throughout a trial. We can see a difference between *feature* and *conjunction* foraging, with *feature* foraging being more predictable. 
@@ -97,8 +95,6 @@ We can then plot this data to show how our ability to predict which target will 
 ggplot(a_agg, aes(x = found, y = meanb, colour = condition, fill = condition)) + 
   geom_jitter(data = filter(a_agg, found<40), width = 0.1, height = 0, alpha = 0.2) + 
   stat_lineribbon(.width = 0.67, alpha = 0.50) +
-  geom_path(data = filter(a_agg, observer == 1, condition == "feature"), 
-                          aes(y = chance), linetype = 2, colour = "black") + 
   geom_point(data = tibble(x=40, y=1), aes(x, y), size = 1.5, colour = "black", fill = "grey") + 
   scale_x_continuous(breaks = c(2, 10, 20, 40), "target selection", expand = c(0.01, 0.01)) + 
   scale_y_continuous("average weight from model", expand = c(0.01, 0.01)) -> plt_b
@@ -106,8 +102,6 @@ ggplot(a_agg, aes(x = found, y = meanb, colour = condition, fill = condition)) +
 ggplot(a_agg, aes(x = found, y = prop_best, colour = condition, fill = condition)) + 
   geom_jitter(data = filter(a_agg, found<40), width = 0.1, height = 0.00, alpha = 0.2) + 
   stat_lineribbon(.width = 0.67, alpha = 0.50) +
-  geom_path(data = filter(a_agg, observer == 1, condition == "feature"), 
-            aes(y = chance), linetype = 2, colour = "black") + 
   geom_point(data = tibble(x=40, y=1), aes(x, y), size = 1.5, colour = "black", fill = "grey") + 
   scale_x_continuous(breaks = c(2, 10, 20, 40), "target selection", expand = c(0.01, 0.01)) + 
   scale_y_continuous("proportion most likely was selected", expand = c(0.01, 0.01)) -> plt_c
@@ -129,12 +123,12 @@ We will calculate this as follows: for each target selection (on each trial, for
 
 
 ```{r, echo = TRUE}
-my_breaks <- seq(0.0, 1, 0.05)
+my_breaks <- seq(0.5, 1, 0.05)
 
 a %>% mutate(b_bin = cut(max_b, breaks = my_breaks, labels = FALSE)) %>%
   group_by(condition, b_bin) %>% 
   summarise(acc = mean(selected_max), .groups = "drop") %>%
-  mutate(b_bin = as.numeric(b_bin)/(length(my_breaks)-1)) -> a_cut
+  mutate(b_bin = my_breaks[b_bin]) -> a_cut
 ```
 
 We can see from the Figure below that our model is well-calibrated (at least in terms of the target with the highest assigned weight). If we repeat this calculation for the 2nd and 3rd ranked candidate items we can see that we slightly underweight these items, but we are still pretty accurate. 

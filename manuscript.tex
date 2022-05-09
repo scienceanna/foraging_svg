@@ -185,7 +185,7 @@ Figure \ref{fig:cal} hints at some individual differences when it comes to how p
 \centering
 \includegraphics[width=12 cm]{Figures/qjep_indiv_diff.pdf}
 \caption{(\textit{left}) Posterior probabilities for target selections during a visual foraging task. Each dot shows the  data from an individual participant, averaged over trials, in a condition and the shaded region indicates the interval in which we expect 67\% of participants to fall. The dashed line indicates chance performance. (\textit{centre})  Calibration plot for our foraging model. The *x*-axis gives the largest weight assigned by the model while the *y*-axis shows how often that target was actually selected by a human participant. (\textit{right}) This plot shows how often the 2nd and 3rd ranked items are selected based on the weights assigned by the model.}
-\label{fig:cal}
+\label{fig:cal2}
 \end{figure}   
 
 \begin{figure}[H]
@@ -195,9 +195,21 @@ Figure \ref{fig:cal} hints at some individual differences when it comes to how p
 \label{fig:qjep_paths}
 \end{figure} 
 
-\section{Results: Improving the model}
+\section{Improving the model: location of the first target selection}
 
 One weakness of the foraging model by \cite{clarke2022foraging} is that it makes little attempt to the predict which item will be selected first. IN this section we aim to improve this by modelling participant bias/preference in their choice of initial target selection. Following \cite{clarke_tatler2014, clarke2017} we fit truncated Gaussian distributions to the $(x,y)$ coordinates of the initial target selections 
+
+\subsection{Results}
+
+Figure \ref{fig:qjep_init_sel_hex} shows the distribution of the locations of first target selections. We can see that unlike the central bias in fixations during scene viewing, the distribution of initial target locations appear to be bimodal: while most targets are positioned in the top left hand corner <CHECK MATLAB CODE!!!> there is a second smaller distribution of central target selections. This appears to be due to different participants choosing to utilise different strategies rather than within-subject variation. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=12 cm]{Figures/init_sel_hex_plot.pdf}
+\caption{Hexagonal heatmaps showing the two-dimensional distribution of the location of initial target selections. Grey areas indicate cells with a count of 0/ (\textit{left}) shows the distribution over all initial target selections while (\textit{right}) shows the distribution of each participant's median initial selection. }
+\label{fig:qjep_init_sel_hex}
+\end{figure} 
+
 
 
 

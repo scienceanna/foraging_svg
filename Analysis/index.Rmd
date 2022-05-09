@@ -487,13 +487,25 @@ create_post_plot <- function(dm) {
     bind_rows() %>%
     mutate(z = z) %>%
     pivot_longer(-z, names_to = "observer", values_to = "v") %>%
-    ggplot(aes(x = z, y = v, group = observer)) + geom_path(alpha = 0.25) +
-    scale_x_continuous(dm) + scale_y_continuous("likelihood") -> plt
+    ggplot(aes(x = z, y = v, group = observer)) + 
+    geom_path(alpha = 0.25) +
+    scale_x_continuous(dm) + 
+    scale_y_continuous("likelihood") -> plt
   
   return(plt)
 }
 
-create_post_plot("x") + create_post_plot("y")
+am %>% select(-sd) %>% 
+  pivot_wider(names_from = "dim", values_from = "mean") %>%
+  ggplot(aes(x, y)) + 
+  geom_point(alpha = 0.5) + 
+  geom_line(data = tibble(), aes(x = c(0, 1), y = c(0, 0)), color = "grey") +
+  geom_line(data = tibble(), aes(x = c(0, 1), y = c(1, 1)), color = "grey") +
+  geom_line(data = tibble(), aes(x = c(0, 0), y = c(0, 1)), color = "grey") +
+  geom_line(data = tibble(), aes(x = c(1, 1), y = c(0, 1)), color = "grey") -> plt_m
+
+create_post_plot("x") + create_post_plot("y") + plt_m
+ggsave("../Figures/init_sel_mdl.pdf", width = 10, height = 3)
 ```
 
 - Do we want to simplify this model to something in which people have some mix of a (fixed) centre and corner bias?

@@ -505,7 +505,7 @@ am %>% select(-sd) %>%
   geom_line(data = tibble(), aes(x = c(1, 1), y = c(0, 1)), color = "grey") -> plt_m
 
 create_post_plot("x") + create_post_plot("y") + plt_m
-ggsave("../Figures/init_sel_mdl.pdf", width = 10, height = 3)
+ggsave("../Figures/init_sel_mdl.pdf", width = 10, height = 3.5)
 ```
 
 - Do we want to simplify this model to something in which people have some mix of a (fixed) centre and corner bias?

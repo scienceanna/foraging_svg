@@ -451,6 +451,7 @@ d %>% group_by(observer, condition) %>%
   my_theme -> plt_med
 
 plt_all + plt_med 
+ggsave("../Figures/init_sel_hex_plot.pdf", width = 8, height = 4)
 
 rm(plt_all, plt_med)
 ```

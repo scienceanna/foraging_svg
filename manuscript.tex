@@ -106,9 +106,9 @@ While our model is able to do a good job of allowing us to understand biases at 
 
 \subsection{Datasets}
 
-We will use two previously published datasets to explore how well our model can account for trial-level behaviour. We will start with the visual foraging data from \cite{clarke2022}. This is an attractive dataset for our needs as it is very close to the ``classic'' visual foraging paradigm \citep{kristjansson2014}, yet with a substantially larger sample of participants. (The key difference between paradigms is that \cite{kristjansson2014} used an ipad and finger foraging, while \cite{clarke2022} used a desktop computer and mouse clicks). Furthermore, we have already demonstrated that our model can capture individual differences in foraging behaviour \citep{clarke2022}. As such, we will only give a brief overview of the data here and refer the reader to these earlier papers for a more details.
+We will a previously published dataset to explore how well our model can account for trial-level behaviour. We will start with the visual foraging data from \cite{clarke2022}. This is an attractive dataset for our needs as it is very close to the ``classic'' visual foraging paradigm \citep{kristjansson2014}, yet with a substantially larger sample of participants. (The key difference between paradigms is that \cite{kristjansson2014} used an ipad and finger foraging, while \cite{clarke2022} used a desktop computer and mouse clicks). Furthermore, we have already demonstrated that our model can capture individual differences in foraging behaviour \citep{clarke2022}. As such, we will only give a brief overview of the data here and refer the reader to these earlier papers for a more details.
 
-To test how well our methods generalise, we will introduce a new dataset that was not analysed in our previous modelling paper. This \cite{prpic2019} data comes from a study in which participants played a simple computer game in which they controlled a squirrel hunting for acorns. The game makes us a 3D virtual world and player are provided with a 1st person (2nd??) view. This differs from the top down displays typically used in other visual foraging studies and so makes a good test of generalisability. 
+To test how well our methods generalise, we will introduce a new dataset that was not analysed in our previous modelling paper....
 
 \subsubsection{Clarke et al 2022}
 
@@ -135,7 +135,7 @@ These combine to give:
 \end{equation}
 \end{linenomath}
 
-where $t_i = 1$ if item $i$ is of class $A$ and 0 otherwise, $m(t_i, t_{i-1}) =1$ if item $i$ is the same class as the previously selected item. $\rho_d$ and $\rho_{\theta}$ measures proximity and the effect of direction:
+where $t_i = 1$ if item $i$ is of class $A$ and 0 otherwise, $m(t_i, t_{i-1}) =1$ if item $i$ is the same class as the previously selected item. $\rho_d$ and $\rho_{\theta}$ measure proximity and the effect of direction:
 
 \begin{linenomath}
 \begin{equation}
@@ -170,38 +170,38 @@ Note: while our model returns estimates of full posterior probability distributi
 
 \subsection{Trial-level predictions}
 
-To assess how well our model can account for behaviour at the level of individual trials, we start by stepping through each trial in the data from \cite{clarke2022}. For each target selection, we can estimate how likely each of the remaining items are to be selected using the parameters from our posterior model. As can be seen in Figure \ref{fig:cal}, the model is putting somewhere between 25\% and 75\% of the weight on the target that is selected next easily outperforming a chance $1/n$ baseline. We can also see  that the model is well calibrated in that the probabilities assigned to the largest target manage to capture how well often that target is actually selected. However, we can see a decrease in accuracy when it comes to how often ``runner-up`` candidate items are selected as our model appears to systematically undervalue these (presumably by putting too much of the probabilistic weight on low chance items).
+To assess how well our model can account for behaviour at the level of individual trials, we start by stepping through each trial in the data from \cite{clarke2022}. For each target selection, we can estimate how likely each of the remaining items are to be selected using the parameters from our posterior model. As can be seen in Figure \ref{fig:cal}, the model is putting somewhere between 25\% and 75\% of the weight on the target that is selected next, easily outperforming a chance $1/n$ baseline. We can also see  that the model is well calibrated in that the probabilities assigned to the largest target manage to capture how well often that target is actually selected. However, we can see a decrease in accuracy when it comes to how often ``runner-up`` candidate items are selected as our model appears to systematically undervalue these (presumably by putting too much of the probabilistic weight on low chance items).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=12 cm]{Figures/qjep_preds.pdf}
-\caption{(\textit{left}) Posterior probabilities for target selections during a visual foraging task. Each dot shows the  data from an individual participant, averaged over trials, in a condition and the shaded region indicates the interval in which we expect 67\% of participants to fall. The dashed line indicates chance performance. (\textit{centre})  Calibration plot for our foraging model. The *x*-axis gives the largest weight assigned by the model while the *y*-axis shows how often that target was actually selected by a human participant. (\textit{right}) This plot shows how often the 2nd and 3rd ranked items are selected based on the weights assigned by the model.}
+\caption{(\textit{left}) Posterior probabilities for target selections during a visual foraging task. Each dot shows the  data from an individual participant, averaged over trials, in a condition and the shaded region indicates the interval in which we expect 67\% of participants to fall. The dashed line indicates chance performance. (\textit{centre})  Calibration plot for our foraging model. The $x$-axis gives the largest weight assigned by the model while the $y$-axis shows how often that target was actually selected by a human participant. (\textit{right}) This plot shows how often the 2nd and 3rd ranked items are selected based on the weights assigned by the model.}
 \label{fig:cal}
 \end{figure}   
 
-Figure \ref{fig:cal} hints at some individual differences when it comes to how predictable the model is: we can see a lot of variation in the size of the weights 
+Figure \ref{fig:cal2} hints at some individual differences when it comes to how predictable the model is: we can see a lot of variation in the size of the weights. However, interestingly, we find that this variability can be explained by our model parameters: nearly all of the differences between people, and between feature and conjunction conditions, can be explained by the $bP$ parameter, which is our proximity bias. The model is doing a better job with participants who show a stronger proximity bias. 
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=12 cm]{Figures/qjep_indiv_diff.pdf}
-\caption{(\textit{left}) Posterior probabilities for target selections during a visual foraging task. Each dot shows the  data from an individual participant, averaged over trials, in a condition and the shaded region indicates the interval in which we expect 67\% of participants to fall. The dashed line indicates chance performance. (\textit{centre})  Calibration plot for our foraging model. The *x*-axis gives the largest weight assigned by the model while the *y*-axis shows how often that target was actually selected by a human participant. (\textit{right}) This plot shows how often the 2nd and 3rd ranked items are selected based on the weights assigned by the model.}
+\caption{(\textit{left}) Prediction scores for participants. Boxplots show quartile range and the grey lines indicate individual participants. The dots indicate outliers. (\textit{right}) Accuracy of our model varies with the strength of an individual’s \textit{bP} parameter. We can see two clear outlier participants (marked with an X).}
 \label{fig:cal2}
 \end{figure}   
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=12 cm]{Figures/qjep_ex_paths.pdf}
-\caption{(\textit{top}) Two randomly selected trials in which the model does a good job in accounting for human behaviour. When participants diverge from the model's prediction, it appears to be due to some form of path-length optimisation. (\textit{bottom}) Two randomly selected examples in which the model does a less good job in accounting for the order in which human participants selected the items.}
+\caption{(\textit{top}) Two randomly selected trials in which the model does a good job in accounting for human behaviour. Red arrows indicate places where the model prediction deviates from participant behaviour. When participants diverge from the model's prediction, it appears to be due to some form of path-length optimisation. (\textit{bottom}) Two randomly selected examples in which the model does a less good job in accounting for the order in which human participants selected the items.}
 \label{fig:qjep_paths}
 \end{figure} 
 
 \section{Improving the model: location of the first target selection}
 
-One weakness of the foraging model by \cite{clarke2022foraging} is that it makes little attempt to the predict which item will be selected first. IN this section we aim to improve this by modelling participant bias/preference in their choice of initial target selection. Following \cite{clarke_tatler2014, clarke2017} we fit truncated Gaussian distributions to the $(x,y)$ coordinates of the initial target selections 
+One weakness of the foraging model by \cite{clarke2022foraging} is that it makes little attempt to the predict which item will be selected first. In this section we aim to improve this by modelling participant bias/preference in their choice of initial target selection. Following \cite{clarke_tatler2014, clarke2017} we fit truncated Gaussian distributions to the $(x,y)$ coordinates of the initial target selections 
 
 \subsection{Results}
 
-Figure \ref{fig:qjep_init_sel_hex} shows the distribution of the locations of first target selections. We can see that unlike the central bias in fixations during scene viewing, the distribution of initial target locations appear to be bimodal: while most targets are positioned in the top left hand corner <CHECK MATLAB CODE!!!> there is a second smaller distribution of central target selections. This appears to be due to different participants choosing to utilise different strategies rather than within-subject variation. 
+Figure \ref{fig:qjep_init_sel_hex} shows the distribution of the locations of first target selections. We can see that unlike the central bias in fixations during scene viewing, the distribution of initial target locations appear to be bimodal: while most targets are positioned in the top left hand corner <CHECK MATLAB CODE!!!> there is a second smaller distribution of central target selections. This appears to be due to different participants choosing to utilise different strategies rather than within-subject variation. However, we have no evidence that these different initial strategies affect the model parameters in any systematic way (see Supplementary Material).
 
 \begin{figure}[H]
 \centering
@@ -210,7 +210,7 @@ Figure \ref{fig:qjep_init_sel_hex} shows the distribution of the locations of fi
 \label{fig:qjep_init_sel_hex}
 \end{figure} 
 
-We modelled this bias using a multi-level two-dimensional $[0, 1]$ truncated Gaussian distribution, the results of which are shown in Figure \ref{fig:qjep_init_sel_mdl}\footnoteP{Full details of the analysis can be found in the supplementary materials}.
+We modelled this bias using a multi-level two-dimensional $[0, 1]$ truncated Gaussian distribution, the results of which are shown in Figure \ref{fig:qjep_init_sel_mdl}\footnote{Full details of the analysis can be found in the supplementary materials}.
 
 \begin{figure}[H]
 \centering
@@ -220,25 +220,6 @@ We modelled this bias using a multi-level two-dimensional $[0, 1]$ truncated Gau
 \end{figure} 
 
 
-
-
-\section{Foraging in 3D virtual environments}
-
-Can we model the data from \cite{prpic2019}? 
-
-\subsection{Fitting the Model}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=12 cm]{Figures/prpic_model_params.pdf}
-\caption{(\textit{top}) Figure caption needed}
-\label{fig:qjep_paths}
-\end{figure} 
-
-
-
-
-The text continues here. 
 
 \subsection{Figures, Tables and Schemes}
 

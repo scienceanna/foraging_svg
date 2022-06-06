@@ -456,38 +456,42 @@ ggsave("../Figures/init_sel_hex_plot.pdf", width = 8, height = 4)
 rm(plt_all, plt_med)
 ```
 
-We can model this as multi-level Gaussian? Yes, although it seems like people are in one of two clusters. 
+## Multi-level Model
+
+We can model this as multi-level beta distribution? Yes, although it seems like people are in one of two clusters. 
 
 ```{r fig.cap = "The mean posterior plot for the truncated normal distriubtions for (*left*) $x$ and (*right*) $y$. We can see that a two component mixture model will capture most of the variance in intial target selection."}
 
 m <- readRDS("scratch/init_sel_model.rds")
-z <- seq(0, 1, 0.01)
 
 gather_draws(m, u[dim, observer]) %>% 
   ungroup() %>%
   select(-.variable) %>%
   rename(obs_b = ".value") %>%
-  full_join(gather_draws(m, b[dim]),
-             by = c("dim", ".chain", ".iteration", ".draw")) %>%
-  mutate(obs_b = .value + obs_b,
-         .variable = if_else(dim %in% c(1,2), "mu", "sd"),
+  left_join(gather_draws(m, b[dim]), 
+            by = c("dim", ".chain", ".iteration", ".draw")) %>%
+  mutate(obs_b = exp(.value + obs_b),
+         .variable = if_else(dim %in% c(1,2), "a", "b"),
          dim = if_else(dim %in% c(1,3), "x", "y")) %>%
-  select(observer, dim, .iteration, obs_b, param = ".variable") %>%
-  mutate(obs_b = if_else(param == "sd", exp(obs_b), obs_b)) -> a 
+  select(observer, dim, .iteration, obs_b, param = ".variable") -> a 
 
 a %>% group_by(observer, param, dim) %>%
   summarise(value = mean(obs_b) , .groups = "drop") %>%
-  pivot_wider(names_from = param, values_from = value) %>%
-  rename(mean = "mu") -> am
+  pivot_wider(names_from = param, values_from = value) -> am
+
+compute_beta_dist <- function(observer, a, b) {
+  x <- seq(0.01,0.99,0.01)
+  return(tibble(observer = observer, 
+                x=  x,
+                z = dbeta(x, a, b)))
+
+}
 
 create_post_plot <- function(dm) {
   
-  pmap(filter(am,  dim == dm) %>% select(mean, sd), dtruncnorm, a = 0, b= 1, x = z) %>%
-    set_names(rownames(filter(am,  dim == dm))) %>%
-    bind_rows() %>%
-    mutate(z = z) %>%
-    pivot_longer(-z, names_to = "observer", values_to = "v") %>%
-    ggplot(aes(x = z, y = v, group = observer)) + 
+   pmap_df(filter(am,  dim == dm) %>% select(observer, a, b), 
+                      compute_beta_dist) %>%
+    ggplot(aes(x = x, y = z, group = observer)) + 
     geom_path(alpha = 0.25) +
     scale_x_continuous(dm) + 
     scale_y_continuous("likelihood") -> plt
@@ -495,35 +499,60 @@ create_post_plot <- function(dm) {
   return(plt)
 }
 
-am %>% select(-sd) %>% 
-  pivot_wider(names_from = "dim", values_from = "mean") %>%
-  ggplot(aes(x, y)) + 
-  geom_point(alpha = 0.5) + 
-  geom_line(data = tibble(), aes(x = c(0, 1), y = c(0, 0)), color = "grey") +
-  geom_line(data = tibble(), aes(x = c(0, 1), y = c(1, 1)), color = "grey") +
-  geom_line(data = tibble(), aes(x = c(0, 0), y = c(0, 1)), color = "grey") +
-  geom_line(data = tibble(), aes(x = c(1, 1), y = c(0, 1)), color = "grey") -> plt_m
-
-create_post_plot("x") + create_post_plot("y") + plt_m
+create_post_plot("x") + create_post_plot("y") 
 ggsave("../Figures/init_sel_mdl.pdf", width = 10, height = 3.5)
 ```
 
-- Do we want to simplify this model to something in which people have some mix of a (fixed) centre and corner bias?
+## Mixture Model
 
-Do participants who differ in terms of their initial target selection differ in other ways too?
+It looks like we can simplify the model somewhat by using a two component mixture model instead!
 
-```{r echo = TRUE, fig.cap = "Whether participants have a central or corner bias for the intiial target selection appears to be largely independent of their other model parameters."}
-full_join(fit, filter(am, dim == "x"), by = "observer") %>%
-  pivot_longer(c(pA, pS, bP, bM, accuracy), 
-               names_to = "statistic", values_to = "value") %>%
-  mutate(intial_sel = if_else(mean < 0, "corner", "central")) %>%
-  ggplot(aes(statistic, value, fill = intial_sel)) +
-  geom_boxplot(alpha = 0.5) + 
-  facet_wrap(~statistic, scales = "free", nrow = 1) +
-  theme(legend.position = "bottom") + 
-   scale_fill_manual("intial target selection",
-                     values = c(col3[2], col3[3]))
+```{r, fig.height = 6, fig.cap = "(*top*) Beta distributions for $x$ and $y$ coordinated"}
+
+m <- readRDS("scratch/init_sel_model2.rds")
+
+
+sample_beta <- function(c, .draw, dim, a, b) {
+  x <- seq(0.01, 0.99, 0.01)
+  return(tibble(c = c, 
+                draw = .draw,
+                dim = dim,
+                x = x,
+                z = dbeta(x, shape1 = a, shape2 = b)))
+}
+
+gather_draws(m, a_x[c], b_x[c], a_y[c], b_y[c], ndraws = 100) %>%
+  separate(.variable, into = c("param", "dim")) %>%
+  select(-.chain, -.iteration) %>%
+  pivot_wider(names_from = param, values_from = ".value") %>%
+  pmap_df(sample_beta) %>%
+  mutate(c = as_factor(c)) -> plt_dat
+
+
+plt_dat %>% filter(dim == "x") %>%
+  ggplot(aes(x, z, group = interaction(c, draw), colour = c)) +
+  geom_path(alpha = 0.1) + 
+  facet_wrap(~dim) + 
+  theme(legend.position = "none") -> plt_x
+
+plt_dat %>% filter(dim == "y") %>%
+  ggplot(aes(x, z, group = interaction(c, draw), colour = c)) +
+  geom_path(alpha = 0.1) + 
+  facet_wrap(~dim) + 
+  theme(legend.position = "none") +
+  scale_x_continuous("y") -> plt_y
+
+
+gather_draws(m, lambda[observer]) %>%
+  ggplot(aes(.value, group = observer)) + 
+  geom_density(alpha = 0.25, fill = "grey") -> plt_lambdas
+
+(plt_x + plt_y) / plt_lambdas
+
+
+
 ```
+
 
 
 # Item Density

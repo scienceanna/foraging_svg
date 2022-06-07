@@ -53,13 +53,15 @@ This is the replication with Kristjansson (2014) data.
 
 ```{r, echo = TRUE}
 # read in data
-d <- read_csv("data/human_data_2014_prox.csv", show_col_types = FALSE) %>%
+d <- read_csv("data/test_arni.csv", show_col_types = FALSE) %>%
   mutate(condition = as_factor(condition),
          condition = fct_recode(condition, feature = "1", conjunction = "2"),
          targ_type = as_factor(targ_type))
 ```
 
-We will use the model fit as detailed in @clarke2020compbio. For simplicity sake, we will characterise all of our estimated posterior probability densities with just the mean value. This gives us four parameters per participant: $b_S, b_A, b_P, b_D$. 
+Here, we have used half the data as a training set which we used to fit the initial model. This is then used for computing model weights for the test dataset.
+
+For simplicity's sake, we will characterise all of our estimated posterior probability densities with just the mean value. This gives us four parameters per participant: $b_S, b_A, b_P, b_D$. 
 
 Using these fitted values, we can now step through each target selection in the dataset and computer the probability weights our model assigns to each remaining target. For each target selection, we record:
 
@@ -69,7 +71,7 @@ Using these fitted values, we can now step through each target selection in the 
 
 ```{r echo = TRUE}
 # item weights pre-computed - see scripts/extract_item_weights_using_model.R
-a <- readRDS("scratch/kristjansson_model_weights.rda") %>%
+a <- readRDS("scratch/kristjansson_model_weights_train.rda") %>%
   filter(found != 1) # remove initial selections
 
 # compute the average weight for each participant x condition x item selection
@@ -82,7 +84,7 @@ a %>% group_by(condition, observer, found) %>%
   mutate(chance = 1/(41-found))-> a_agg
 ```
 
-We can then plot this data to show how our ability to predict which target will be selected next varies throughout a trial. We can see a difference between *feature* and *conjunction* foraging, with *feature* foraging being more predictable. 
+We can then plot this data to show how our ability to predict which target will be selected next varies throughout a trial. We can see a difference between *feature* and *conjunction* foraging, with *feature* foraging being more predictable (though the distinction is less clear after the initial 20 target selections).
 
 ```{r, fig.cap = "(*left*) The average weight assigned to each selected target by our model. (*right*) The proportion of trials the item with the largest assigned weight was selected by the participant.  Each dot shows data from an individual participant in a condition and the shaded region indicates the interval in which we expect 67% of participants to fall."}
 
@@ -191,12 +193,14 @@ ggplot(a_acc, aes(x= condition, y = accuracy, fill = condition)) +
 
 plt_a
 ```
+Model accuracy is quite high (though lower than for Clarke et al).
+
 
 Is this explained by differences in proximity weighting? i.e., are participants with weaker proximity biases harder to predict? Yes! 
 
 ```{r fig.height = 6, fig.cap = "Accuracy of our model varies with the strength of an individual's model parameters. We can see two clear outlier participants (marked with an X). "}
 # computed in xxxx.R
-fit <- readRDS("scratch/kristjansson_model_fit.rda") %>%
+fit <- readRDS("scratch/kristjansson_model_fit_train.rda") %>%
   full_join(a_acc, by = c("observer", "condition")) %>%
   mutate(is_outlier = if_else(observer %in% c(35, 45), TRUE, FALSE))
 
@@ -236,7 +240,7 @@ summary(lm(accuracy ~ condition * bP,
 
 We can see that the difference in the proximity parameter between conditions appears to account for most of the variables in our model's accuracy from one participant to the next. 
 
-We can also see if the other parameters have an effect. 
+We can also see if the other parameters have an effect - which they do seem to.
 
 
 ```{r echo=TRUE}
@@ -246,11 +250,11 @@ summary(lm(accuracy ~ pA + pS + bM + bP,
 
 # Initial Selection
 
-Previous work (cite Clarke and Tatler etc) has demonstrated that the initial fixation in scene viewing can be well described with truncated Gaussian distribution. Here we explore using a similar idea to account for starting locations. 
+Similar to Clarke et al, there is a bias towards starting in a corner. Interestingly, there isn't much evidence of a central bias (possibly because these trials were completed on an iPad).
 
 ```{r echo = TRUE}
 # Reimport data again (as we removed the initial target selection earlier)
-d <- read_csv("data/human_data_2014_prox.csv", show_col_types = FALSE) %>%
+d <- read_csv("data/test_arni.csv", show_col_types = FALSE) %>%
   filter(found == 1) %>%
   mutate(condition = as_factor(condition))
 ```

@@ -604,5 +604,84 @@ gather_draws(m, lambda[observer]) %>%
 
 
 
-# Item Density
+## Posterior Predictions
+
+```{r}
+gather_draws(m, a_x[c], b_x[c], a_y[c], b_y[c]) %>%
+  group_by(c, .variable) %>%
+  summarise(value = mean(.value)) %>%
+  pivot_wider(names_from = ".variable", values_from = "value") -> am
+
+c1 <- filter(am, c==1)
+c2 <- filter(am, c==2)
+
+gather_draws(m, lambda[observer]) %>%
+  group_by(observer, .variable) %>%
+  summarise(value = mean(.value)) %>%
+  select(-.variable) -> lambdas
+
+get_model_weight <- function(obs, cond, trl) {
+  
+  dt <- filter(d, observer == obs, condition == cond, trial == trl)
+  
+  lambda <- filter(lambdas, observer == obs)$value
+  
+
+  wx <- lambda * dbeta(dt$x, c1$a_x, c1$b_x) +
+    (1-lambda) * dbeta(dt$x, c2$a_x, c2$b_x) 
+  
+  wy <- lambda * dbeta(dt$y, c1$a_y, c1$b_y) +
+    (1-lambda) * dbeta(dt$y, c2$a_y, c2$b_y) 
+  
+  w <- wx * wy
+  w <- w / sum(w)
+  
+  return(tibble(observer = obs,
+                condition = cond, 
+                trial = trl,
+                init_weight = w[1],
+                max_item = which(w == max(w))))
+}
+
+
+d %>% group_by(observer, condition, trial) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  select(-n, obs = "observer", cond = "condition", trl = "trial") %>%
+  pmap_df(get_model_weight) -> weights2
+
+
+bind_rows(weights %>% mutate(method = "multi-level"), 
+          weights2 %>% mutate(method = "mixture model")) -> dw
+
+
+ggplot(dw, aes(init_weight, fill = method)) + 
+  geom_histogram(binwidth = 1/80, position = "identity", alpha = 0.5) +
+  geom_vline(xintercept = 1/40, linetype = 2)  -> plt1
+
+dw %>% group_by(observer, method) %>%
+  summarise(acc = mean(max_item == 1)) %>%
+  ggplot(aes(y = acc, fill = method)) + geom_boxplot() + 
+  geom_hline(yintercept = 1/40, linetype = 2) + 
+  scale_y_continuous("Prop. trials first sel. correct") +
+  theme(legend.position = "none") -> plt2
+
+weights2 %>% group_by(observer) %>%
+  summarise(accuracy = mean(max_item == 1)) %>%
+  full_join(lambdas) %>%
+  rename(lambda = "value") %>%
+  ggplot(aes(lambda, accuracy)) + 
+  geom_point() +
+  geom_smooth(method = "lm", colour = "black") -> plt3
+
+
+plt1 / (plt2 + plt3)  + plot_layout(guides = "collect")
+
+dw %>% group_by(method, observer) %>%
+  summarise(score = median(init_weight),
+            accuracy = mean(max_item==1)) %>%
+  summarise(mean_score = mean(score),
+            mean_accuracy = mean(accuracy)) %>%
+  knitr::kable()
+
+```
 

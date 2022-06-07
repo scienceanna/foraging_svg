@@ -579,10 +579,13 @@ plt_dat %>% filter(dim == "y") %>%
   scale_x_continuous("y") -> plt_y
 
 gather_draws(m, lambda[observer]) %>%
-  ggplot(aes(.value, group = observer)) + 
-  geom_density(alpha = 0.25, fill = "grey") -> plt_lambdas
+  median_hdci(.value) %>%
+  arrange(.value) %>%
+  mutate(observer = factor(observer, levels = observer)) %>%
+  ggplot(aes(observer, .value, ymin = .lower, ymax = .upper)) + 
+  geom_errorbar() -> plt_lambdas
 
-(plt_x + plt_y) / plt_lambdas
+(plt_x + plt_y) + plt_lambdas
 
 ggsave("../Figures/init_sel2_mdl.pdf", width = 10, height = 5)
 ```

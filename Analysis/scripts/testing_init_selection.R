@@ -75,7 +75,6 @@ rm(obs_fits_x, obs_fits_y)
 
 ## now try guessing initial selections
 
-
 d <- read_csv("../data/clarke_2020_qjep.csv", show_col_types = FALSE) %>%
   mutate(x = if_else(x < 0.01, 0.01, x),
          x = if_else(x > 0.99, 0.99, x),
@@ -131,6 +130,8 @@ m <- stan("../models/initial_selection_models/init_sel2_beta.stan",
 
 saveRDS(m, "../scratch/init_sel_model2.rds")
 
+m <- readRDS("../scratch/init_sel_model2.rds")
+
 sample_beta <- function(c, a_y, b_y) {
   x <- seq(0.01, 0.99, 0.01)
   return(tibble(c = c, 
@@ -148,7 +149,77 @@ gather_draws(m, a_y[c], b_y[c]) %>%
   geom_path() + 
   facet_wrap(~c)
 
-
 gather_draws(m, lambda[observer]) %>%
   ggplot(aes(.value, group = observer)) + 
   geom_density(alpha = 0.25, fill = "grey")
+
+
+## now try guessing initial selections
+
+d <- read_csv("../data/clarke_2020_qjep.csv", show_col_types = FALSE) %>%
+  mutate(x = if_else(x < 0.01, 0.01, x),
+         x = if_else(x > 0.99, 0.99, x),
+         y = if_else(y < 0.01, 0.01, y),
+         y = if_else(y > 0.99, 0.99, y) ) %>%
+  select(-RT)
+
+
+gather_draws(m, a_x[c], b_x[c], a_y[c], b_y[c]) %>%
+  group_by(c, .variable) %>%
+  summarise(value = mean(.value)) %>%
+  pivot_wider(names_from = ".variable", values_from = "value") -> am
+
+c1 <- filter(am, c==1)
+c2 <- filter(am, c==2)
+
+gather_draws(m, lambda[observer]) %>%
+  group_by(observer, .variable) %>%
+  summarise(value = mean(.value)) %>%
+  select(-.variable) -> lambdas
+
+get_model_weight <- function(obs, cond, trl) {
+  
+  dt <- filter(d, observer == obs, condition == cond, trial == trl)
+  
+  lambda <- filter(lambdas, observer == obs)$value
+  
+
+  wx <- lambda * dbeta(dt$x, c1$a_x, c1$b_x) +
+    (1-lambda) * dbeta(dt$x, c2$a_x, c2$b_x) 
+  
+  wy <- lambda * dbeta(dt$y, c1$a_y, c1$b_y) +
+    (1-lambda) * dbeta(dt$y, c2$a_y, c2$b_y) 
+  
+  w <- wx * wy
+  w <- w / sum(w)
+  
+  return(tibble(observer = obs,
+                condition = cond, 
+                trial = trl,
+                init_weight = w[1],
+                max_item = which(w == max(w))))
+}
+
+
+d %>% group_by(observer, condition, trial) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  select(-n, obs = "observer", cond = "condition", trl = "trial") %>%
+  pmap_df(get_model_weight) -> weights2
+
+
+bind_rows(weights %>% mutate(method = "multi-level"), 
+          weights2 %>% mutate(method = "mixture model")) -> dw
+
+
+ggplot(dw, aes(init_weight, fill = method)) + 
+  geom_histogram(binwidth = 1/80, position = "identity", alpha = 0.5) +
+  geom_vline(xintercept = 1/40, linetype = 2) -> plt1
+
+dw %>% group_by(observer, method) %>%
+  summarise(acc = mean(max_item == 1)) %>%
+  ggplot(aes(y = acc, fill = method)) + geom_boxplot() + 
+  geom_hline(yintercept = 1/40, linetype = 2) + 
+  scale_y_continuous("Prop. trials first sel. correct") -> plt2
+
+plt1 + plt2
+

@@ -2,7 +2,7 @@
 compute_weights_trials <- function(obs, cond, n_trials = 20) {
   
   params <- filter(fit,  observer == obs, condition == cond )
-  a <- map_dfr(1:n_trial, compute_weights, params = params, cond = cond, obs = obs)
+  a <- map_dfr(1:n_trials, compute_weights, params = params, cond = cond, obs = obs)
   
   return(a)
   

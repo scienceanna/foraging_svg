@@ -502,16 +502,16 @@ create_post_plot <- function(dm) {
 create_post_plot("x") + create_post_plot("y") 
 ggsave("../Figures/init_sel_mdl.pdf", width = 10, height = 3.5)
 ```
-How well does the model do in guessing the first target in a trial?
+
 
 ```{r}
+# Compute weights for later
 d <- read_csv("data/clarke_2020_qjep.csv", show_col_types = FALSE) %>%
   mutate(x = if_else(x < 0.01, 0.01, x),
          x = if_else(x > 0.99, 0.99, x),
          y = if_else(y < 0.01, 0.01, y),
          y = if_else(y > 0.99, 0.99, y) ) %>%
   select(-RT)
-
 
 get_model_weight <- function(obs, cond, trl) {
   
@@ -532,25 +532,12 @@ get_model_weight <- function(obs, cond, trl) {
                 max_item = which(w == max(w))))
 }
 
-
 d %>% group_by(observer, condition, trial) %>%
   summarise(n = n(), .groups = "drop") %>%
   select(-n, obs = "observer", cond = "condition", trl = "trial") %>%
   pmap_df(get_model_weight) -> weights
 
-
-ggplot(weights, aes(init_weight)) + geom_histogram(binwidth = 1/80) +
-  geom_vline(xintercept = 1/40, linetype = 2) -> plt1
-
-weights %>% group_by(observer) %>%
-  summarise(acc = mean(max_item == 1)) %>%
-  ggplot(aes(y = acc)) + geom_boxplot() + 
-  geom_hline(yintercept = 1/40, linetype = 2) + 
-  scale_y_continuous("Prop. trials first sel. correct") -> plt2
-
-plt1 + plt2
 ```
-
 
 ## Mixture Model
 
@@ -591,15 +578,11 @@ plt_dat %>% filter(dim == "y") %>%
   theme(legend.position = "none") +
   scale_x_continuous("y") -> plt_y
 
-
 gather_draws(m, lambda[observer]) %>%
   ggplot(aes(.value, group = observer)) + 
   geom_density(alpha = 0.25, fill = "grey") -> plt_lambdas
 
 (plt_x + plt_y) / plt_lambdas
-
-
-
 ```
 
 
@@ -609,7 +592,7 @@ gather_draws(m, lambda[observer]) %>%
 ```{r}
 gather_draws(m, a_x[c], b_x[c], a_y[c], b_y[c]) %>%
   group_by(c, .variable) %>%
-  summarise(value = mean(.value)) %>%
+  summarise(value = mean(.value), .groups = "drop") %>%
   pivot_wider(names_from = ".variable", values_from = "value") -> am
 
 c1 <- filter(am, c==1)
@@ -617,7 +600,7 @@ c2 <- filter(am, c==2)
 
 gather_draws(m, lambda[observer]) %>%
   group_by(observer, .variable) %>%
-  summarise(value = mean(.value)) %>%
+  summarise(value = mean(.value), .groups = "drop") %>%
   select(-.variable) -> lambdas
 
 get_model_weight <- function(obs, cond, trl) {
@@ -659,28 +642,30 @@ ggplot(dw, aes(init_weight, fill = method)) +
   geom_vline(xintercept = 1/40, linetype = 2)  -> plt1
 
 dw %>% group_by(observer, method) %>%
-  summarise(acc = mean(max_item == 1)) %>%
+  summarise(acc = mean(max_item == 1), .groups = "drop") %>%
   ggplot(aes(y = acc, fill = method)) + geom_boxplot() + 
   geom_hline(yintercept = 1/40, linetype = 2) + 
   scale_y_continuous("Prop. trials first sel. correct") +
   theme(legend.position = "none") -> plt2
 
 weights2 %>% group_by(observer) %>%
-  summarise(accuracy = mean(max_item == 1)) %>%
-  full_join(lambdas) %>%
+  summarise(accuracy = mean(max_item == 1), .groups = "drop") %>%
+  full_join(lambdas, by = "observer") %>%
   rename(lambda = "value") %>%
   ggplot(aes(lambda, accuracy)) + 
   geom_point() +
-  geom_smooth(method = "lm", colour = "black") -> plt3
+  geom_smooth(method = "lm", formula = y ~ x, colour = "black") -> plt3
 
 
 plt1 / (plt2 + plt3)  + plot_layout(guides = "collect")
 
 dw %>% group_by(method, observer) %>%
-  summarise(score = median(init_weight),
-            accuracy = mean(max_item==1)) %>%
+  summarise(score = median(init_weight,),
+            accuracy = mean(max_item==1),
+            .groups = "drop_last") %>%
   summarise(mean_score = mean(score),
-            mean_accuracy = mean(accuracy)) %>%
+            mean_accuracy = mean(accuracy),
+            .groups = "drop") %>%
   knitr::kable()
 
 ```

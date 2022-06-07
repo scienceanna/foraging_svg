@@ -54,7 +54,7 @@
 \newcommand{\orcidauthorC}{0000-0003-2677-1965}
 
 % Authors, for the paper (add full first names)
-\Author{Alasdair Clarke $^{1}$\orcidA{}, Amelia Hunt $^{2}$\orcidB{} and Anna Hughes\orcidC{} $^{1,}$*}
+\Author{Alasdair D.F. Clarke $^{1}$\orcidA{}, Amelia Hunt $^{2}$\orcidB{} and Anna E. Hughes\orcidC{} $^{1,}$*}
 
 %\longauthorlist{yes}
 
@@ -203,17 +203,17 @@ Figure \ref{fig:qjep_init_sel_hex} shows the distribution of the locations of fi
 \begin{figure}[H]
 \centering
 \includegraphics[width=12 cm]{Figures/init_sel_hex_plot.pdf}
-\caption{Hexagonal heatmaps showing the two-dimensional distribution of the location of initial target selections. Grey areas indicate cells with a count of 0/ (\textit{left}) shows the distribution over all initial target selections while (\textit{right}) shows the distribution of each participant's median initial selection. }
+\caption{Hexagonal heatmaps showing the two-dimensional distribution of the location of initial target selections. Grey areas indicate cells with a count of 0. (\textit{left}) shows the distribution over all initial target selections while (\textit{right}) shows the distribution of each participant's median initial selection. }
 \label{fig:qjep_init_sel_hex}
 \end{figure} 
 
 \subsection{Multi-level Modelling Results}
-We modelled this bias using a multi-level two-dimensional $[0, 1]$ truncated Gaussian distribution, the results of which are shown in Figure \ref{fig:qjep_init_sel_mdl}\footnote{Full details of the analysis can be found in the \textit{Supplementary Materials}}.
+We modelled this bias using a multi-level two-dimensional $[0, 1]$ truncated Gaussian distribution, the results of which are shown in Figure \ref{fig:qjep_init_sel_mdl}\footnote{Full details of the analysis can be found in the \textit{Supplementary Materials}.}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=12 cm]{Figures/init_sel_mdl.pdf}
-\caption{Posterior fits for (\textit{left}) horizontal and (\textit{middle}) vertical locations of the initial target selection. Each line represents a different participant.  (\textit{right}) shows the correlation between participant's mean $x$ and $y$ coordinates. The box shows the extent of the stimulus.}
+\caption{Posterior fits for (\textit{left}) horizontal and (\textit{right}) vertical locations of the initial target selection. Each line represents a different participant.}
 \label{fig:qjep_init_sel_mdl}
 \end{figure} 
 
@@ -222,14 +222,14 @@ We modelled this bias using a multi-level two-dimensional $[0, 1]$ truncated Gau
 \begin{figure}[H]
 \centering
 \includegraphics[width=12 cm]{Figures/init_sel2_mdl.pdf}
-\caption{Posterior fits for (\textit{left}) horizontal and (\textit{middle}) vertical locations of the initial target selection. Each line represents a different participant.  (\textit{right}) shows the correlation between participant's mean $x$ and $y$ coordinates. The box shows the extent of the stimulus.}
+\caption{Posterior fits for the (\textit{left}) horizontal and (\textit{middle}) vertical locations of the initial target selection. (\textit{right}) shows the mixing parameters for each participant, with the error bar indicating the $95\%$  HDPI.}
 \label{fig:qjep_init2_sel_mdl}
 \end{figure} 
 
 
 \subsection{Posterior Predictions}
 
-The posterior predictions from the two models are compared in Figure \ref{fig:qjep_init_sel_pred}
+The posterior predictions from the two models are compared in Figure \ref{fig:qjep_init_sel_pred}.
 
 \begin{figure}[H]
 \centering
@@ -242,9 +242,17 @@ The posterior predictions from the two models are compared in Figure \ref{fig:qj
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
 
-Authors should discuss the results and how they can be interpreted from the perspective of previous studies and of the working hypotheses. The findings and their implications should be discussed in the broadest context possible. Future research directions may also be highlighted.
+To what extent does our model predict behaviour on a trial-by-trial basis? Surprisingly well - this is a difficult task, in some cases the model can be over 80\% accurate. Are there any examples of similar models that can make such fine grained predictions?
 
-Remaining open questions
+What mistakes does the model make? 
+Runner up item weights are a bit too low - this probably suggests a 'peakier' distribution for real human foragers, with only a few targets seriously considered, and everything else being approximately zero weighted?
+Better at feature search compared to conjunction search, better at people with a stronger proximity bias - people who do unpredictable things are unpredictable? Does this suggest that some of our model parameters are less useful at predicting what occurs on a trial-by-trial basis (although they might be useful in aggregate).
+
+To a large extent, initial item selection strategy seems to be stable - either you're someone who starts in the corner, or in the centre of the screen. This makes predicting where people start actually also quite accurate. Fancy multi-level model not really any better at predicting this than a mixture model. But this probably depends on the exact nature of the task (i.e. central bias not seen in \citep{kristjansson2014}, presumably because this was carried out on an iPad - affects people's behaviour in some way we don't really understand?)
+
+Remaining open questions?
+Incorporating other biases into initial target selection, e.g. $pA$?
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vspace{6pt} 
@@ -258,63 +266,19 @@ Remaining open questions
 % \supplementary{The following are available at \linksupplementary{s1}, Figure S1: title, Table S1: title, Video S1: title. A supporting video article is available at doi: link.} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\authorcontributions{For research articles with several authors, a short paragraph specifying their individual contributions must be provided. The following statements should be used ``Conceptualization, X.X. and Y.Y.; methodology, X.X.; software, X.X.; validation, X.X., Y.Y. and Z.Z.; formal analysis, X.X.; investigation, X.X.; resources, X.X.; data curation, X.X.; writing---original draft preparation, X.X.; writing---review and editing, X.X.; visualization, X.X.; supervision, X.X.; project administration, X.X.; funding acquisition, Y.Y. All authors have read and agreed to the published version of the manuscript.'', please turn to the  \href{http://img.mdpi.org/data/contributor-role-instruction.pdf}{CRediT taxonomy} for the term explanation. Authorship must be limited to those who have contributed substantially to the work~reported.}
+\authorcontributions{Conceptualization, A.D.F.C., A.H. and A.E.H.; methodology, A.D.F.C.; software, A.D.F.C.; formal analysis, A.D.F.C.; data curation, A.D.F.C., and A.E.H.; writing---original draft preparation, A.D.F.C.; writing---review and editing, A.H. and A.E.H.; visualization, A.D.F.C. and A.E.H.; funding acquisition, A.D.F.C. and A.H. All authors have read and agreed to the published version of the manuscript.}
 
-\funding{Please add: ``This research received no external funding'' or ``This research was funded by NAME OF FUNDER grant number XXX.'' and  and ``The APC was funded by XXX''. Check carefully that the details given are accurate and use the standard spelling of funding agency names at \url{https://search.crossref.org/funding}, any errors may affect your future funding.}
+\funding{This research was funded by NAME OF FUNDER grant number XXX.}
 
-\institutionalreview{In this section, please add the Institutional Review Board Statement and approval number for studies involving humans or animals. Please note that the Editorial Office might ask you for further information. Please add ``The study was conducted according to the guidelines of the Declaration of Helsinki, and approved by the Institutional Review Board (or Ethics Committee) of NAME OF INSTITUTE (protocol code XXX and date of approval).'' OR ``Ethical review and approval were waived for this study, due to REASON (please provide a detailed justification).'' OR ``Not applicable'' for studies not involving humans or animals. You might also choose to exclude this statement if the study did not involve humans or animals.}
+\institutionalreview{Not applicable (secondary data analysis only).}
 
-\informedconsent{Any research article describing a study involving humans should contain this statement. Please add ``Informed consent was obtained from all subjects involved in the study.'' OR ``Patient consent was waived due to REASON (please provide a detailed justification).'' OR ``Not applicable'' for studies not involving humans. You might also choose to exclude this statement if the study did not involve humans.
+\informedconsent{Not applicable (secondary data analysis only).}
 
-Written informed consent for publication must be obtained from participating patients who can be identified (including by the patients themselves). Please state ``Written informed consent has been obtained from the patient(s) to publish this paper'' if applicable.}
-
-\dataavailability{In this section, please provide details regarding where data supporting reported results can be found, including links to publicly archived datasets analyzed or generated during the study. Please refer to suggested Data Availability Statements in section ``MDPI Research Data Policies'' at \url{https://www.mdpi.com/ethics}. You might choose to exclude this statement if the study did not report any data.} 
+\dataavailability{Data supporting reported results can be found on Github at XXX. The datasets analysed in this study can be found at \url{https://osf.io/y6qbv/} and \url{https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0100752}.} 
 
 \acknowledgments{In this section you can acknowledge any support given which is not covered by the author contribution or funding sections. This may include administrative and technical support, or donations in kind (e.g., materials used for experiments).}
 
-\conflictsofinterest{Declare conflicts of interest or state ``The authors declare no conflict of interest.'' Authors must identify and declare any personal circumstances or interest that may be perceived as inappropriately influencing the representation or interpretation of reported research results. Any role of the funders in the design of the study; in the collection, analyses or interpretation of data; in the writing of the manuscript, or in the decision to publish the results must be declared in this section. If there is no role, please state ``The funders had no role in the design of the study; in the collection, analyses, or interpretation of data; in the writing of the manuscript, or in the decision to publish the~results''.} 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Only for journal Encyclopedia
-%\entrylink{The Link to this entry published on the encyclopedia platform.}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Optional
-\abbreviations{Abbreviations}{
-The following abbreviations are used in this manuscript:\\
-
-\noindent 
-\begin{tabular}{@{}ll}
-MDPI & Multidisciplinary Digital Publishing Institute\\
-DOAJ & Directory of open access journals\\
-TLA & Three letter acronym\\
-LD & Linear dichroism
-\end{tabular}}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Optional
-\appendixtitles{no} % Leave argument "no" if all appendix headings stay EMPTY (then no dot is printed after "Appendix A"). If the appendix sections contain a heading then change the argument to "yes".
-\appendixstart
-\appendix
-\section[\appendixname~\thesection]{}
-\subsection[\appendixname~\thesubsection]{}
-The appendix is an optional section that can contain details and data supplemental to the main text---for example, explanations of experimental details that would disrupt the flow of the main text but nonetheless remain crucial to understanding and reproducing the research shown; figures of replicates for experiments of which representative data are shown in the main text can be added here if brief, or as Supplementary Data. Mathematical proofs of results not central to the paper can be added as an appendix.
-
-\begin{table}[H] 
-\caption{This is a table caption.\label{tab5}}
-\newcolumntype{C}{>{\centering\arraybackslash}X}
-\begin{tabularx}{\textwidth}{CCC}
-\toprule
-\textbf{Title 1}	& \textbf{Title 2}	& \textbf{Title 3}\\
-\midrule
-Entry 1		& Data			& Data\\
-Entry 2		& Data			& Data\\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-\section[\appendixname~\thesection]{}
-All appendix sections must be cited in the main text. In the appendices, Figures, Tables, etc. should be labeled, starting with ``A''---e.g., Figure A1, Figure A2, etc.
+\conflictsofinterest{The authors declare no conflict of interest.} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{adjustwidth}{-\extralength}{0cm}

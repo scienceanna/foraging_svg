@@ -438,7 +438,7 @@ my_theme <- theme(axis.line=element_blank(),axis.text.x=element_blank(),
         panel.grid.major=element_blank(),
         panel.grid.minor=element_blank())
 
-ggplot(d, aes(x, y)) + geom_hex(aes(colour = ..count..), bins = 12) +
+ggplot(d, aes(x, 1 - y)) + geom_hex(aes(colour = ..count..), bins = 12) +
   scale_fill_viridis_c() + scale_color_viridis_c() +
   my_theme -> plt_all
 
@@ -446,7 +446,7 @@ ggplot(d, aes(x, y)) + geom_hex(aes(colour = ..count..), bins = 12) +
 d %>% group_by(observer, condition) %>% 
   summarise(x = median(x), y = median(y),
             .groups = "drop") %>%
-  ggplot(aes(x, y)) + geom_hex(bins = 12) +
+  ggplot(aes(x, 1 - y)) + geom_hex(bins = 12) +
   scale_fill_viridis_c()+ scale_color_viridis_c() +
   my_theme -> plt_med
 
@@ -656,8 +656,11 @@ weights2 %>% group_by(observer) %>%
   geom_point() +
   geom_smooth(method = "lm", formula = y ~ x, colour = "black") -> plt3
 
-
 plt1 / (plt2 + plt3)  + plot_layout(guides = "collect")
+
+ggsave("../Figures/qjep_init_sel_preds.pdf", 
+       plt1 / (plt2 + plt3)  + plot_layout(guides = "collect"),
+       width = 10, height = 6)
 
 dw %>% group_by(method, observer) %>%
   summarise(score = median(init_weight,),

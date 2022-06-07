@@ -502,6 +502,55 @@ create_post_plot <- function(dm) {
 create_post_plot("x") + create_post_plot("y") 
 ggsave("../Figures/init_sel_mdl.pdf", width = 10, height = 3.5)
 ```
+How well does the model do in guessing the first target in a trial?
+
+```{r}
+d <- read_csv("data/clarke_2020_qjep.csv", show_col_types = FALSE) %>%
+  mutate(x = if_else(x < 0.01, 0.01, x),
+         x = if_else(x > 0.99, 0.99, x),
+         y = if_else(y < 0.01, 0.01, y),
+         y = if_else(y > 0.99, 0.99, y) ) %>%
+  select(-RT)
+
+
+get_model_weight <- function(obs, cond, trl) {
+  
+  dt <- filter(d, observer == obs, condition == cond, trial == trl)
+  
+  mtx <- filter(am, observer == obs, dim == "x")
+  mty <- filter(am, observer == obs, dim == "y")
+  
+  wx <- dbeta(dt$x, mtx$a, mtx$b)
+  wy <- dbeta(dt$y, mty$a, mty$b)
+  w <- wx * wy
+  w <- w / sum(w)
+  
+  return(tibble(observer = obs,
+                condition = cond, 
+                trial = trl,
+                init_weight = w[1],
+                max_item = which(w == max(w))))
+}
+
+
+d %>% group_by(observer, condition, trial) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  select(-n, obs = "observer", cond = "condition", trl = "trial") %>%
+  pmap_df(get_model_weight) -> weights
+
+
+ggplot(weights, aes(init_weight)) + geom_histogram(binwidth = 1/80) +
+  geom_vline(xintercept = 1/40, linetype = 2) -> plt1
+
+weights %>% group_by(observer) %>%
+  summarise(acc = mean(max_item == 1)) %>%
+  ggplot(aes(y = acc)) + geom_boxplot() + 
+  geom_hline(yintercept = 1/40, linetype = 2) + 
+  scale_y_continuous("Prop. trials first sel. correct") -> plt2
+
+plt1 + plt2
+```
+
 
 ## Mixture Model
 

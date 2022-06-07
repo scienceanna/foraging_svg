@@ -4,13 +4,13 @@ library(tidybayes)
 library(truncnorm)
 
 options(digits = 2, mc.cores = 10)
-d <- read_csv("../data/clarke_2020_qjep.csv") %>%
+
+d <- read_csv("../data/clarke_2020_qjep.csv", show_col_types = FALSE) %>%
   filter(found == 1) %>%
   mutate(x = if_else(x < 0.01, 0.01, x),
          x = if_else(x > 0.99, 0.99, x),
          y = if_else(y < 0.01, 0.01, y),
-         y = if_else(y > 0.99, 0.99, y)
-         )
+         y = if_else(y > 0.99, 0.99, y) )
 
 
 stan_data <- list(N = nrow(d),
@@ -19,15 +19,15 @@ stan_data <- list(N = nrow(d),
                   x = d$x,
                   y = d$y)
 
-m <- stan("../models/initial_selection_models/init_sel_beta.stan",
-                data = stan_data,
-                chains = 1,
-                iter = 1000,
-                refresh = 100)
-
-
-
-saveRDS(m, "../scratch/init_sel_model.rds")
+# m <- stan("../models/initial_selection_models/init_sel_beta.stan",
+#                 data = stan_data,
+#                 chains = 1,
+#                 iter = 1000,
+#                 refresh = 100)
+# 
+# 
+# 
+# saveRDS(m, "../scratch/init_sel_model.rds")
 
 m <- readRDS("../scratch/init_sel_model.rds")
 
@@ -70,7 +70,56 @@ obs_fits_x <- pmap_df(filter(am,  dim == "x") %>% select(observer, a, b),
 
 
 obs_fits_x + obs_fits_y
+rm(obs_fits_x, obs_fits_y)
 
+
+## now try guessing initial selections
+
+
+d <- read_csv("../data/clarke_2020_qjep.csv", show_col_types = FALSE) %>%
+  mutate(x = if_else(x < 0.01, 0.01, x),
+         x = if_else(x > 0.99, 0.99, x),
+         y = if_else(y < 0.01, 0.01, y),
+         y = if_else(y > 0.99, 0.99, y) ) %>%
+  select(-RT)
+
+
+get_model_weight <- function(obs, cond, trl) {
+  
+  dt <- filter(d, observer == obs, condition == cond, trial == trl)
+  
+  mtx <- filter(am, observer == obs, dim == "x")
+  mty <- filter(am, observer == obs, dim == "y")
+  
+  wx <- dbeta(dt$x, mtx$a, mtx$b)
+  wy <- dbeta(dt$y, mty$a, mty$b)
+  w <- wx * wy
+  w <- w / sum(w)
+  
+  return(tibble(observer = obs,
+                condition = cond, 
+                trial = trl,
+                init_weight = w[1],
+                max_item = which(w == max(w))))
+}
+
+
+d %>% group_by(observer, condition, trial) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  select(-n, obs = "observer", cond = "condition", trl = "trial") %>%
+  pmap_df(get_model_weight) -> weights
+
+
+ggplot(weights, aes(init_weight)) + geom_histogram(binwidth = 1/80) +
+  geom_vline(xintercept = 1/40, linetype = 2) -> plt1
+
+weights %>% group_by(observer) %>%
+  summarise(acc = mean(max_item == 1)) %>%
+  ggplot(aes(y = acc)) + geom_boxplot() + 
+  geom_hline(yintercept = 1/40, linetype = 2) + 
+  scale_y_continuous("Prop. trials first sel. correct") -> plt2
+
+plt1 + plt2
 
 
 m <- stan("../models/initial_selection_models/init_sel2_beta.stan",

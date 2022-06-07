@@ -86,7 +86,7 @@ $^{2}$ \quad Affiliation 2; e-mail@e-mail.com}
 \abstract{Foraging refers to search involving multiple targets or multiple types of targets, and as a model task has a long history in animal behaviour and human cognition research. Foraging behaviour is usually operationalized using summary statistics, such as average distance covered during target collection (the path length) and the frequency of switching between target types. We recently introduced an alternative approach, which is to model each instance of target selection as random selection without replacement. Our model produces estimates of a set of foraging biases, such as a bias to select closer targets or targets of a particular category. Here we apply this model to predict individual target selection events. We add a new start position bias to the model, and generate foraging paths using the parameters estimated from individual participants’ pre-existing data. The model predicts which target the participant will select next with a range of accuracy from 43\% to 69\% across participants (chance is 11\%). The model therefore explains a substantial proportion of foraging behaviour in this paradigm. The situations where the model makes errors reveal useful information to guide future research on those aspects of foraging that we have not yet explained.}
 
 % Keywords
-\keyword{foraging; visual search; bayesian model; decision; strategy (List three to ten pertinent keywords specific to the article; yet reasonably common within the subject discipline.)} 
+\keyword{foraging; visual search; bayesian model; decision; strategy.} 
 
 \begin{document}
 
@@ -112,7 +112,7 @@ While our model is able to do a good job of allowing us to understand biases at 
 
 We will a previously published dataset to explore how well our model can account for trial-level behaviour. We will start with the visual foraging data from \cite{clarke2022}. This is an attractive dataset for our needs as it is very close to the ``classic'' visual foraging paradigm \citep{kristjansson2014}, yet with a substantially larger sample of participants. (The key difference between paradigms is that \cite{kristjansson2014} used an ipad and finger foraging, while \cite{clarke2022} used a desktop computer and mouse clicks). Furthermore, we have already demonstrated that our model can capture individual differences in foraging behaviour \citep{clarke2022}. As such, we will only give a brief overview of the data here and refer the reader to these earlier papers for a more details.
 
-To test how well our methods generalise, we will introduce a new dataset that was not analysed in our previous modelling paper....
+To test how well our methods generalise, we use the dataset from \citep{kristjansson2014}. We split this into a training dataset (50\% of the original data i.e. 10 trials per participant) and a test dataset (the remaining 50\% of the data). The foraging model is fit on the training dataset, and the parameters from this model are then used to predict behaviour at the level of individual trials. We show that our methods appear to generalise beyond \citep{clarke2022}: further details can be found in the \textit{Supplementary Materials}.
 
 
 \subsection{A Model for Visual Foraging}
@@ -121,7 +121,7 @@ We will make use of the foraging model from \cite{clarke2022}. This treats forag
 
 \begin{itemize}
     \item $b_A$ - preference for selecting items of type $A$ rather than $B$.
-    \item $b_S$ - preference for selections items of the same type as the previously selected item.
+    \item $b_S$ - preference for selecting items of the same type as the previously selected item.
     \item $\sigma_d$ - preference for selecting items close to the previously selected item.
     \item $\sigma_{\theta}$ - preference to keep selecting items along a straight line versus changing direction.
 \end{itemize}
@@ -196,9 +196,9 @@ Figure \ref{fig:cal2} hints at some individual differences when it comes to how 
 
 \section{Improving the model: location of the first target selection}
 
-One weakness of the foraging model by \cite{clarke2022foraging} is that it makes little attempt to the predict which item will be selected first. In this section we aim to improve this by modelling participant bias/preference in their choice of initial target selection. Following \cite{clarke_tatler2014, clarke2017} we fit truncated Gaussian distributions to the $(x,y)$ coordinates of the initial target selections 
+One weakness of the foraging model by \cite{clarke2022foraging} is that it makes little attempt to predict which item will be selected first. In this section we aim to improve this by modelling participant bias (or preference) in their choice of initial target selection. Following \cite{clarke_tatler2014, clarke2017} we fit truncated Gaussian distributions to the $(x,y)$ coordinates of the initial target selections.
 
-Figure \ref{fig:qjep_init_sel_hex} shows the distribution of the locations of first target selections. We can see that unlike the central bias in fixations during scene viewing, the distribution of initial target locations appear to be bimodal: while most targets are positioned in the top left hand corner <CHECK MATLAB CODE!!!> there is a second smaller distribution of central target selections. This appears to be due to different participants choosing to utilise different strategies rather than within-subject variation. However, we have no evidence that these different initial strategies affect the model parameters in any systematic way (see Supplementary Material)
+Figure \ref{fig:qjep_init_sel_hex} shows the distribution of the locations of first target selections. We can see that unlike the central bias in fixations during scene viewing, the distribution of initial target locations appear to be bimodal: while most targets are positioned in the top left hand corner, there is a second smaller distribution of central target selections. This appears to be due to different participants choosing to utilise different strategies rather than within-subject variation. However, we have no evidence that these different initial strategies affect the model parameters in any systematic way (see \textit{Supplementary Material}).
 
 \begin{figure}[H]
 \centering
@@ -208,7 +208,7 @@ Figure \ref{fig:qjep_init_sel_hex} shows the distribution of the locations of fi
 \end{figure} 
 
 \subsection{Multi-level Modelling Results}
-We modelled this bias using a multi-level two-dimensional $[0, 1]$ truncated Gaussian distribution, the results of which are shown in Figure \ref{fig:qjep_init_sel_mdl}\footnote{Full details of the analysis can be found in the supplementary materials}.
+We modelled this bias using a multi-level two-dimensional $[0, 1]$ truncated Gaussian distribution, the results of which are shown in Figure \ref{fig:qjep_init_sel_mdl}\footnote{Full details of the analysis can be found in the \textit{Supplementary Materials}}.
 
 \begin{figure}[H]
 \centering
@@ -218,6 +218,14 @@ We modelled this bias using a multi-level two-dimensional $[0, 1]$ truncated Gau
 \end{figure} 
 
 \subsection{Mixture Modelling}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=12 cm]{Figures/init_sel2_mdl.pdf}
+\caption{Posterior fits for (\textit{left}) horizontal and (\textit{middle}) vertical locations of the initial target selection. Each line represents a different participant.  (\textit{right}) shows the correlation between participant's mean $x$ and $y$ coordinates. The box shows the extent of the stimulus.}
+\label{fig:qjep_init2_sel_mdl}
+\end{figure} 
+
 
 \subsection{Posterior Predictions}
 

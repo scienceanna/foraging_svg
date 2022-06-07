@@ -569,25 +569,31 @@ plt_dat %>% filter(dim == "x") %>%
   ggplot(aes(x, z, group = interaction(c, draw), colour = c)) +
   geom_path(alpha = 0.1) + 
   facet_wrap(~dim) + 
-  theme(legend.position = "none") -> plt_x
+  theme(legend.position = "none")  + 
+    scale_y_continuous("likelihood") -> plt_x
 
 plt_dat %>% filter(dim == "y") %>%
   ggplot(aes(x, z, group = interaction(c, draw), colour = c)) +
   geom_path(alpha = 0.1) + 
   facet_wrap(~dim) + 
-  theme(legend.position = "none") +
-  scale_x_continuous("y") -> plt_y
+  theme(legend.position = "none",
+        axis.title.y = element_blank()) +
+  scale_x_continuous("y") + 
+    scale_y_continuous("likelihood") -> plt_y
 
 gather_draws(m, lambda[observer]) %>%
   median_hdci(.value) %>%
   arrange(.value) %>%
   mutate(observer = factor(observer, levels = observer)) %>%
   ggplot(aes(observer, .value, ymin = .lower, ymax = .upper)) + 
-  geom_errorbar() -> plt_lambdas
+  geom_errorbar() +
+  scale_y_continuous("lambda") + 
+  theme(axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) -> plt_lambdas
 
 (plt_x + plt_y) + plt_lambdas
 
-ggsave("../Figures/init_sel2_mdl.pdf", width = 10, height = 5)
+ggsave("../Figures/init_sel2_mdl.pdf", width = 10, height = 3.5)
 ```
 
 

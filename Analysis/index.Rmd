@@ -583,6 +583,8 @@ gather_draws(m, lambda[observer]) %>%
   geom_density(alpha = 0.25, fill = "grey") -> plt_lambdas
 
 (plt_x + plt_y) / plt_lambdas
+
+ggsave("../Figures/init_sel2_mdl.pdf", width = 10, height = 5)
 ```
 
 

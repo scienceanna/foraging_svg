@@ -225,7 +225,7 @@ The results are shown in Figure \ref{fig:qjep_init_sel_mdl} and we can clearly s
 \begin{figure}[H]
 \centering
 \includegraphics[width=12 cm]{Figures/init_sel_mdl.pdf}
-\caption{Posterior fits for (\textit{left}) horizontal and (\textit{right}) vertical locations of the initial target selection. Each line represents a different participant.}
+\caption{Posterior fits for (\textit{left}) horizontal and (\textit{middle}) vertical locations of the initial target selection. Each line represents a different participant. (\textit{right) A scatter plot showing the $x$ and $y$ posterior means for each participant.}
 \label{fig:qjep_init_sel_mdl}
 \end{figure} 
 
@@ -253,10 +253,9 @@ The model fit is shown in Figure \ref{fig:qjep_init2_sel_mdl}. We can see that t
 \label{fig:qjep_init2_sel_mdl}
 \end{figure} 
 
-
 \subsection{Posterior Predictions}
 
-The posterior predictions from the two models are compared in Figure \ref{fig:qjep_init_sel_pred}.
+To compare the two approaches, we assess how well they fit the empirical data: we can use the fitted distributions to calculate the weight assigned to the selected target by each method for each trial in our dataset (Figure \ref{fig:qjep_init_sel_pred}). We can see that both models give a similar distribution of target weights and accuracies. Overall, both methods  select the correct target in around half of the trials. Interesting, as above, there is considerable variation between participants, with participants who favour the top-left corner being easier to predict. 
 
 \begin{figure}[H]
 \centering
@@ -264,7 +263,6 @@ The posterior predictions from the two models are compared in Figure \ref{fig:qj
 \caption{(\textit{Top}): a count of initial weight values predicted from both methods (mixture and multi-level). (\textit{Bottom left}): the proportion of times the first selection was correct for both methods.  (\textit{Bottom left}): as lambda (the model parameter underlying initial weight) increases, accuracy increases i.e. the model is more accurate for the cases where participants are selecting a corner as their initial target selection.} 
 \label{fig:qjep_init_sel_pred}
 \end{figure} 
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}

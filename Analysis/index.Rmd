@@ -499,7 +499,14 @@ create_post_plot <- function(dm) {
   return(plt)
 }
 
-create_post_plot("x") + create_post_plot("y") 
+am %>% mutate(mu = a/(a+b)) %>%
+  pivot_wider(observer, names_from = "dim", values_from = "mu") %>%
+  ggplot(aes(x, y)) + geom_point(alpha = 0.5) +
+  scale_x_continuous("mean x") + 
+  scale_y_continuous("mean y") -> plt_mu
+
+
+create_post_plot("x") + create_post_plot("y") + plt_mu
 ggsave("../Figures/init_sel_mdl.pdf", width = 10, height = 3.5)
 ```
 

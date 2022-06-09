@@ -32,6 +32,7 @@ theme_set(ggthemes::theme_tufte() + theme(plot.background = element_rect(fill = 
 
 # some more colours
 col3 = c("#d04e00", "#ddc000","#34b6c6",  "#79ad41", "#4063a3")
+col2 = c("#d04e00", "#34b6c6")
                 
 our_cols <- c("#1b9e77", "#7570b3")
 options(ggplot2.discrete.fill = our_cols ,
@@ -657,14 +658,16 @@ bind_rows(weights %>% mutate(method = "multi-level"),
 
 ggplot(dw, aes(init_weight, fill = method)) + 
   geom_histogram(binwidth = 1/80, position = "identity", alpha = 0.5) +
-  geom_vline(xintercept = 1/40, linetype = 2)  -> plt1
+  geom_vline(xintercept = 1/40, linetype = 2) +
+  scale_fill_manual(values = col2)-> plt1
 
 dw %>% group_by(observer, method) %>%
   summarise(acc = mean(max_item == 1), .groups = "drop") %>%
-  ggplot(aes(y = acc, fill = method)) + geom_boxplot() + 
+  ggplot(aes(y = acc, fill = method)) + geom_boxplot(alpha = 0.5) + 
   geom_hline(yintercept = 1/40, linetype = 2) + 
   scale_y_continuous("Prop. trials first sel. correct") +
-  theme(legend.position = "none") -> plt2
+  theme(legend.position = "none") +  
+  scale_fill_manual(values = col2) -> plt2
 
 weights2 %>% group_by(observer) %>%
   summarise(accuracy = mean(max_item == 1), .groups = "drop") %>%

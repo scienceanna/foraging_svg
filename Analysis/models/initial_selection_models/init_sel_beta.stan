@@ -41,7 +41,7 @@ model {
     int z = Z[n];
 
     x[n] ~ beta(exp(b[1] + u[1, z]), exp(b[3] + u[3, z]));
-    y[n] ~ beta(exp(b[2] + u[2, z]), exp(b[4] + u[4, z])) ;
+    y[n] ~ beta(exp(b[2] + u[2, z]), exp(b[4] + u[4, z]));
   }
 
  }

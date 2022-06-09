@@ -196,9 +196,9 @@ Figure \ref{fig:cal2} hints at some individual differences when it comes to how 
 
 \section{Improving the model: location of the first target selection}
 
-One weakness of the foraging model by \cite{clarke2022foraging} is that it makes little attempt to predict which item will be selected first. In this section we aim to improve this by modelling participant bias (or preference) in their choice of initial target selection. Following \cite{clarke_tatler2014, clarke2017} we fit truncated Gaussian distributions to the $(x,y)$ coordinates of the initial target selections.
+One weakness of the foraging model by \cite{clarke2022foraging} is that it makes little attempt to predict which item will be selected first. In this section we aim to improve this by modelling participant bias (or preference) in their choice of initial target selection. Our approach is inspired by previous work on the central bias in scene viewing \cite{clarke_tatler2014, clarke2017}. These studies characterised fit truncated Gaussian distributions to the  $(x,y)$ coordinates of fixation locations. Here we will do similar, and fit beta distributions\footnote{We use beta distributions here as ADFC couldn't work out the syntax for specifying a mixture model using truncated Gaussians in Stan. But, in hindsight, beta distributions are probably a better choice anyway!} to locations of the initial target selections in the visual foraging task. 
 
-Figure \ref{fig:qjep_init_sel_hex} shows the distribution of the locations of first target selections. We can see that unlike the central bias in fixations during scene viewing, the distribution of initial target locations appear to be bimodal: while most targets are positioned in the top left hand corner, there is a second smaller distribution of central target selections. This appears to be due to different participants choosing to utilise different strategies rather than within-subject variation. However, we have no evidence that these different initial strategies affect the model parameters in any systematic way (see \textit{Supplementary Material}).
+Figure \ref{fig:qjep_init_sel_hex} shows the distribution of the locations of first target selections. We can see that unlike the central bias in fixations during scene viewing, the distribution of initial target locations appear to be bimodal: while most targets are positioned in the top left hand corner, there is a second smaller distribution of central target selections. This appears to be due to different participants choosing to utilise different strategies rather than within-subject variation. However, we have no evidence that these different initial strategies affect the model parameters in any systematic way (see \textit{Supplementary Material}). We fit two dwill try two different modelling approaches (multi-level and mixture) to  
 
 \begin{figure}[H]
 \centering
@@ -208,7 +208,19 @@ Figure \ref{fig:qjep_init_sel_hex} shows the distribution of the locations of fi
 \end{figure} 
 
 \subsection{Multi-level Modelling Results}
-We modelled this bias using a multi-level two-dimensional $[0, 1]$ truncated Gaussian distribution, the results of which are shown in Figure \ref{fig:qjep_init_sel_mdl}\footnote{Full details of the analysis can be found in the \textit{Supplementary Materials}.}
+
+We first consider a multi-level model in which we fit beta distributions to the $x$ and $y$ coordinates of each participant's initial target selections\footnote{Full details of the analysis can be found in the \textit{Supplementary Materials}.}:
+
+\begin{equation}
+    x_i \sim Beta(a_{x,i}, b_{x,i})
+    \label{eq:beta1x}
+\end{equation}
+\begin{equation}
+    y_i \sim Beta(a_{y,i}, b_{y,i})
+    \label{eq:beta1y}
+\end{equation}
+
+The results are shown in Figure \ref{fig:qjep_init_sel_mdl} and we can clearly see that most participants either have a strong bias to $x=0$ and $y=0$, or a more diffuse central bias. 
 
 \begin{figure}[H]
 \centering
@@ -219,10 +231,25 @@ We modelled this bias using a multi-level two-dimensional $[0, 1]$ truncated Gau
 
 \subsection{Mixture Modelling}
 
+While the multi-level model outlined above appears to offer a good fit for the between-subject differences in initial target selection location, it comes at the expense of requiring four parameters per participant (= 290 for the 58 participants in our dataset). Given that the majority of our participants appear to be following one of two distinct strategies, we can potentially simplify our model by using a two-component mixture model:
+
+\begin{equation}
+    x_i \sim \lambda_i \times Beta(a_{x,1}, b_{x,1}) + (1-\lambda_i) \times Beta(a_{x,2}, b_{x,2})
+    \label{eq:beta2x}
+\end{equation}
+\begin{equation}
+    y_i \sim \lambda_i \times Beta(a_{y,1}, b_{y,1}) + (1-\lambda_i) \times Beta(a_{y,2}, b_{y,2})
+    \label{eq:beta2y}
+\end{equation}
+
+This reduces the number of parameters to eight (to specify the two Beta distributions) and then one $\lambda$ value per participant (= 66 in our dataset). While the formulae in Equations \ref{eq:beta2x} and \ref{eq:beta2y} appear more complex than those in Equations \ref{eq:beta1x} and \ref{eq:beta1y}, the model requires less than a quarter as many free parameters! 
+
+The model fit is shown in Figure \ref{fig:qjep_init2_sel_mdl}. We can see that the two components identified by the model clearly correspond to the top corner and diffuse-central strategies discussed above. We can also see from the lambda values that our participants take on a range of different mixtures between the two. 
+
 \begin{figure}[H]
 \centering
-\includegraphics[width=12 cm]{Figures/init_sel2_mdl.pdf}
-\caption{Posterior fits for the (\textit{left}) horizontal and (\textit{middle}) vertical locations of the initial target selection. (\textit{right}) shows the mixing parameters for each participant, with the error bar indicating the $95\%$  HDPI.}
+\includegraphics[width=\textwidth]{Figures/init_sel2_mdl.pdf}
+\caption{Posterior fits for the (\textit{left}) horizontal and (\textit{middle}) vertical locations of the initial target selection. (\textit{right}) shows the mixing parameters for each participant, with the error bar indicating the $95\%$ HDPI.}
 \label{fig:qjep_init2_sel_mdl}
 \end{figure} 
 
@@ -234,7 +261,7 @@ The posterior predictions from the two models are compared in Figure \ref{fig:qj
 \begin{figure}[H]
 \centering
 \includegraphics[width=12 cm]{Figures/qjep_init_sel_preds.pdf}
-\caption{}
+\caption{(\textit{Top}): a count of initial weight values predicted from both methods (mixture and multi-level). (\textit{Bottom left}): the proportion of times the first selection was correct for both methods.  (\textit{Bottom left}): as lambda (the model parameter underlying initial weight) increases, accuracy increases i.e. the model is more accurate for the cases where participants are selecting a corner as their initial target selection.} 
 \label{fig:qjep_init_sel_pred}
 \end{figure} 
 

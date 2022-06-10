@@ -278,7 +278,7 @@ a %>% select(observer, condition, trial, found, selected_max) %>%
             .groups = "drop") %>%
   filter(time_taken < 60)  ->timedat
 
-%>%
+timedat %>%
   ggplot(aes(time_taken, acc, colour = condition)) + 
   geom_jitter(alpha = 0.2, height = 0.005, width = 0) +
   geom_smooth(method = "lm") + 
@@ -292,11 +292,11 @@ a %>% select(observer, condition, trial, found, selected_max) %>%
   full_join(d, by = c("observer", "condition", "trial", "found")) %>%
   arrange(observer, condition, trial, found) %>%
   mutate(
-    RTd = RT - lag(RT),
+    RTd = log(RT - lag(RT)),
     RTd = if_else(found == 1, 0, RTd)) %>%
   filter(RTd < 2, is.finite(RTd)) %>%
   mutate(
-    time_bin = cut(RTd,breaks = seq(0, 2, 0.25), labels = FALSE)) %>%
+    time_bin = cut(RTd,breaks = 50, labels = FALSE)) %>%
   group_by(observer, condition, time_bin) %>%
   summarise(acc = mean(selected_max)) %>%
   ggplot(aes(time_bin, acc, group = observer)) +

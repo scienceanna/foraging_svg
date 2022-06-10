@@ -264,6 +264,45 @@ ggplot(drt, aes(accuracy, median_rt, colour = condition)) +
 
 summary(lm(median_rt ~ accuracy*condition, data = drt))
 
+drt <- filter(d, found == 40) 
+
+```
+
+```{r}
+# try doing per trial
+a %>% select(observer, condition, trial, found, selected_max) %>%
+  full_join(d, by = c("observer", "condition", "trial", "found")) %>%
+  group_by(observer, condition, trial) %>%
+  summarise(time_taken = max(RT),
+            acc = mean(selected_max, na.rm = T), 
+            .groups = "drop") %>%
+  filter(time_taken < 60)  ->timedat
+
+%>%
+  ggplot(aes(time_taken, acc, colour = condition)) + 
+  geom_jitter(alpha = 0.2, height = 0.005, width = 0) +
+  geom_smooth(method = "lm") + 
+  facet_wrap(~condition)
+
+library(brms)
+
+my_model <- brm(acc ~ time_taken:condition + (1|observer), timedat)
+
+a %>% select(observer, condition, trial, found, selected_max) %>%
+  full_join(d, by = c("observer", "condition", "trial", "found")) %>%
+  arrange(observer, condition, trial, found) %>%
+  mutate(
+    RTd = RT - lag(RT),
+    RTd = if_else(found == 1, 0, RTd)) %>%
+  filter(RTd < 2, is.finite(RTd)) %>%
+  mutate(
+    time_bin = cut(RTd,breaks = seq(0, 2, 0.25), labels = FALSE)) %>%
+  group_by(observer, condition, time_bin) %>%
+  summarise(acc = mean(selected_max)) %>%
+  ggplot(aes(time_bin, acc, group = observer)) +
+  geom_path(alpha = 0.2) +
+  geom_smooth(se= F, alpha = 0.1, method = lm) + 
+  facet_grid(found~condition)
 
 ```
 

@@ -387,6 +387,23 @@ ggsave("../Figures/qjep_ex_paths.pdf",
 rm(trls_easy, trls_mid, trls_hard, plts, qs, plts1, plts2, plts3)
 ```
 
+
+# Trial level
+
+
+```{r}
+
+a %>% group_by(condition, observer, trial) %>%
+  summarise(meanb = mean(b),
+            prop_best = mean(selected_max), .groups = "drop") -> a_trl
+
+ggplot(a_trl, aes(trial, meanb, group = observer)) + geom_jitter(alpha = 0.25) + 
+  geom_path(alpha = 0.1) + facet_wrap(~condition) +
+  geom_smooth(method = "lm", group = 1)
+
+```
+
+
 # Path Length Analysis
 
 It looks like some of the target selections that our model fails to capture are when participants select a further away target in order to minimise overall path length. Here we will compare our model's predicted path length against the empirical paths. 

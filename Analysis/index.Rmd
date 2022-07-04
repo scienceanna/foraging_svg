@@ -24,6 +24,8 @@ library(patchwork)
 library(tidybayes)
 library(ggrepel)
 library(truncnorm)
+library(modelr)
+library(brms)
 ```
 
 ```{r}
@@ -251,40 +253,62 @@ summary(lm(accuracy ~ pA + pS + bM + bP,
 
 Both $p_A$ and $b_M$ also have an effect on our model's accuracy, but note there is only a small increases in $R^2$ from just using $b_P$.
 
-## Are more predictable people faster at the task?
+## The relationship between time and model accuracy
 
-```{r}
-drt <- filter(d, found == 40) %>% group_by(observer, condition) %>%
-  summarise(median_rt = median(RT), .groups = "drop") %>% 
-  full_join(dm, by = c("observer", "condition"))
+### Faster people are more predictable
 
-ggplot(drt, aes(accuracy, median_rt, colour = condition)) +
-         geom_point(alpha = 0.5) + 
-  geom_smooth(method = "lm") 
+Is this worth doing?
 
-summary(lm(median_rt ~ accuracy*condition, data = drt))
+### Shorter trials are more predictable
 
-drt <- filter(d, found == 40) 
-
-```
-
-```{r}
-# try doing per trial
+```{r fig.cap="The relationship between the time taken to complete a trial and how predictible it is. Dots show empirical data, and the shaded ribbon shows the fixed-effects of a multi-level model. The lines give posterior samples from each indivdiaul observer."}
 a %>% select(observer, condition, trial, found, selected_max) %>%
   full_join(d, by = c("observer", "condition", "trial", "found")) %>%
   group_by(observer, condition, trial) %>%
   summarise(time_taken = max(RT),
             acc = mean(selected_max, na.rm = T), 
             .groups = "drop") %>%
-  filter(time_taken < 60) -> timedat
+  filter(time_taken < 60) %>%
+  mutate(time_taken_s = as.numeric(scale(log(time_taken)))) -> timedat
 
-timedat %>%
-  ggplot(aes(time_taken, acc, colour = condition)) + 
-  geom_jitter(alpha = 0.2, height = 0.005, width = 0) +
-  geom_smooth(method = "lm") + 
-  facet_wrap(~condition)
+write_csv(timedat, "scratch/time_per_trial.csv")
 
-# library(brms)
+m <- readRDS("scratch/time_model_acc_model.rds")
+
+fixef(m) %>% knitr::kable()
+
+```
+
+
+
+
+```{r fig.cap="The relationship between the time taken to complete a trial and how predictible it is. Dots show empirical data, and the shaded ribbon shows the fixed-effects of a multi-level model. The lines give posterior samples from each indivdiaul observer."}
+timedat %>% data_grid(condition, time_taken_s = seq_range(time_taken_s, 5)) %>%
+  add_epred_draws(m, re_formula = NA, ndraws = 100) %>%
+  ggplot(aes(time_taken_s, fill = condition)) + 
+  stat_lineribbon(aes(y = .epred), alpha = 0.5, .width = c(0.53, 0.97)) +
+  geom_jitter(data = timedat, aes(y = acc, colour = condition), 
+              alpha = 0.05, width = 0, height = 0.005, colour = "black") +
+  scale_x_continuous("scaled log response time (log seconds)") + 
+  scale_y_continuous("model accuracy")  + 
+  scale_colour_discrete(guide = "none") +
+  coord_cartesian(ylim = c(0.4, 0.9)) +
+  guides(fill = guide_legend(reverse = TRUE)) +
+  facet_wrap(~ condition) -> plt
+
+timedat %>% data_grid(condition, time_taken_s = seq_range(time_taken_s, 5), observer) %>%
+  add_epred_draws(m, re_formula = NULL, ndraws = 1) -> d_pred
+
+
+plt + geom_path(data  = d_pred,
+                aes(y = .epred, 
+                    group = interaction(condition, observer)),
+                alpha = 0.25)
+
+```
+
+```{r}
+
 # 
 # my_model <- brm(acc ~ time_taken:condition + (1|observer), timedat)
 

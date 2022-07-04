@@ -284,15 +284,15 @@ timedat %>%
   geom_smooth(method = "lm") + 
   facet_wrap(~condition)
 
-library(brms)
-
-my_model <- brm(acc ~ time_taken:condition + (1|observer), timedat)
+# library(brms)
+# 
+# my_model <- brm(acc ~ time_taken:condition + (1|observer), timedat)
 
 a %>% select(observer, condition, trial, found, selected_max) %>%
   full_join(d, by = c("observer", "condition", "trial", "found")) %>%
   arrange(observer, condition, trial, found) %>%
   mutate(
-    RTd = log(RT - lag(RT)),
+    RTd = RT - lag(RT),
     RTd = if_else(found == 1, 0, RTd)) %>%
   filter(RTd < 2, is.finite(RTd)) %>%
   mutate(
@@ -302,7 +302,7 @@ a %>% select(observer, condition, trial, found, selected_max) %>%
   ggplot(aes(time_bin, acc, group = observer)) +
   geom_path(alpha = 0.2) +
   geom_smooth(se= F, alpha = 0.1, method = lm) + 
-  facet_grid(found~condition)
+  facet_grid(~condition)
 
 ```
 

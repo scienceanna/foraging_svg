@@ -276,7 +276,7 @@ a %>% select(observer, condition, trial, found, selected_max) %>%
   summarise(time_taken = max(RT),
             acc = mean(selected_max, na.rm = T), 
             .groups = "drop") %>%
-  filter(time_taken < 60)  ->timedat
+  filter(time_taken < 60) -> timedat
 
 timedat %>%
   ggplot(aes(time_taken, acc, colour = condition)) + 

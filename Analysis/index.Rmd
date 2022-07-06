@@ -30,7 +30,8 @@ library(brms)
 
 ```{r}
 # set ggplot2 options
-theme_set(ggthemes::theme_tufte() + theme(plot.background = element_rect(fill = "#fffff8", colour = "#fffff8")))
+theme_set(ggthemes::theme_tufte() + 
+            theme(plot.background = element_rect(fill = "#fffff8", colour = "#fffff8")))
 
 # some more colours
 col3 = c("#d04e00", "#ddc000","#34b6c6",  "#79ad41", "#4063a3")

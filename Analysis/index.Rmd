@@ -463,6 +463,16 @@ path_lengths %>% group_by(observer, type) %>%
 
 plt1 + plt2 + plot_layout(guides = "collect")  &
   theme(legend.position = 'bottom', legend.title = element_blank())
+
+# regen with legend in a different position for saving to pdf (see below)
+path_lengths %>% group_by(observer, type) %>%
+  summarise(path_length = median(path_length), .groups = "drop") %>%
+  ggplot(aes(path_length, fill = type)) + 
+  geom_histogram(bins = 25, alpha = 0.5, position = "identity") +
+  geom_vline(xintercept = 0, linetype = 2) + 
+  theme(legend.position = "right") +
+  scale_x_continuous("median path length") +
+  scale_fill_manual(values = col3) -> plt2
 ```
 
 We can see that overall, the model is not making substantially longer paths through the items than our human participants. However, there is some variability in that some participants routinely select paths shorter than our model would, and others do not.
@@ -489,10 +499,14 @@ ggplot(path_lengths, aes(accuracy, prop_shorter, colour = condition)) +
               method = "lm", formula = y ~ x, se = FALSE) + 
   scale_shape_manual(values = c(19, 4), guide = "none") + 
   scale_y_continuous("prop. shorter than model", breaks = seq(0, 1, 0.2)) +
-  coord_cartesian(ylim = c(0, 1)) -> plt2 
+  coord_cartesian(ylim = c(0, 1)) -> plt2b
 
-plt1 + plt2 + plot_layout(guides = "collect")  &
+plt1 + plt2b + plot_layout(guides = "collect")  &
   theme(legend.position = 'bottom')
+```
+
+```{r}
+ggsave("../Figures/path_length.pdf", plt2 + plt2b, width = 8, height = 4)
 ```
 
 ```{r}

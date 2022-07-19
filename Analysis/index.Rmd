@@ -506,7 +506,7 @@ plt1 + plt2b + plot_layout(guides = "collect")  &
 ```
 
 ```{r}
-ggsave("../Figures/path_length.pdf", plt2 + plt2b, width = 8, height = 4)
+ggsave("../Figures/path_length.pdf", plt2 + plt2b, width = 8, height = 3)
 ```
 
 ```{r}

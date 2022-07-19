@@ -105,6 +105,8 @@ Different aspects of foraging behaviour, such as the search image and the search
 
 While our model is able to do a good job of allowing us to understand biases at the level of a trial (e.g. conjunction vs. feature search differences \cite{kristjansson2014} or the influence of high value targets compared to low value targets \cite{tagu2020}), we did not originally investigate to what extent our model was able to predict target-by-target behaviour within any given trial. However, as the model is based on target-by-target level information, it is possible for us to use this information to ask: to what extent does our model predict foraging behaviour within a trial? Can it predict exactly which target a participant will pick next? And if the model makes mistakes, can we understand where it is failing, in order to improve our understanding of how human foraging behaviour operates?
 
+The original implementation of our model has little to say about the initial target selection in each trial: as there is not yet a previous target, the stick/switch and proximity parameters are all ignored leaving just a simple salience parameter that allows us to model one set of targets as being more attractive than the other. Taking inspiration from the work on the central viewing bias in the eye movements literature \cite{clarke2014deriving, clarke2017} we develop two models of the spatial bias in initial target selection during visual foraging.  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Materials and Methods}
 
@@ -162,14 +164,12 @@ Note: while our model returns estimates of full posterior probability distributi
 
 \subsection{Software environment}
  
- We used R, Stan, tidyverse version etc. 
+We mainly used R v4.2.0 and rStan v2.26.11 \cite{rstan}. For fitting the model to the data from \cite{clarke2022} we used a university computing cluster with R v and rStan v 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results: Evaluating the Model}
 
-\subsection{Trial-level predictions}
-
-To assess how well our model can account for behaviour at the level of individual trials, we start by stepping through each trial in the data from \cite{clarke2022}. For each target selection, we can estimate how likely each of the remaining items are to be selected using the parameters from our posterior model. As can be seen in Figure \ref{fig:cal}, the model is putting somewhere between 25\% and 75\% of the weight on the target that is selected next, easily outperforming a chance $1/n$ baseline. We can also see  that the model is well calibrated in that the probabilities assigned to the largest target manage to capture how often that target is actually selected. However, we can see a decrease in accuracy when it comes to how often ``runner-up`` candidate items are selected as our model appears to systematically undervalue these (presumably by putting too much of the probabilistic weight on low chance items).
+To assess how well our model can account for behaviour at the level of individual trials, we start by stepping through each trial in the data from \cite{clarke2022}. For each target selection\footnote{Note: for the reasons discussed above, we ignore the initial target selection for now, as the model has very little to say about it.}, in each trial, we can estimate how likely each of the remaining items are to be selected using the parameters from our posterior model. As can be seen in Figure \ref{fig:cal}, the model is putting somewhere between 25\% and 75\% of the weight on the target that is selected next, easily outperforming a chance $1/n$ baseline. We can also see  that the model is well calibrated in that the probabilities assigned to the largest target manage to capture how often that target is actually selected. However, we can see a decrease in accuracy when it comes to how often ``runner-up`` candidate items are selected as our model appears to systematically undervalue these (presumably by putting too much of the probabilistic weight on low chance items).
 
 \begin{figure}[H]
 \centering
@@ -178,7 +178,7 @@ To assess how well our model can account for behaviour at the level of individua
 \label{fig:cal}
 \end{figure}   
 
-Figure \ref{fig:cal2} hints at some individual differences when it comes to how predictable the model is: we can see a lot of variation in the size of the weights. However, interestingly, we find that this variability can be explained by our model parameters: nearly all of the differences between people, and between feature and conjunction conditions, can be explained by the $bP$ parameter, which is our proximity bias. The model is doing a better job with participants who show a stronger proximity bias (see \textit{Supplementary Materials} for more details).
+Figure \ref{fig:cal2} hints at some individual differences when it comes to how predictable the model is: we can see a lot of variation in the size of the weights. However, interestingly, we find that this variability can be explained by our model parameters: nearly all of the differences between different participants, as well as the within-participant differences in the feature and conjunction conditions, can be explained by the $bP$ parameter, which is our proximity bias. The model does a better job of predicting which will be selected next when there is a stronger proximity bias (see \textit{Supplementary Materials} for more details).
 
 \begin{figure}[H]
 \centering
@@ -186,6 +186,10 @@ Figure \ref{fig:cal2} hints at some individual differences when it comes to how 
 \caption{(\textit{left}) Prediction scores for participants. Boxplots show quartile range and the grey lines indicate individual participants. The dots indicate outliers. (\textit{right}) Accuracy of our model varies with the strength of an individual’s \textit{bP} parameter. We can see two clear outlier participants (marked with an X).}
 \label{fig:cal2}
 \end{figure}   
+
+We now look at some example trials and compare the behaviour of our human participants to the predicted behaviour from our model (see Figure \ref{fig:qjep_paths}. When looking at trials in which our model has done a particularly good job of account for the target selections (model accuracy > 80$\%$) we can see that the \textit{disagreements} appear to often occur in cases when the human participant appears to be carrying out some form of local path length optimisation. In general, the cases in which our model suggests a different target from the one the participant actually selected appear reasonable. 
+
+For trials in which we do a worse job of predicting (accuracy <50$\%$) we can see that the human behaviour appears less organised in general and it seems unlikely that adding some form of path-length optimisation to our model would improve accuracy with these participants. We can see this more clearly  
 
 \begin{figure}[H]
 \centering

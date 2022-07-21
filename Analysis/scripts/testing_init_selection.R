@@ -19,15 +19,15 @@ stan_data <- list(N = nrow(d),
                   x = d$x,
                   y = d$y)
 
-# m <- stan("../models/initial_selection_models/init_sel_beta.stan",
-#                 data = stan_data,
-#                 chains = 1,
-#                 iter = 1000,
-#                 refresh = 100)
-# 
-# 
-# 
-# saveRDS(m, "../scratch/init_sel_model.rds")
+m <- stan("../models/initial_selection_models/init_sel_beta.stan",
+                 data = stan_data,
+                 chains = 1,
+                 iter = 1000,
+                 refresh = 100)
+ 
+ 
+ 
+saveRDS(m, "../scratch/init_sel_model.rds")
 
 m <- readRDS("../scratch/init_sel_model.rds")
 
@@ -63,7 +63,7 @@ obs_fits_x <- pmap_df(filter(am,  dim == "x") %>% select(observer, a, b),
   ggplot(aes(x = x, y = z, group = observer)) + geom_path() +
   scale_x_continuous("x")
 
-obs_fits_x <- pmap_df(filter(am,  dim == "x") %>% select(observer, a, b), 
+obs_fits_y <- pmap_df(filter(am,  dim == "y") %>% select(observer, a, b), 
                       compute_beta_dist) %>%
   ggplot(aes(x = x, y = z, group = observer)) + geom_path() +
   scale_x_continuous("y")

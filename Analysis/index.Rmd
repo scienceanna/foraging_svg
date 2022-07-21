@@ -72,7 +72,7 @@ Using these fitted values, we can now step through each target selection in the 
 
 
 ```{r echo = TRUE}
-# item weights pre-computed - see scripts/extract_item_weights_using_model.R
+# item weights pre-computed - see scripts/extract_item_weights_using_model_clarke.R
 a <- readRDS("scratch/qjep_model_weights.rda") %>%
   filter(found != 1) # remove initial selections
 
@@ -167,13 +167,11 @@ a %>% select(max_b2, max_b3, selected_max2, selected_max3) %>%
 
  plt1 + plt2
 
-ggsave("../Figures/qjep_preds.pdf", 
-       plt_b + plt1 + plt2 + 
-         plot_layout(guides = "collect") & theme(legend.position = "bottom"),
-       width = 10, height = 4)
+#ggsave("../Figures/qjep_preds.pdf", 
+#       plt_b + plt1 + plt2 + 
+#         plot_layout(guides = "collect") & theme(legend.position = "bottom"),
+#       width = 10, height = 4)
 
-
-rm(plt1, plt2, plt_a)
 ```
 
 ```{r}
@@ -201,7 +199,7 @@ plt_a
 Is this explained by differences in proximity weighting? i.e., are participants with weaker proximity biases harder to predict? Yes! 
 
 ```{r fig.height = 6, fig.cap = "Accuracy of our model varies with the strength of an individual's model parameters. We can see two clear outlier participants (marked with an X). "}
-# computed in xxxx.R
+# computed in scripts/extract_item_weights_using_model_clarke.R
 fit <- readRDS("scratch/qjep_model_fit.rda") %>%
   full_join(a_acc, by = c("observer", "condition")) %>%
   mutate(is_outlier = if_else(observer %in% c(35, 45), TRUE, FALSE))
@@ -226,9 +224,9 @@ plt_b <- ggplot(filter(fit_plt, parameter == "bP"),
    scale_y_continuous("model accuracy",  
                      limits = c(0.35, 0.8), breaks = seq(0.3, 0.8, 0.1))
 
-ggsave("../Figures/qjep_indiv_diff.pdf", 
-       plt_a + plt_b + 
-         plot_layout(guides = "collect") & theme(legend.position = "right"), width = 8, height = 4)
+#ggsave("../Figures/qjep_indiv_diff.pdf", 
+#       plt_a + plt_b + 
+#         plot_layout(guides = "collect") & theme(legend.position = "right"), width = 8, height = 4)
 ```
 
 As the two outlier participants appear to be doing something different, not captured especially well by our model, we will remove them from the rest of this analysis.
@@ -272,8 +270,9 @@ a %>% select(observer, condition, trial, found, selected_max) %>%
   filter(time_taken < 60) %>%
   mutate(time_taken_s = as.numeric(scale(log(time_taken)))) -> timedat
 
-write_csv(timedat, "scratch/time_per_trial.csv")
+#write_csv(timedat, "scratch/time_per_trial.csv")
 
+# see scripts/fit_time_model.R for full model fitting
 m <- readRDS("scratch/time_model_acc_model.rds")
 
 fixef(m) %>% knitr::kable()
@@ -405,11 +404,11 @@ plts3[[1]] + plts3[[2]] +
 
 
 ```{r}
-ggsave("../Figures/qjep_ex_paths.pdf",
-      ( plts1[[1]] + plts1[[2]]) /( plts3[[1]] + plts3[[3]]), 
-       width = 8, height = 8)
+#ggsave("../Figures/qjep_ex_paths.pdf",
+#      ( plts1[[1]] + plts1[[2]]) /( plts3[[1]] + plts3[[3]]), 
+#       width = 8, height = 8)
 
-rm(trls_easy, trls_mid, trls_hard, plts, qs, plts1, plts2, plts3)
+rm(trls_easy, trls_mid, trls_hard, qs, plts1, plts2, plts3)
 ```
 
 
@@ -436,6 +435,7 @@ It looks like some of the target selections that our model fails to capture are 
 - We will provide the model/simulation with the initial target selection.
 
 ```{r, fig.height=3.5, fig.cap = "(*left*) Histogram comparing the empirical path lengths to simulations from our fitted model. Difference indicates the human path length - the simulated path length. (*right*) Histogram comparing the median path lengths per participant.", message=FALSE}
+# see scripts/compute_empirical_paths.R
 path_lengths <- readRDS("scratch/path_lengths.rda") %>%
   rename(observer = "obs",
          condition = "cond",
@@ -506,7 +506,7 @@ plt1 + plt2b + plot_layout(guides = "collect")  &
 ```
 
 ```{r}
-ggsave("../Figures/path_length.pdf", plt2 + plt2b, width = 8, height = 3)
+#ggsave("../Figures/path_length.pdf", plt2 + plt2b, width = 8, height = 3)
 ```
 
 ```{r}
@@ -547,7 +547,7 @@ d %>% group_by(observer, condition) %>%
   my_theme -> plt_med
 
 plt_all + plt_med 
-ggsave("../Figures/init_sel_hex_plot.pdf", width = 8, height = 4)
+#ggsave("../Figures/init_sel_hex_plot.pdf", width = 8, height = 4)
 
 rm(plt_all, plt_med)
 ```
@@ -558,6 +558,7 @@ We can model this as multi-level beta distribution? Yes, although it seems like 
 
 ```{r fig.cap = "The mean posterior plot for the truncated normal distriubtions for (*left*) $x$ and (*right*) $y$. We can see that a two component mixture model will capture most of the variance in intial target selection."}
 
+# see scripts/testing_init_selection.R
 m <- readRDS("scratch/init_sel_model.rds")
 
 gather_draws(m, u[dim, observer]) %>% 
@@ -603,7 +604,7 @@ am %>% mutate(mu = a/(a+b)) %>%
 
 
 create_post_plot("x") + create_post_plot("y") + plt_mu
-ggsave("../Figures/init_sel_mdl.pdf", width = 10, height = 3.5)
+#ggsave("../Figures/init_sel_mdl.pdf", width = 10, height = 3.5)
 ```
 
 
@@ -696,7 +697,7 @@ gather_draws(m, lambda[observer]) %>%
 
 (plt_x + plt_y) + plt_lambdas
 
-ggsave("../Figures/init_sel2_mdl.pdf", width = 10, height = 3.5)
+#ggsave("../Figures/init_sel2_mdl.pdf", width = 10, height = 3.5)
 ```
 
 
@@ -774,9 +775,9 @@ weights2 %>% group_by(observer) %>%
 
 plt1 / (plt2 + plt3)  + plot_layout(guides = "collect")
 
-ggsave("../Figures/qjep_init_sel_preds.pdf", 
-       plt1 / (plt2 + plt3)  + plot_layout(guides = "collect"),
-       width = 10, height = 6)
+#ggsave("../Figures/qjep_init_sel_preds.pdf", 
+#       plt1 / (plt2 + plt3)  + plot_layout(guides = "collect"),
+#       width = 10, height = 6)
 
 dw %>% group_by(method, observer) %>%
   summarise(score = median(init_weight,),

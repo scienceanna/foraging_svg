@@ -151,7 +151,7 @@ sim_momentum_trial <- function(params, trial = 1,
   for (t in 2:params$m) {
     
     # compute proximity of remaining targets from current target 
-    d_remain <- calc_weights(d_remain, d_found, t)
+    d_remain <- calc_weights(d_remain, d_found, t, params)
     
     # sample the next target
     d_found %>% add_row(
@@ -168,7 +168,7 @@ sim_momentum_trial <- function(params, trial = 1,
   return(d_trial)
 }
 
-calc_weights <- function(d_remain, d_found, t) {
+calc_weights <- function(d_remain, d_found, t, params) {
   
   prev_targ <- d_found$type[t-1]
   match_prev <- if_else(d_remain$type == prev_targ, 1, -1)

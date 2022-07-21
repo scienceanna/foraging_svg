@@ -254,13 +254,12 @@ Both $p_A$ and $b_M$ also have an effect on our model's accuracy, but note there
 
 ## The relationship between time and model accuracy
 
-### Faster people are more predictable
-
-Is this worth doing?
-
 ### Shorter trials are more predictable
 
-```{r fig.cap="The relationship between the time taken to complete a trial and how predictible it is. Dots show empirical data, and the shaded ribbon shows the fixed-effects of a multi-level model. The lines give posterior samples from each indivdiaul observer."}
+It seems like shorter trials are easier for the model to predict, in both the feature and conjunction case (though the relationship appears to be clearer in the feature condition).
+
+```{r, message = FALSE, warning = FALSE, fig.cap="The relationship between the time taken to complete a trial and how predictable it is. Dots show empirical data, and the shaded ribbon shows the fixed-effects of a multi-level model. The lines give posterior samples from each indivdiaul observer."}
+
 a %>% select(observer, condition, trial, found, selected_max) %>%
   full_join(d, by = c("observer", "condition", "trial", "found")) %>%
   group_by(observer, condition, trial) %>%
@@ -280,9 +279,8 @@ fixef(m) %>% knitr::kable()
 ```
 
 
+```{r, message = FALSE, warning = FALSE, fig.cap="The relationship between the time taken to complete a trial and how predictible it is. Dots show empirical data, and the shaded ribbon shows the fixed-effects of a multi-level model. The lines give posterior samples from each individual observer."}
 
-
-```{r fig.cap="The relationship between the time taken to complete a trial and how predictible it is. Dots show empirical data, and the shaded ribbon shows the fixed-effects of a multi-level model. The lines give posterior samples from each individual observer."}
 timedat %>% data_grid(condition, time_taken_s = seq_range(time_taken_s, 5)) %>%
   add_epred_draws(m, re_formula = NA, ndraws = 100) %>%
   ggplot(aes(time_taken_s, fill = condition)) + 
@@ -306,8 +304,10 @@ plt + geom_path(data  = d_pred,
                 alpha = 0.25)
 
 ```
+This relationship appears to hold true if you look at how long it takes participants to select individual targets as well.
 
-```{r}
+
+```{r, message = FALSE, warning = FALSE, fig.cap = "The relationship between the time taken to complete a single target selection and how predictible it is."}
 
 # 
 # my_model <- brm(acc ~ time_taken:condition + (1|observer), timedat)
@@ -412,10 +412,7 @@ rm(trls_easy, trls_mid, trls_hard, qs, plts1, plts2, plts3)
 ```
 
 
-# Trial level
-
-
-```{r}
+```{r eval=FALSE, fig.cap="The relationship between mean weight of the next target and trial number", message=FALSE, include=FALSE}
 
 a %>% group_by(condition, observer, trial) %>%
   summarise(meanb = mean(b),
@@ -423,7 +420,9 @@ a %>% group_by(condition, observer, trial) %>%
 
 ggplot(a_trl, aes(trial, meanb, group = observer)) + geom_jitter(alpha = 0.25) + 
   geom_path(alpha = 0.1) + facet_wrap(~condition) +
-  geom_smooth(method = "lm", group = 1)
+  geom_smooth(method = "lm", group = 1) +
+  ylab('Mean weight of next target') +
+  xlab('Trial number')
 
 ```
 
@@ -554,9 +553,9 @@ rm(plt_all, plt_med)
 
 ## Multi-level Model
 
-We can model this as multi-level beta distribution? Yes, although it seems like people are in one of two clusters. 
+Can we model this as multi-level beta distribution? Yes, although it seems like people are in one of two clusters. 
 
-```{r fig.cap = "The mean posterior plot for the truncated normal distriubtions for (*left*) $x$ and (*right*) $y$. We can see that a two component mixture model will capture most of the variance in intial target selection."}
+```{r fig.cap = "The mean posterior plot for the truncated normal distriubtions for (*left*) $x$ and (*right*) $y$. We can see that a two component mixture model will capture most of the variance in intial target selection.", warning = FALSE}
 
 # see scripts/testing_init_selection.R
 m <- readRDS("scratch/init_sel_model.rds")
@@ -701,10 +700,11 @@ gather_draws(m, lambda[observer]) %>%
 ```
 
 
-
 ## Posterior Predictions
 
-```{r}
+Both models give a similar distribution of target weights and accuracies, and in both cases, participants who start in a corner are easier to predict.
+
+```{r, fig.cap = "(Top): a count of initial weight values predicted from both methods (mixture and multi-level). (Bottom left): the proportion of times the first selection was correct for both methods. (Bottom right): as lambda (the model parameter underlying initial weight) increases, accuracy increases ie. the model is moore accurate for the cases where participants are selecting a corner as their initial target selection."}
 gather_draws(m, a_x[c], b_x[c], a_y[c], b_y[c]) %>%
   group_by(c, .variable) %>%
   summarise(value = mean(.value), .groups = "drop") %>%

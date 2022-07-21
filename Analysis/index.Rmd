@@ -63,9 +63,9 @@ d <- read_csv("data/clarke_2020_qjep.csv", show_col_types = FALSE) %>%
          targ_type = as_factor(targ_type))
 ```
 
-We will use the model fit as detailed in @clarke2020compbio. For simplicity sake, we will characterise all of our estimated posterior probability densities with just the mean value. This gives us four parameters per participant: $b_S, b_A, b_P, b_D$. 
+We will use the model fit as detailed in @clarke2020compbio. For simplicity's sake, we will characterise all of our estimated posterior probability densities with just the mean value. This gives us four parameters per participant: $b_S, b_A, b_P, b_D$. 
 
-Using these fitted values, we can now step through each target selection in the dataset and computer the probability weights our model assigns to each remaining target. For each target selection, we record:
+Using these fitted values, we can now step through each target selection in the dataset and compute the probability weights our model assigns to each remaining target. For each target selection, we record:
 
 - the item assigned the highest weight by our model.
 - whether this item was then selected by the human participant. 
@@ -283,7 +283,7 @@ fixef(m) %>% knitr::kable()
 
 
 
-```{r fig.cap="The relationship between the time taken to complete a trial and how predictible it is. Dots show empirical data, and the shaded ribbon shows the fixed-effects of a multi-level model. The lines give posterior samples from each indivdiaul observer."}
+```{r fig.cap="The relationship between the time taken to complete a trial and how predictible it is. Dots show empirical data, and the shaded ribbon shows the fixed-effects of a multi-level model. The lines give posterior samples from each individual observer."}
 timedat %>% data_grid(condition, time_taken_s = seq_range(time_taken_s, 5)) %>%
   add_epred_draws(m, re_formula = NA, ndraws = 100) %>%
   ggplot(aes(time_taken_s, fill = condition)) + 
@@ -364,7 +364,7 @@ trls_mid  <- filter(a_trl, prop_max > qs[2], prop_max < qs[3]) %>% sample_n(3)
 trls_easy <- filter(a_trl, prop_max > qs[4]) %>% sample_n(3)
 ```
 
-We can see that for these highly predictable trials, we make very few mistakes, and those that we do make appear to be related to some sort of shortest-path optimization on the part of the participant. 
+We can see that for these highly predictable trials, we make very few mistakes, and those mistakes that we do make appear to be related to some sort of shortest-path optimization on the part of the participant. 
 
 ```{r fig.cap = "A random selection of *good* trials. When participants diverge from the model's prediction, it appears to be due to some form of path-length optimisation."}
 
@@ -479,7 +479,7 @@ We can see that overall, the model is not making substantially longer paths thro
 
 Perhaps this is related to predictability (i.e., how well the model can predict a participant's trial level behaviour)?
 
-```{r fig.height=3, fig.cap = "(*left*) A histogram showing the proportion of trials each participant managed a shorter path through the targets than the model's prediction. (*right*) Scatter plot showing the relationship between predictability (accuracy) and whether the model over or under estimates path length. Xs mark the outlier participants discussed above."}
+```{r fig.height=3, fig.cap = "(*left*) A histogram showing the proportion of trials on which each participant managed a shorter path through the targets than the model's prediction. (*right*) Scatter plot showing the relationship between predictability (accuracy) and whether the model over or under estimates path length. Xs mark the outlier participants discussed above."}
 path_lengths %>% filter(type == "difference") %>%
   mutate(shorter = path_length < 0) %>%
   group_by(observer, condition) %>%

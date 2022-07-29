@@ -2,7 +2,7 @@
 %  For support, please attach all files needed for compiling as well as the log file, and specify your operating system, LaTeX version, and LaTeX editor.
 
 %=================================================================
-\documentclass[vision,article,submit,pdftex,moreauthors]{Definitions/mdpi} 
+\documentclass[preprints, article,submit,pdftex,moreauthors]{Definitions/mdpi} 
 % For posting an early version of this manuscript as a preprint, you may use "preprints" as the journal and change "submit" to "accept". The document class line would be, e.g., \documentclass[preprints,article,accept,moreauthors,pdftex]{mdpi}. This is especially recommended for submission to arXiv, where line numbers should be removed before posting. For preprints.org, the editorial staff will make this change immediately prior to posting.
 
 %----------
@@ -43,7 +43,7 @@
 
 %=================================================================
 % Full title of the paper (Capitalized)
-\Title{Foraging: The Triumphant Return}
+\Title{A Bayesian statistical model is able to predict target-by-target selection behaviour in a human foraging task}
 
 % MDPI internal command: Title for citation in the left column
 \TitleCitation{Title}
@@ -54,24 +54,24 @@
 \newcommand{\orcidauthorC}{0000-0003-2677-1965}
 
 % Authors, for the paper (add full first names)
-\Author{Alasdair D.F. Clarke $^{1}$\orcidA{}, Amelia Hunt $^{2}$\orcidB{} and Anna E. Hughes\orcidC{} $^{1,}$*}
+\Author{Alasdair D.F. Clarke $^{1}$\orcidA{}, Amelia R. Hunt $^{2}$\orcidB{} and Anna E. Hughes\orcidC{} $^{1,}$*}
 
 %\longauthorlist{yes}
 
 % MDPI internal command: Authors, for metadata in PDF
-\AuthorNames{Firstname Lastname, Firstname Lastname and Firstname Lastname}
+\AuthorNames{Alasdair D.F. Clarke, Amelia R. Hunt and Anna E. Hughes}
 
 % MDPI internal command: Authors, for citation in the left column
-\AuthorCitation{Lastname, F.; Lastname, F.; Lastname, F.}
+\AuthorCitation{Clarke, A.D.F.; Hunt, A.; Hughes, A.E.}
 % If this is a Chicago style journal: Lastname, Firstname, Firstname Lastname, and Firstname Lastname.
 
 % Affiliations / Addresses (Add [1] after \address if there is only one affiliation.)
 \address{%
-$^{1}$ \quad Affiliation 1; e-mail@e-mail.com\\
-$^{2}$ \quad Affiliation 2; e-mail@e-mail.com}
+$^{1}$ \quad Department of Psychology, University of Essex, Wivenhoe Park, Colchester, UK, CO4 3SQ\\
+$^{2}$ \quad School of Psychology, University of Aberdeen, King's College, Aberdeen, UK, AB24 3FX}
 
 % Contact information of the corresponding author
-\corres{Correspondence: e-mail@e-mail.com; Tel.: (optional; include country code; if there are multiple corresponding authors, add author initials) +xx-xxxx-xxx-xxxx (F.L.)}
+\corres{Correspondence: a.clarke@essex.ac.uk}
 
 % Current address and/or shared authorship
 %\firstnote{Current address: Affiliation 3} 
@@ -114,7 +114,7 @@ The original implementation of our model has little to say about the initial tar
 
 We use a previously published dataset to explore how well our model can account for trial-level behaviour: the visual foraging data from \cite{clarke2022}. This is an attractive dataset for our needs as it is very close to the ``classic'' visual foraging paradigm \citep{kristjansson2014}, yet with a substantially larger sample of participants. (The key difference between paradigms is that \cite{kristjansson2014} used an ipad and finger foraging, while \cite{clarke2022} used a desktop computer and mouse clicks.) Furthermore, we have already demonstrated that our model can capture individual differences in foraging behaviour \citep{clarke2022}. As such, we will only give a brief overview of the data here and refer the reader to these earlier papers for more details.
 
-To test how well our methods generalise, we use the dataset from \citep{kristjansson2014}. We split this into a training dataset (50\% of the original data i.e. 10 trials per participant) and a test dataset (the remaining 50\% of the data). The foraging model is fit on the training dataset, and the parameters from this model are then used to predict behaviour at the level of individual trials. We show that our methods appear to generalise beyond \citep{clarke2022}: further details can be found in the \textit{Supplementary Materials}.
+To test how well our methods generalise, we use the dataset from \citep{kristjansson2014}. We split this into a training dataset (50\% of the original data i.e. 10 trials per participant) and a test dataset (the remaining 50\% of the data). The foraging model is fit on the training dataset, and the parameters from this model are then used to predict behaviour at the level of individual trials. We show that our methods appear to generalise beyond \citep{clarke2022}: further details can be found in the \textit{Supplementary Materials: Part 2}.
 
 
 \subsection{A Model for Visual Foraging}
@@ -164,12 +164,12 @@ Note: while our model returns estimates of full posterior probability distributi
 
 \subsection{Software environment}
  
-We mainly used R v4.2.0 and rStan v2.26.11 \cite{rstan}. For fitting the model to the data from \cite{clarke2022} we used a university computing cluster with R v and rStan v 
+We mainly used R v4.2.0 and rStan v2.26.11 \cite{rstan}. For fitting the model to the data from \cite{clarke2022} we used a university computing cluster with R v3.6.3 and rStan v2.19.2.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Results: Evaluating the Model}
 
-To assess how well our model can account for behaviour at the level of individual trials, we start by stepping through each trial in the data from \cite{clarke2022}. For each target selection\footnote{Note: for the reasons discussed above, we ignore the initial target selection for now, as the model has very little to say about it.}, in each trial, we can estimate how likely each of the remaining items are to be selected using the parameters from our posterior model. As can be seen in Figure \ref{fig:cal}, the model is putting somewhere between 25\% and 75\% of the weight on the target that is selected next, easily outperforming a chance $1/n$ baseline. We can also see  that the model is well calibrated in that the probabilities assigned to the largest target manage to capture how often that target is actually selected. However, we can see a decrease in accuracy when it comes to how often ``runner-up`` candidate items are selected as our model appears to systematically undervalue these (presumably by putting too much of the probabilistic weight on low chance items).
+To assess how well our model can account for behaviour at the level of individual trials, we start by stepping through each trial in the data from \cite{clarke2022}. For each target selection\footnote{Note: for the reasons discussed above, we ignore the initial target selection for now, as the model has very little to say about it. We return to this issue in section 4.}, in each trial, we can estimate how likely each of the remaining items are to be selected using the parameters from our posterior model. As can be seen in Figure \ref{fig:cal}, the model is putting somewhere between 25\% and 75\% of the weight on the target that is selected next, easily outperforming a chance $1/n$ baseline. We can also see  that the model is well calibrated in that the probabilities assigned to the largest target manage to capture how often that target is actually selected. However, we can see a decrease in accuracy when it comes to how often ``runner-up`` candidate items are selected as our model appears to systematically undervalue these (presumably by putting too much of the probabilistic weight on low chance items).
 
 \begin{figure}[H]
 \centering
@@ -178,7 +178,7 @@ To assess how well our model can account for behaviour at the level of individua
 \label{fig:cal}
 \end{figure}   
 
-Figure \ref{fig:cal2} hints at some individual differences when it comes to how predictable the model is: we can see a lot of variation in the size of the weights. However, interestingly, we find that this variability can be explained by our model parameters: nearly all of the differences between different participants, as well as the within-participant differences in the feature and conjunction conditions, can be explained by the $bP$ parameter, which is our proximity bias. The model does a better job of predicting which will be selected next when there is a stronger proximity bias (see \textit{Supplementary Materials} for more details).
+Figure \ref{fig:cal2} hints at some individual differences when it comes to how predictable the model is: we can see a lot of variation in the size of the weights. However, interestingly, we find that this variability can be explained by our model parameters: nearly all of the differences between different participants, as well as the within-participant differences in the feature and conjunction conditions, can be explained by the $bP$ parameter, which is our proximity bias. The model does a better job of predicting which will be selected next when there is a stronger proximity bias (see \textit{Supplementary Materials: Part 1} for more details).
 
 \begin{figure}[H]
 \centering
@@ -187,8 +187,7 @@ Figure \ref{fig:cal2} hints at some individual differences when it comes to how 
 \label{fig:cal2}
 \end{figure}   
 
-We now look at some example trials and compare the behaviour of our human participants to the predicted behaviour from our model (see Figure \ref{fig:qjep_paths}. When looking at trials in which our model has done a particularly good job of account for the target selections (model accuracy > 80$\%$) we can see that the \textit{disagreements} appear to often occur in cases when the human participant appears to be carrying out some form of local path length optimisation. In general, the cases in which our model suggests a different target from the one the participant actually selected appear reasonable. 
-
+We now look at some example trials and compare the behaviour of our human participants to the predicted behaviour from our model (see Figure \ref{fig:qjep_paths}). When looking at trials in which our model has done a particularly good job of account for the target selections (model accuracy > 80$\%$) we can see that the \textit{disagreements} appear to often occur in cases when the human participant appears to be carrying out some form of local path length optimisation. In general, the cases in which our model suggests a different target from the one the participant actually selected appear reasonable. 
 
 
 \begin{figure}[H]
@@ -198,12 +197,12 @@ We now look at some example trials and compare the behaviour of our human partic
 \label{fig:qjep_paths}
 \end{figure} 
 
-For trials in which we do a worse job of predicting (accuracy <50$\%$) we can see that the human behaviour appears less organised in general and it seems unlikely that adding some form of path-length optimisation to our model would improve accuracy with these participants. We can see this more clearly  
+For trials in which we do a worse job of predicting (accuracy <50$\%$) we can see that the human behaviour appears less organised in general and it seems unlikely that adding some form of path-length optimisation to our model would improve accuracy with these participants. We can see this more clearly in Figure \ref{fig:qjep_path_lengths}: while our model does a good job of capturing the average total path length, there is considerable variation with some participants generating shorter paths and some longer. We can see  that this appears to be systematically related to how well our model can predict behaviour. 
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=12 cm]{Figures/path_length.pdf}
-\caption{(\textit{left})  (\textit{right})}
+\caption{(\textit{left}) Histogram showing the distribution of the median path lengths for our human participants and model (fitted to each human participant via the random effect structure). (\textit{right}) The relationship between model accuracy and the proportion of trials in which the human participant has a shorter total path length than predicted.}
 \label{fig:qjep_path_lengths}
 \end{figure} 
 
@@ -211,7 +210,7 @@ For trials in which we do a worse job of predicting (accuracy <50$\%$) we can se
 
 One weakness of the foraging model by \cite{clarke2022foraging} is that it makes little attempt to predict which item will be selected first. In this section we aim to improve this by modelling participant bias (or preference) in their choice of initial target selection. Our approach is inspired by previous work on the central bias in scene viewing \cite{clarke_tatler2014, clarke2017}. These studies fit truncated Gaussian distributions to the  $(x,y)$ coordinates of fixation locations. Here we will do similar, and fit beta distributions\footnote{We use beta distributions here as ADFC couldn't work out the syntax for specifying a mixture model using truncated Gaussians in Stan. But, in hindsight, beta distributions are probably a better choice anyway!} to locations of the initial target selections in the visual foraging task. 
 
-Figure \ref{fig:qjep_init_sel_hex} shows the distribution of the locations of first target selections. We can see that unlike the central bias in fixations during scene viewing, the distribution of initial target locations appear to be bimodal: while most targets are positioned in the top left hand corner, there is a second smaller distribution of central target selections. This appears to be due to different participants choosing to utilise different strategies rather than within-subject variation. However, we have no evidence that these different initial strategies affect the model parameters in any systematic way (see \textit{Supplementary Material}). We try two different modelling approaches (multi-level and mixture) to assess whether the less complex mixture model is able to account for the patterns of starting positions seen.
+Figure \ref{fig:qjep_init_sel_hex} shows the distribution of the locations of first target selections. We can see that unlike the central bias in fixations during scene viewing, the distribution of initial target locations appear to be bimodal: while most targets are positioned in the top left hand corner, there is a second smaller distribution of central target selections. This appears to be due to different participants choosing to utilise different strategies rather than within-subject variation. However, we have no evidence that these different initial strategies affect the model parameters in any systematic way (see \textit{Supplementary Materials: Part 1}). We try two different modelling approaches (multi-level and mixture) to assess whether the less complex mixture model is able to account for the patterns of starting positions seen.
 
 \begin{figure}[H]
 \centering
@@ -222,7 +221,7 @@ Figure \ref{fig:qjep_init_sel_hex} shows the distribution of the locations of fi
 
 \subsection{Multi-level Modelling Results}
 
-We first consider a multi-level model in which we fit beta distributions to the $x$ and $y$ coordinates of each participant's initial target selections\footnote{Full details of the analysis can be found in the \textit{Supplementary Materials}.}:
+We first consider a multi-level model in which we fit beta distributions to the $x$ and $y$ coordinates of each participant's initial target selections\footnote{Full details of the analysis can be found in the \textit{Supplementary Materials: Part 1}.}:
 
 \begin{equation}
     x_i \sim Beta(a_{x,i}, b_{x,i})
@@ -273,26 +272,26 @@ To compare the two approaches, we assess how well they fit the empirical data: w
 \begin{figure}[H]
 \centering
 \includegraphics[width=12 cm]{Figures/qjep_init_sel_preds.pdf}
-\caption{(\textit{Top}): a count of initial weight values predicted from both methods (mixture and multi-level). (\textit{Bottom left}): the proportion of times the first selection was correct for both methods.  (\textit{Bottom left}): as lambda (the model parameter underlying initial weight) increases, accuracy increases i.e. the model is more accurate for the cases where participants are selecting a corner as their initial target selection.} 
+\caption{(\textit{Top}): a count of initial weight values predicted from both methods (mixture and multi-level). (\textit{Bottom left}): the proportion of times the first selection was correct for both methods.  (\textit{Bottom right}): as lambda (the model parameter underlying initial weight) increases, accuracy increases i.e. the model is more accurate for the cases where participants are selecting a corner as their initial target selection.} 
 \label{fig:qjep_init_sel_pred}
 \end{figure} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
 
-In our original model of visual foraging \citep{clarke2022foraging}, we were able to robustly measure aggregate parameters that underlie behaviour, at both an overall mean level across an experiment, and at the level of individual participants. In the current manuscript, we asked a more difficult question: could this model make target-by-target predictions, guessing which target would be picked next on any given trial? Despite this being a relatively difficult task, we found that our model was in some cases over 80\% accurate, demonstrating that at least in some cases, participants' behaviour in this task is remarkably predictable. 
+In our original model of visual foraging \citep{clarke2022foraging}, we were able to robustly measure aggregate parameters that underlie behaviour, at both an overall mean level across an experiment, and at the level of individual participants. In the current manuscript, we asked a more difficult question: could this model make target-by-target predictions, guessing which target would be picked next within a trial? Despite this being a relatively difficult task, we found that for some trials our model was over 80\% accurate, demonstrating that at least in some cases, participants' behaviour in this task is remarkably predictable. 
 
-A benefit of our approach is that it is relatively easy to interrogate the model to try to understand why prediction accuracy is higher for some participants and trials than others. The model is generally better at feature search compared to conjunction search, and also seems to be better at predicting participants with a stronger proximity bias. The model also seems to assign more weight to 'runner-up' items than real humans do, perhaps suggesting a 'peakier' choice distribution for real foragers, with only a few targets seriously considered, and everything else being approximately zero weighted. 
+A benefit of our approach is that it is relatively easy to interrogate the model to try to understand why prediction accuracy is higher for some participants and trials than others. The model is generally better at feature search compared to conjunction search, and also seems to be better at predicting participants with a stronger proximity bias. The model also seems to assign more weight to 'runner-up' items than real humans do, perhaps suggesting a 'peakier' choice distribution, but with fatter tails, for real foragers, with only a few nearby targets seriously considered, but with some low probability of selecting a further away target. 
  
-However, we can also delve deeper into exploratory hypotheses about other factors that might influence predictability. One suggestion is that the people who our model is able to predict are in some way the most 'optimal'. If this is the case, we might expect that model predictability should correlate with how good people are at the task, although we do not find any evidence that model accuracy correlates with reaction time on a by-participant or by-trial basis (see \textit{Supplementary Materials}). This may be due to the fact that this task was not time-limited, and instead participants were encouraged to be as accurate as possible (in fact, the trial restarted if the participant clicked on a non-target \citep{clarke2022}). However, there is some evidence that on a target-by-target basis, faster moves from one target to the next are more easily predicted by the model (see \textit{Supplementary Materials}). This likely is linked to the fact that our model is better at predicting participants with a stronger proximity bias, as targets that are closer to the previous target are also likely to be selected more quickly. Intuitively, it makes sense that the model struggles to make predictions when a participant has exhausted a local patch and may need to make a bigger jump to a more distant area to carry on collecting targets, as there may be multiple candidates and distance may no longer be such a good predictor (for example, people may choose to move to the next most densely populated patch). 
+However, we can also delve deeper into exploratory hypotheses about other factors that might influence predictability. One suggestion is that the people who our model is able to predict are in some way the most 'optimal'. If this is the case, we might expect that model predictability should correlate with how good people are at the task. There is some evidence that on a trial-by-trial basis, shorter trials are easier for the model to predict, and on a target-by-target basis, faster moves from one target to the next are more easily predicted by the model (see \textit{Supplementary Materials: Part 1}). This likely is linked to the fact that our model is better at predicting participants with a stronger proximity bias, as targets that are closer to the previous target are also likely to be selected more quickly. Intuitively, it makes sense that the model struggles to make predictions when a participant has exhausted a local patch and may need to make a bigger jump to a more distant area to carry on collecting targets, as there may be multiple candidates and distance may no longer be such a good predictor (for example, people may choose to move to the next most densely populated patch). 
  
-There has been some previous work on within-trial behaviour in the context of foraging. For example, \citep{tagu2020} found that inter-target times vary across a trial (with targets selected later in the trial being slower) and inter-target distances also vary (with targets selected later in the trial having greater inter-target distances). Similarly, \citep{thornton2022foraging} showed that switches between target categories can be characterised by a change in foraging 'tempo', and if participants are forced to forage at a particular speed, by asking them to synchronise with an auditory signal, higher tempos led to a systematic decrease in the probability of participants switching between target categories. In the current version of the model, we do not consider time explicitly (although distance is likely to be highly correlated with time in this task). However, it would be possible to extend the model to incorporate timing information, and this may help to improve the target-by-target predictions.
+There has been some previous work on within-trial behaviour in the context of foraging. For example, \citep{tagu2020} found that inter-target times vary across a trial (with targets selected later in the trial being slower) and inter-target distances also vary (with targets selected later in the trial having greater inter-target distances). Similarly, \citep{thornton2022foraging} showed that switches between target categories can be characterised by a change in foraging 'tempo', and if participants are forced to forage at a particular speed, by asking them to synchronise with an auditory signal, higher tempos led to a systematic decrease in the probability of participants switching between target categories. In the current version of the model, we do not consider time explicitly (although distance is likely to be correlated with time in this task). However, it would be possible to extend the model to incorporate timing information, and this may help to improve the target-by-target predictions.
  
-From inspection of Figure \ref{fig:qjep_paths}, we noticed that in some cases, participants may be using a type of local path minimisation procedure, selecting a further away target in order to minimise overall path length, which the model does not always seem to predict. Could this help to explain some of the mistakes the model makes? Overall, the model doesn't seem to make substantially longer paths through the items than the human participants (see \textit{Supplementary Materials}). However, there is a relationship between model accuracy and the proportion of times that participants select paths shorter than the model: as model accuracy increases, people seem to be more likely to have paths shorter than the model predicts. This seems to suggest that path minimisation is not a good explanation for the participants our model is failing to capture, and instead the people that are difficult to predict are taking longer paths than the model thinks they should take.
+From inspection of Figure \ref{fig:qjep_paths}, we noticed that in some cases, participants may be using a type of local path minimisation procedure, selecting a further away target in order to minimise overall path length, which the model does not always seem to predict. Could this help to explain some of the mistakes the model makes? Overall, the model doesn't seem to make substantially longer paths through the items than the human participants. However, there is a relationship between model accuracy and the proportion of times that participants select paths shorter than the model: as model accuracy increases, people seem to be more likely to have paths shorter than the model predicts. This seems to suggest that path minimisation is not a good explanation for the participants our model is failing to capture, and instead the people that are difficult to predict are taking longer paths than the model thinks they should take.
 
 Our exploratory analyses seem to hint at the idea that the people who are difficult for the model to predict are those who do not behave in a manner that optimises path length. It could be that these participants are simply unpredictable, and do not behave in a consistent manner on a target-by-target basis, making it difficult for a model to predict their behaviour at this level of granularity. However, it is possible that there are other factors that we have not taken into account that could further help explain these discrepancies. For example, it is possible that relatively unpredictable participants use multiple rules and switch between them in ways that we are not currently captured in the model. Some participants may also lose track of where they are more frequently (perhaps due to attentional lapses) and thus may show foraging patterns that are predictable apart from unpredictable discontinuities, which again may not be easy to model. Finally, the displays had artificial discontinuities (i.e. screen edges) which may lead to different behaviour in different participants: some may carry out the task as if they are reading, reaching the right hand edge and then swinging back to the left, whereas others may 'bounce' off an edge they have just reached. Our model may well be able to predict the latter, but could struggle with the former behaviour.
 
-To a large extent, initial item selection strategy seems to be stable within a participant, with people either starting in the corner or the centre of the screen. Our model is therefore also relatively accurate for selecting the initial target, selecting the correct target in around half of the trials (with a mixture model performing similarly to a multi-level model with many more parameters). Participants who prefer the top left corner were easiest to predict, probably because these participants formed the majority group in this experiment. Our results are congruent with \citep{kristjansson2022moving}, who found a bottom left bias in a 3D environment They suggest this may be an advantageous strategy because it allows your foraging to be more organised (e.g. in an 'S-shape', as has been found in real world search tasks \citep{riggs2017importance}). The smaller group of participants who prefer to start in the centre of the screen may be displaying similar behaviour to the well-known central bias in eye movements \citep{tatler2007central, tseng2009quantifying, clarke2014deriving} However, it is worth noting that these findings probably depend strongly on the context of the task. For example, there was no obvious central bias subgroup in \citep{kristjansson2014}, possibly reflecting the fact that this experiment was carried out on an iPad, compared to the computer screen and mouse used in \citep{clarke2022}. One challenge for future modelling work is to what extent we should try to account for these types of task-specific details: by incorporating them, we can generate better predictions for the experiment we are currently modelling, but perhaps at the cost of generalisability to other paradigms.
+To a large extent, initial item selection strategy seems to be stable within a participant, with people either starting in the corner or the centre of the screen. Our model is therefore also relatively accurate for selecting the initial target, selecting the correct target in around half of the trials (with a mixture model performing similarly to a multi-level model with many more parameters). Participants who prefer the top left corner were easiest to predict, probably because these participants formed the majority group in this experiment. Our results are congruent with \citep{kristjansson2022moving}, who found a bottom left bias in a 3D environment. They suggest this may be an advantageous strategy because it allows your foraging to be more organised (e.g. in an 'S-shape', as has been found in real world search tasks \citep{riggs2017importance}). The smaller group of participants who prefer to start in the centre of the screen may be displaying similar behaviour to the well-known central bias in eye movements \citep{tatler2007central, tseng2009quantifying, clarke2014deriving} However, it is worth noting that these findings probably depend strongly on the context of the task. For example, there was no obvious central bias subgroup in \citep{kristjansson2014}, possibly reflecting the fact that this experiment was carried out on an iPad, compared to the computer screen and mouse used in \citep{clarke2022}. One challenge for future modelling work is to what extent we should try to account for these types of task-specific details: by incorporating them, we can generate better predictions for the experiment we are currently modelling, but perhaps at the cost of generalisability to other paradigms.
 
 One of the key benefits of computational models is that they allow us to rigorously test how well we are able to predict behaviour, and can provide insights into what factors we are not capturing that may have important influences on how participants complete a task. We have demonstrated that our foraging model \cite{clarke2022foraging} is not only able to predict behaviour in aggregate, but can also make reasonable predictions at the target-by-target level. It is particularly good if a participant has a strong proximity bias, and on 'feature' trials where participants are normally switching between target types fairly frequently. It is also good at predicting where participants will start on a trial. The model finds it more difficult to predict 'discontinuous' jumps, which could be caused by a range of factors: a more difficult foraging task (e.g. conjunction searches), local path length minimisation, inattention, or aspects of the physical search space (e.g. edges of the screen). However, it would be possible to extend the model to incorporate these factors e.g. by incorporating a heuristic that would allow for local path minimisation, or introducing time as a predictor in the model. Our findings also suggest possible future directions for empirical work, such as evaluating the effect of inattention on foraging behaviour, or how the foraging targets are organised in space. We suggest that computational modelling is a powerful tool for helping us to understand behaviour, both by incorporating previous research into a shared framework, and by making testable predictions for future work.
 
@@ -309,9 +308,9 @@ One of the key benefits of computational models is that they allow us to rigorou
 % \supplementary{The following are available at \linksupplementary{s1}, Figure S1: title, Table S1: title, Video S1: title. A supporting video article is available at doi: link.} 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\authorcontributions{Conceptualization, A.D.F.C., A.H. and A.E.H.; methodology, A.D.F.C.; software, A.D.F.C.; formal analysis, A.D.F.C.; data curation, A.D.F.C., and A.E.H.; writing---original draft preparation, A.D.F.C.; writing---review and editing, A.H. and A.E.H.; visualization, A.D.F.C. and A.E.H.; funding acquisition, A.D.F.C. and A.H. All authors have read and agreed to the published version of the manuscript.}
+\authorcontributions{Conceptualization, A.D.F.C., A.R.H. and A.E.H.; methodology, A.D.F.C.; software, A.D.F.C.; formal analysis, A.D.F.C.; data curation, A.D.F.C., and A.E.H.; writing---original draft preparation, A.D.F.C.; writing---review and editing, A.R.H. and A.E.H.; visualization, A.D.F.C. and A.E.H.; funding acquisition, A.D.F.C. and A.R.H. All authors have read and agreed to the published version of the manuscript.}
 
-\funding{This research was funded by NAME OF FUNDER grant number XXX.}
+\funding{This research was funded by the Economic and Social Research Council grant number ES/S016120/1 to A.D.F.C and A.R.H.}
 
 \institutionalreview{Not applicable (secondary data analysis only).}
 

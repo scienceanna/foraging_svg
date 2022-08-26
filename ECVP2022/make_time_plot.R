@@ -35,16 +35,6 @@ ggplot(b, aes(x = RTd, y = acc, colour = condition)) +
 
 
 
-a %>% select(observer, condition, trial, found, selected_max) %>%
-  full_join(d, by = c("observer", "condition", "trial", "found")) %>%
-  group_by(observer, condition, trial) %>%
-  summarise(time_taken = max(RT),
-            acc = mean(selected_max, na.rm = T), 
-            .groups = "drop") %>%
-  filter(time_taken < 60) %>%
-  mutate(time_taken_s = as.numeric(scale(log(time_taken)))) -> timedat
-
-
 
 a %>% select(observer, condition, trial, found, selected_max) %>%
   full_join(d, by = c("observer", "condition", "trial", "found")) %>%
@@ -55,18 +45,31 @@ a %>% select(observer, condition, trial, found, selected_max) %>%
     RTd = RT - lag(RT),
     RTd = if_else(found == 1, 0, RTd),
     logRTd = log2(RTd)) %>%
-  filter(is.finite(logRTd)) -> qq
+  filter(is.finite(logRTd)) %>%
+  select(observer, condition, trial, found, selected_max, logdist, logRTd) -> qq
 
-%>%
-  ggplot(aes(log(dist), logRTd)) + geom_point(alpha = 0.1)
 
 
 
 library(brms)
 options(mc.cores = 6)
-m <- brm(selected_max ~ logdist*RTd*condition - logdist:RTd:condition + (1|observer), qq, 
-         family = "binomial",
+
+my_priors = c(prior(normal(0, 1), class = "Intercept"),
+              prior(normal(0, 0.5), class = "b") )
+
+
+m <- brm(selected_max ~ logdist*logRTd + (1|observer), 
+         data = filter(qq, found == 10), 
+         family = "bernoulli",
          chains = 4, cores = 4)
 
+qq %>% modelr::data_grid(logRTd = seq_range(logRTd, 5), logdist = seq_range(logdist, 100)) %>%
+  add_epred_draws(m, re_formula = NA) %>%
+  mutate(logRTd = as_factor(logRTd)) %>%
+  group_by(logRTd, logdist) %>%
+  median_hdci() %>%
+  ggplot(aes(x = logdist, y = .epred, ymax = .upper, ymin = .lower, fill = logRTd)) +
+  geom_path() + 
+  geom_lineribbon(alpha = 0.33)
 
 

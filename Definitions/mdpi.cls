@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%	MDPI class for LaTeX files	 25 March 2022
+%%%%	MDPI class for LaTeX files	 12 August 2022
 %% %%	For any information please send an e-mail to:
 %% %%		latex@mdpi.com
 %% %%
@@ -21,7 +21,7 @@
 
 %% IDENTIFICATION
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{Definitions/mdpi}[25/03/2022 MDPI paper class]
+\ProvidesClass{Definitions/mdpi}[12/08/2022 MDPI paper class]
 
  %% PRELIMINARY DECLARATIONS
 \LoadClass[10pt,a4paper]{article}
@@ -247,6 +247,7 @@
 		\OR \equal{\@journal}{econometrics}
 		\OR \equal{\@journal}{economies}
 		\OR \equal{\@journal}{genealogy}
+		\OR \equal{\@journal}{histories}
 		\OR \equal{\@journal}{humanities}
 		\OR \equal{\@journal}{ijfs}
 		\OR \equal{\@journal}{jintelligence}
@@ -254,11 +255,10 @@
 		\OR \equal{\@journal}{jrfm}
 		\OR \equal{\@journal}{languages}
 		\OR \equal{\@journal}{laws}
+		\OR \equal{\@journal}{literature}
 		\OR \equal{\@journal}{religions}
 		\OR \equal{\@journal}{risks}
 		\OR \equal{\@journal}{socsci}
-		\OR \equal{\@journal}{literature}
-		\OR \equal{\@journal}{histories}
 		}
 }
 
@@ -306,6 +306,7 @@
 \definecolor{bluecite}{HTML}{0875b7}
 
 % After TeXLive 2021, \AddToHook{begindocument} is needed to make sure that hyperref is loaded last. \ifdef{\AddToHook{begindocument}}{ is needed for backwards-compatibility because \AddToHook{begindocument} did not yet exist in 2020.
+% After TeXLive 2022, \AddToHook{begindocument/before}{} is needed and  \DeclareHookRule{begindocument}{hyperref}{before}{mdpi} needs to be added because of the new version of hyperref.
 \newcommand{\hyperrefpackage}{
 \ifthenelse{\equal{\@arttype}{Book}}{
 	\RequirePackage[unicode=true,
@@ -345,7 +346,8 @@
 }
 }
 \ifdef{\AddToHook}{
-	\AddToHook{begindocument}{ 
+\DeclareHookRule{begindocument}{hyperref}{before}{mdpi}
+	\AddToHook{begindocument/before}{ 
 		\hyperrefpackage
 		}
 	}{
@@ -526,6 +528,8 @@
 \newcommand{\LSID}[1]{\gdef\@LSID{#1}}
 \def\@datereceived{}
 \newcommand{\datereceived}[1]{\gdef\@datereceived{#1}} 
+\def\@daterevised{}
+\newcommand{\daterevised}[1]{\gdef\@daterevised{#1}} 
 \def\@dateaccepted{}
 \newcommand{\dateaccepted}[1]{\gdef\@dateaccepted{#1}} 
 \newcommand{\datepublished}[1]{\gdef\@datepublished{#1}} 
@@ -583,6 +587,11 @@
 \newcommand{\reftitle}[1]{\gdef\@reftitle{#1}}
 \def\@longauthorlist{}
 \newcommand{\longauthorlist}[1]{\gdef\@longauthorlist{#1}}
+\def\@encyclopediadef{}
+\newcommand{\encyclopediadef}[1]{\gdef\@encyclopediadef{#1}}
+\def\@addhighlights{}
+\newcommand{\addhighlights}[1]{\gdef\@addhighlights{#1}}
+
 
 %% ORCID
 % Make Orcid icon
@@ -618,7 +627,7 @@
 			\fancyhead[R]{
 				\footnotesize %
 				S\thepage{} of S\pageref*{LastPage}%
-				\\\rule{\textwidth}{0.4pt}%
+				\\\rule{\fulllength}{0.4pt}%
 				}%
 			\fancyhead[L]{
 				\footnotesize %
@@ -636,7 +645,7 @@
 					. {\changeurlcolor{black}%
         					\url{https://doi.org/\@doinum}}%
 					}%
-					\\\vspace{-2pt}\rule{\textwidth}{0.4pt}%
+					\\\vspace{-2pt}\rule{\fulllength}{0.4pt}%
 				}%
 			}%
 		}{
@@ -703,11 +712,6 @@
 					\href{https://www.mdpi.com/journal/\@journal}{
 					\includegraphics[height=1.2cm]{Definitions/\@journal-logo.eps}}%
 					\hfill
-%					\ifthenelse{\equal{\@journal}{proceedings}}{
-%						\href{https://www.mdpi.com/journal/\@journal}{
-%						\includegraphics[height=1.2cm]{Definitions/logo-conference.eps}
-%						\hfill}
-%						}{}
 					\ifthenelse{\equal{\@journal}{scipharm}}{%
 						\href{https://www.mdpi.com}{\includegraphics[height=1cm]{Definitions/logo-mdpi-scipharm.eps}}%
 						}{%
@@ -825,6 +829,10 @@
 			Published: \@datepublished\\\vspace{-12pt}
 			}{%
 			Received: \@datereceived\\
+			\ifthenelse{\equal{\@daterevised}{\@empty}}{%
+				}{%
+				Revised: \@daterevised\\%
+				}
 			Accepted: \@dateaccepted\\
 			Published: \@datepublished
 			\ifthenelse{\equal{\@datecorrected}{\@empty}}{%
@@ -1025,17 +1033,21 @@
 	\vspace{12pt}
 	\par
 }
+\ifthenelse{\equal{\@addhighlights}{\@empty}}{}{
+	\noindent\textbf{Highlights:\\\vspace{-12pt}}\addhighlights % redefined in .tex to use itemize
+	\vspace{12pt}
+	\par
+}
 \ifthenelse{\equal{\@abstract}{\@empty}}{}{
- 	\ifthenelse{\equal{\@journal}{encyclopedia}}{
-    		\noindent\textbf{Definition:\space}\@abstract
- 		\vspace{12pt}
- 		\par
-      		}{
- 		\noindent\textbf{Abstract:\space}\@abstract
- 		\vspace{12pt}
- 		\par
- 	}
- }
+	\noindent\textbf{Abstract:\space}\@abstract
+	\vspace{12pt}
+	\par
+}
+\ifthenelse{\equal{\@encyclopediadef}{\@empty}}{}{
+	\noindent\textbf{Definition:\space}\@encyclopediadef
+	\vspace{12pt}
+	\par
+}
 %10
 % For journal Data:
 \ifthenelse{\equal{\@dataset}{\@empty}}{}{

@@ -1,0 +1,135 @@
+\begin{thebibliography}{999}
+
+\bibitem[Dawkins(1971)]{dawkins1971}
+Dawkins, M.
+\newblock Shifts of ‘attention’in chicks during feeding.
+\newblock {\em Animal Behaviour} {\bf 1971}, {\em 19},~575--582.
+
+\bibitem[Kristj{\'a}nsson \em{et~al.}(2014)Kristj{\'a}nsson, J{\'o}hannesson,
+  and Thornton]{kristjansson2014}
+Kristj{\'a}nsson, {\'A}.; J{\'o}hannesson, {\'O}.I.; Thornton, I.M.
+\newblock Common attentional constraints in visual foraging.
+\newblock {\em PloS one} {\bf 2014}, {\em 9},~e100752.
+
+\bibitem[Charnov(1976)]{charnov1976}
+Charnov, E.L.
+\newblock Optimal foraging, the marginal value theorem.
+\newblock {\em Theoretical population biology} {\bf 1976}, {\em 9},~129--136.
+
+\bibitem[Bartumeus \em{et~al.}(2005)Bartumeus, Da~Luz, Viswanathan, and
+  Catalan]{bartumeus2005}
+Bartumeus, F.; Da~Luz, M.; Viswanathan, G.; Catalan, J.
+\newblock Animal search strategies: A quantitative random-walk analysis.
+\newblock {\em Ecology} {\bf 2005}, {\em 86},~3078 – 3087.
+\newblock Cited by: 442; All Open Access, Green Open Access,
+  {\url{https://doi.org/10.1890/04-1806}}.
+
+\bibitem[Benhamou(2007)]{benhamou2007}
+Benhamou, S.
+\newblock How many animals really do the Lévy walk?
+\newblock {\em Ecology} {\bf 2007}, {\em 88},~1962 – 1969.
+\newblock Cited by: 307, {\url{https://doi.org/10.1890/06-1769.1}}.
+
+\bibitem[Dukas and Ellner(1993)]{Dukas1993}
+Dukas, R.; Ellner, S.
+\newblock Information processing and prey detection.
+\newblock {\em Ecology} {\bf 1993}, {\em 74},~1337--1346.
+
+\bibitem[Clarke \em{et~al.}(2022)Clarke, Hunt, and Hughes]{clarke2022foraging}
+Clarke, A.D.; Hunt, A.R.; Hughes, A.E.
+\newblock Foraging as sampling without replacement: A Bayesian statistical
+  model for estimating biases in target selection.
+\newblock {\em PLOS Computational Biology} {\bf 2022}, {\em 18},~e1009813.
+
+\bibitem[Thornton \em{et~al.}(2020)Thornton, Nguyen, and
+  Kristj{\'a}nsson]{thornton2020}
+Thornton, I.M.; Nguyen, T.T.; Kristj{\'a}nsson, {\'A}.
+\newblock Foraging tempo: Human run patterns in multiple-target search are
+  constrained by the rate of successive responses.
+\newblock {\em Quarterly Journal of Experimental Psychology} {\bf 2020}, p.
+  1747021820961640.
+
+\bibitem[Clarke \em{et~al.}(2022)Clarke, Irons, James, Leber, and
+  Hunt]{clarke2022}
+Clarke, A.D.; Irons, J.L.; James, W.; Leber, A.B.; Hunt, A.R.
+\newblock Stable individual differences in strategies within, but not between,
+  visual search tasks.
+\newblock {\em Quarterly Journal of Experimental Psychology} {\bf 2022}, p.
+  1747021820929190.
+
+\bibitem[Tagu and Kristj{\'a}nsson(2021)]{tagu_kristjansson_2021}
+Tagu, J.; Kristj{\'a}nsson, {\'A}.
+\newblock The selection balance: contrasting value, proximity and priming in a
+  multitarget foraging task,  2021.
+\newblock {\url{https://doi.org/10.31234/osf.io/48pzy}}.
+
+\bibitem[Tagu and Kristj{\'a}nsson(2020)]{tagu2020}
+Tagu, J.; Kristj{\'a}nsson, {\'A}.
+\newblock Dynamics of attentional and oculomotor orienting in visual foraging
+  tasks.
+\newblock {\em Quarterly Journal of Experimental Psychology} {\bf 2020}, p.
+  1747021820919351.
+
+\bibitem[Clarke and Tatler(2014)]{clarke2014deriving}
+Clarke, A.D.; Tatler, B.W.
+\newblock Deriving an appropriate baseline for describing fixation behaviour.
+\newblock {\em Vision research} {\bf 2014}, {\em 102},~41--51.
+
+\bibitem[Clarke \em{et~al.}(2017)Clarke, Stainer, Tatler, and Hunt]{clarke2017}
+Clarke, A.D.; Stainer, M.J.; Tatler, B.W.; Hunt, A.R.
+\newblock The saccadic flow baseline: Accounting for image-independent biases
+  in fixation behavior.
+\newblock {\em Journal of vision} {\bf 2017}, {\em 17},~12--12.
+
+\bibitem[{Stan Development Team}(2020)]{rstan}
+{Stan Development Team}.
+\newblock {RStan}: the {R} interface to {Stan},  2020.
+\newblock R package version 2.21.2.
+
+\bibitem[Clarke and Tatler(2014)]{clarke_tatler2014}
+Clarke, A.D.; Tatler, B.W.
+\newblock Deriving an appropriate baseline for describing fixation behaviour.
+\newblock {\em Vision research} {\bf 2014}, {\em 102},~41--51.
+
+\bibitem[Thornton \em{et~al.}(2022)Thornton, Nguyen, and
+  Kristj{\'a}nsson]{thornton2022foraging}
+Thornton, I.M.; Nguyen, T.T.; Kristj{\'a}nsson, {\'A}.
+\newblock Foraging tempo: Human run patterns in multiple-target search are
+  constrained by the rate of successive responses.
+\newblock {\em Quarterly Journal of Experimental Psychology} {\bf 2022}, {\em
+  75},~297--312.
+
+\bibitem[Kristj{\'a}nsson \em{et~al.}(2022)Kristj{\'a}nsson, Draschkow,
+  P{\'a}lsson, Haraldsson, J{\'o}nsson, and
+  Kristj{\'a}nsson]{kristjansson2022moving}
+Kristj{\'a}nsson, T.; Draschkow, D.; P{\'a}lsson, {\'A}.; Haraldsson, D.;
+  J{\'o}nsson, P.{\"O}.; Kristj{\'a}nsson, {\'A}.
+\newblock Moving foraging into three dimensions: feature-versus
+  conjunction-based foraging in virtual reality.
+\newblock {\em Quarterly Journal of Experimental Psychology} {\bf 2022}, {\em
+  75},~313--327.
+
+\bibitem[Riggs \em{et~al.}(2017)Riggs, Cornes, Godwin, Liversedge, Guest, and
+  Donnelly]{riggs2017importance}
+Riggs, C.A.; Cornes, K.; Godwin, H.J.; Liversedge, S.P.; Guest, R.; Donnelly,
+  N.
+\newblock The importance of search strategy for finding targets in open
+  terrain.
+\newblock {\em Cognitive research: principles and implications} {\bf 2017},
+  {\em 2},~1--17.
+
+\bibitem[Tatler(2007)]{tatler2007central}
+Tatler, B.W.
+\newblock The central fixation bias in scene viewing: Selecting an optimal
+  viewing position independently of motor biases and image feature
+  distributions.
+\newblock {\em Journal of vision} {\bf 2007}, {\em 7},~4--4.
+
+\bibitem[Tseng \em{et~al.}(2009)Tseng, Carmi, Cameron, Munoz, and
+  Itti]{tseng2009quantifying}
+Tseng, P.H.; Carmi, R.; Cameron, I.G.; Munoz, D.P.; Itti, L.
+\newblock Quantifying center bias of observers in free viewing of dynamic
+  natural scenes.
+\newblock {\em Journal of vision} {\bf 2009}, {\em 9},~4--4.
+
+\end{thebibliography}

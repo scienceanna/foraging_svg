@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.8.28) (preloaded format=pdflatex 2022.9.22)  22 SEP 2022 15:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.8.28) (preloaded format=pdflatex 2022.9.22)  22 SEP 2022 16:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1644,10 +1644,10 @@ Package rerunfilecheck Info: File `manuscriptRevisions.out' has not changed.
  ) 
 Here is how much of TeX's memory you used:
  31918 strings out of 475389
- 604880 string characters out of 2774134
- 974649 words of memory out of 3000000
+ 604883 string characters out of 2774134
+ 974745 words of memory out of 3000000
  52136 multiletter control sequences out of 15000+600000
- 546907 words of font info for 441 fonts, out of 8000000 for 9000
+ 546903 words of font info for 441 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  123i,12n,120p,1801b,573s stack positions out of 10000i,1000n,20000p,200000b,80000s
  <C:\Users\ah19679\AppData\Local\MiKTeX\2.9\fonts/pk/ljfour/jknappen/ec/dpi60
@@ -1660,7 +1660,7 @@ ta/Local/Programs/MiKTeX 2.9/fonts/type1/urw/palatino/uplb8a.pfb><C:/Users/ah19
 679/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/urw/palatino/uplr8a.pfb><C:/U
 sers/ah19679/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/urw/palatino/uplri8a
 .pfb>
-Output written on manuscriptRevisions.pdf (12 pages, 702264 bytes).
+Output written on manuscriptRevisions.pdf (12 pages, 702296 bytes).
 PDF statistics:
  356 PDF objects out of 1000 (max. 8388607)
  63 named destinations out of 1000 (max. 500000)

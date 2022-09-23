@@ -114,8 +114,6 @@ The original implementation of our model has little to say about the initial tar
 
 We use a previously published dataset to explore how well our model can account for trial-level behaviour: the visual foraging data from \cite{clarke2022}. This is an attractive dataset for our needs as it is very close to the ``classic'' visual foraging paradigm \citep{kristjansson2014}, yet with a substantially larger sample of participants. (The key difference between paradigms is that \cite{kristjansson2014} used an ipad and finger foraging, while \cite{clarke2022} used a desktop computer and mouse clicks.) Furthermore, we have already demonstrated that our model can capture individual differences in foraging behaviour \citep{clarke2022}. As such, we will only give a brief overview of the data here and refer the reader to these earlier papers for more details.
 
-To test how well our methods generalise, we use the dataset from \citep{kristjansson2014}. We split this into a training dataset (50\% of the original data i.e. 10 trials per participant) and a test dataset (the remaining 50\% of the data). The foraging model is fit on the training dataset, and the parameters from this model are then used to predict behaviour at the level of individual trials. We show that our methods appear to generalise beyond \citep{clarke2022}: further details can be found in the \textit{Supplementary Materials: Part 2}.
-
 
 \subsection{A Model for Visual Foraging}
 
@@ -275,6 +273,10 @@ To compare the two approaches, we assess how well they fit the empirical data: w
 \caption{(\textit{Top}): a count of initial weight values predicted from both methods (mixture and multi-level). (\textit{Bottom left}): the proportion of times the first selection was correct for both methods.  (\textit{Bottom right}): as lambda (the model parameter underlying initial weight) increases, accuracy increases i.e. the model is more accurate for the cases where participants are selecting a corner as their initial target selection.} 
 \label{fig:qjep_init_sel_pred}
 \end{figure} 
+
+\subsection{Replication: \cite{kristjansson2014} dataset}
+
+To test how well our methods generalise, we used the dataset from \citep{kristjansson2014}. We split this into a training dataset (50\% of the original data i.e. 10 trials per participant) and a test dataset (the remaining 50\% of the data). The foraging model is fit on the training dataset, and the parameters from this model are then used to predict behaviour at the level of individual trials. We show that our methods appear to generalise beyond \citep{clarke2022}: in particular, feature foraging was more predictable than conjunction foraging, and the model is well calibrated, with participants more frequently selecting targets with higher model assigned weights. Proximity also seems to be an important factor in determining model accuracy, at least for the feature condition, although the relatively low number of participants in this experiment makes it harder to draw strong conclusions. One interesting difference compared to \citep{clarke2022} is in initial target selection: while there was a strong bias towards starting in a corner, there was little evidence of central bias, perhaps because this experiment was completed on an iPad. Further details and graphs can be found in the \textit{Supplementary Materials: Part 2}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}

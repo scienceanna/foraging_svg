@@ -2,10 +2,13 @@
 \providecommand*\new@tpo@label[2]{}
 \providecommand\HyperFirstAtBeginDocument{\AtBeginDocument}
 \HyperFirstAtBeginDocument{\ifx\hyper@anchor\@undefined
+\global\let\oldcontentsline\contentsline
+\gdef\contentsline#1#2#3#4{\oldcontentsline{#1}{#2}{#3}}
 \global\let\oldnewlabel\newlabel
 \gdef\newlabel#1#2{\newlabelxx{#1}#2}
 \gdef\newlabelxx#1#2#3#4#5#6{\oldnewlabel{#1}{{#2}{#3}}}
 \AtEndDocument{\ifx\hyper@anchor\@undefined
+\let\contentsline\oldcontentsline
 \let\newlabel\oldnewlabel
 \fi}
 \fi}
@@ -33,16 +36,14 @@
 \citation{kristjansson2014}
 \citation{clarke2022}
 \citation{clarke2022}
-\citation{kristjansson2014}
 \citation{clarke2022}
 \@writefile{toc}{\contentsline {section}{\numberline {2}Materials and Methods}{2}{section.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Datasets}{2}{subsection.2.1}\protected@file@percent }
-\citation{clarke2022}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}A Model for Visual Foraging}{2}{subsection.2.2}\protected@file@percent }
 \citation{clarke2022foraging}
 \citation{rstan}
 \citation{clarke2022}
 \citation{clarke2022}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}A Model for Visual Foraging}{3}{subsection.2.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Software environment}{3}{subsection.2.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {3}Results: Evaluating the Model}{3}{section.3}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces (\textit  {top left}) Posterior probabilities for target selections during a visual foraging task. Each dot shows the data from an individual participant, averaged over trials, in the feature condition and the shaded region indicates the interval in which we expect 67\% of participants to fall. The dashed line indicates chance performance. (\textit  {top right}) As top left, except showing the conjunction condition. (\textit  {bottom left}) Calibration plot for our foraging model. The $x$-axis gives the largest weight assigned by the model while the $y$-axis shows how often that target was actually selected by a human participant. The dashed line here and in the right plot is the identity line. (\textit  {bottom right}) This plot shows how often the model selects the 2nd and 3rd ranked items based on the weights assigned by the model.\relax }}{4}{figure.caption.1}\protected@file@percent }
@@ -72,9 +73,14 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Posterior Predictions}{8}{subsection.4.3}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces (\textit  {Top}): a count of initial weight values predicted from both methods (mixture and multi-level). (\textit  {Bottom left}): the proportion of times the first selection was correct for both methods. (\textit  {Bottom right}): as lambda (the model parameter underlying initial weight) increases, accuracy increases i.e. the model is more accurate for the cases where participants are selecting a corner as their initial target selection.\relax }}{9}{figure.caption.8}\protected@file@percent }
 \newlabel{fig:qjep_init_sel_pred}{{8}{9}{(\textit {Top}): a count of initial weight values predicted from both methods (mixture and multi-level). (\textit {Bottom left}): the proportion of times the first selection was correct for both methods. (\textit {Bottom right}): as lambda (the model parameter underlying initial weight) increases, accuracy increases i.e. the model is more accurate for the cases where participants are selecting a corner as their initial target selection.\relax }{figure.caption.8}{}}
+\citation{kristjansson2014}
+\citation{kristjansson2014}
+\citation{clarke2022}
+\citation{clarke2022}
 \citation{clarke2022foraging}
 \citation{tagu2020}
 \citation{thornton2022foraging}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Replication: \cite  {kristjansson2014} dataset}{10}{subsection.4.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{10}{section.5}\protected@file@percent }
 \citation{kristjansson2022moving}
 \citation{riggs2017importance}
@@ -96,6 +102,7 @@
 \bibcite{tagu2020}{{11}{2020}{{Tagu and Kristj{\'a}nsson}}{{}}}
 \bibcite{clarke2014deriving}{{12}{2014}{{Clarke and Tatler}}{{}}}
 \bibcite{clarke2017}{{13}{2017}{{Clarke \em  {et~al.}}}{{Clarke, Stainer, Tatler, and Hunt}}}
+\@writefile{toc}{\contentsline {section}{References}{12}{section.5}\protected@file@percent }
 \bibcite{rstan}{{14}{2020}{{Stan Development Team}}{{}}}
 \bibcite{clarke_tatler2014}{{15}{2014}{{Clarke and Tatler}}{{}}}
 \bibcite{thornton2022foraging}{{16}{2022}{{Thornton \em  {et~al.}}}{{Thornton, Nguyen, and Kristj{\'a}nsson}}}
@@ -103,9 +110,8 @@
 \bibcite{riggs2017importance}{{18}{2017}{{Riggs \em  {et~al.}}}{{Riggs, Cornes, Godwin, Liversedge, Guest, and Donnelly}}}
 \bibcite{tatler2007central}{{19}{2007}{{Tatler}}{{}}}
 \bibcite{tseng2009quantifying}{{20}{2009}{{Tseng \em  {et~al.}}}{{Tseng, Carmi, Cameron, Munoz, and Itti}}}
-\@writefile{toc}{\contentsline {section}{References}{12}{section.5}\protected@file@percent }
-\newlabel{LastPage}{{}{12}{}{page.12}{}}
-\xdef\lastpage@lastpage{12}
-\xdef\lastpage@lastpageHy{12}
-\expandafter\ifx\csname c@page@totc\endcsname\relax\newcounter{page@totc}\fi\setcounter{page@totc}{13}
-\gdef \@abspage@last{12}
+\newlabel{LastPage}{{}{13}{}{page.13}{}}
+\xdef\lastpage@lastpage{13}
+\xdef\lastpage@lastpageHy{13}
+\expandafter\ifx\csname c@page@totc\endcsname\relax\newcounter{page@totc}\fi\setcounter{page@totc}{14}
+\gdef \@abspage@last{13}

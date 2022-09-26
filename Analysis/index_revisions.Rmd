@@ -53,7 +53,7 @@ source("functions/get_model_params.R")
 source("functions/compute_weights.R")
 ```
 
-We will use the visual foraging data from @clarke2022 to assess the model's trial level performance. As the current version of our model only takes the $p_A$ bias into account for the initial target selection, we will ignore these data points for now. 
+We will use the visual foraging data from Clarke (2022) to assess the model's trial level performance. As the current version of our model only takes the $p_A$ bias into account for the initial target selection, we will ignore these data points for now. 
 
 ```{r, echo = TRUE}
 # read in data
@@ -63,7 +63,7 @@ d <- read_csv("data/clarke_2020_qjep.csv", show_col_types = FALSE) %>%
          targ_type = as_factor(targ_type))
 ```
 
-We will use the model fit as detailed in @clarke2020compbio. For simplicity's sake, we will characterise all of our estimated posterior probability densities with just the mean value. This gives us four parameters per participant: $b_S, b_A, b_P, b_D$. 
+We will use the model fit as detailed in Clarke (2022). For simplicity's sake, we will characterise all of our estimated posterior probability densities with just the mean value. This gives us four parameters per participant: $b_S, b_A, b_P, b_D$. 
 
 Using these fitted values, we can now step through each target selection in the dataset and compute the probability weights our model assigns to each remaining target. For each target selection, we record:
 
@@ -239,8 +239,7 @@ plt_b <- ggplot(filter(fit_plt, parameter == "bP"),
 
 ggsave("../Figures/qjep_indiv_diff.pdf", 
        plt_a + plt_b + 
-         plot_layout(guides = "collect") & theme(legend.position = "right") & 
-         theme_bw(), width = 8, height = 4)
+         plot_layout(guides = "collect") & theme(legend.position = "right"), width = 8, height = 4)
 ```
 
 As the two outlier participants appear to be doing something different, not captured especially well by our model, we will remove them from the rest of this analysis.
@@ -531,7 +530,7 @@ plt1 + plt2b + plot_layout(guides = "collect")  &
 ```
 
 ```{r}
-#ggsave("../Figures/path_length.pdf", plt2 + plt2b, width = 8, height = 3)
+ggsave("../Figures/path_length.pdf", plt2 + plt2b, width = 8, height = 3)
 ```
 
 ```{r}
@@ -540,7 +539,7 @@ rm(path_lengths, plt1, plt2)
 
 # Initial Selection
 
-Previous work (cite Clarke and Tatler etc) has demonstrated that the initial fixation in scene viewing can be well described with truncated Gaussian distribution. Here we explore using a similar idea to account for starting locations. 
+Previous work (Clarke and Tatler, 2014) has demonstrated that the initial fixation in scene viewing can be well described with truncated Gaussian distribution. Here we explore using a similar idea to account for starting locations. 
 
 ```{r echo = TRUE}
 # Reimport data again (as we removed the initial target selection earlier)
@@ -628,7 +627,7 @@ am %>% mutate(mu = a/(a+b)) %>%
   scale_y_continuous("mean y") -> plt_mu
 
 
-create_post_plot("x") + create_post_plot("y") + plt_mu & theme_bw()
+create_post_plot("x") + create_post_plot("y") + plt_mu #& theme_bw()
 ggsave("../Figures/init_sel_mdl.pdf", width = 10, height = 3.5)
 ```
 
@@ -698,7 +697,7 @@ plt_dat %>% filter(dim == "x") %>%
   ggplot(aes(x, z, group = interaction(c, draw), colour = c)) +
   geom_path(alpha = 0.1) + 
   facet_wrap(~dim) + 
-  theme_bw() + 
+  #theme_bw() + 
   theme(legend.position = "none")  + 
     scale_y_continuous("likelihood") -> plt_x
 
@@ -706,7 +705,7 @@ plt_dat %>% filter(dim == "y") %>%
   ggplot(aes(x, z, group = interaction(c, draw), colour = c)) +
   geom_path(alpha = 0.1) + 
   facet_wrap(~dim) + 
-  theme_bw() + 
+  #theme_bw() + 
   theme(legend.position = "none",
         axis.title.y = element_blank()) +
   scale_x_continuous("y") + 
@@ -719,7 +718,7 @@ gather_draws(m, lambda[observer]) %>%
   ggplot(aes(observer, .value, ymin = .lower, ymax = .upper)) + 
   geom_errorbar() +
   scale_y_continuous("lambda") + 
-  theme_bw() + 
+  #theme_bw() + 
   theme(axis.text.x=element_blank(),
         axis.ticks.x=element_blank()) -> plt_lambdas
 
@@ -800,13 +799,13 @@ weights2 %>% group_by(observer) %>%
   rename(lambda = "value") %>%
   ggplot(aes(lambda, accuracy)) + 
   geom_point() +
-  geom_smooth(method = "lm", formula = y ~ x, colour = "black") -> plt3
+  geom_smooth(method = "lm", formula = y ~ x, colour = "black") +
+  geom_hline(yintercept = 1/40, linetype = 2) -> plt3
 
 plt1 / (plt2 + plt3)  + plot_layout(guides = "collect")
 
-ggsave("../Figures/qjep_init_sel_preds.pdf", 
-       (plt2 / plt3) & theme_bw() & theme(legend.position = "none"),
-       width = 4, height = 8)
+ggsave("../Figures/qjep_init_sel_preds.pdf",
+       width = 8, height = 4)
 
 dw %>% group_by(method, observer) %>%
   summarise(score = median(init_weight,),

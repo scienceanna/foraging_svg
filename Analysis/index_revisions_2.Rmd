@@ -1,11 +1,13 @@
 ---
 title: 'SVG: The Paper'
 author: "Alasdair Clarke, Amelia Hunt &  Anna Hughes"
-date: "13/04/2022"
+date: "14/10/2022"
 output:
-  tufte::tufte_handout:
+  tufte::tufte_html:
     number_sections: true
     fig_height: 4
+    bibliography: literature.bib
+    link-citations: yes  
 ---
 
 ```{r setup, include=FALSE}
@@ -84,9 +86,9 @@ a %>% group_by(condition, observer, found) %>%
   mutate(chance = 1/(41-found))-> a_agg
 ```
 
-We can then plot this data to show how our ability to predict which target will be selected next varies throughout a trial. We can see a difference between *feature* and *conjunction* foraging, with *feature* foraging being more predictable. 
+We can then plot this data to show how our ability to predict which target will be selected next varies throughout a trial. We can see a difference between *feature* and *conjunction* foraging, with *feature* foraging being more predictable (Figure 1). 
 
-```{r, fig.cap = "Left: The average weight assigned to each selected target by our model. Right: The proportion of trials the item with the largest assigned weight was selected by the participant.  Each dot shows data from an individual participant in a condition and the shaded region indicates the interval in which we expect 67% of participants to fall."}
+```{r, fig.cap = "Figure 1. (*left*) The average weight assigned to each selected target by our model. (*right*) The proportion of trials the item with the largest assigned weight was selected by the participant.  Each dot shows data from an individual participant in a condition and the shaded region indicates the interval in which we expect 67% of participants to fall."}
 
 # plot target selected weights
 ggplot(a_agg, aes(x = found, y = meanb, colour = condition, fill = condition)) + 
@@ -132,9 +134,9 @@ a %>% mutate(b_bin = cut(max_b, breaks = my_breaks, labels = FALSE)) %>%
   mutate(b_bin = as.numeric(b_bin)/(length(my_breaks)-1)) -> a_cut
 ```
 
-We can see from the Figure below that our model is well-calibrated (at least in terms of the target with the highest assigned weight). If we repeat this calculation for the 2nd and 3rd ranked candidate items we can see that we slightly underweight these items, but we are still pretty accurate. 
+We can see from Figure 2 below that our model is well-calibrated (at least in terms of the target with the highest assigned weight). If we repeat this calculation for the 2nd and 3rd ranked candidate items we can see that we slightly underweight these items, but we are still pretty accurate. 
 
-```{r, fig.height=3.5, fig.cap = "(*left*) Calibration plot for our foraging model. The *x*-axis gives the largest weight assigned by the model while the *y*-axis shows how often that target was actually selected by a human participant. (*right*) This plot shows how often the 2nd and 3rd ranked items are selected based on the weights assigned by the model."}
+```{r, fig.height=3.5, fig.cap = "Figure 2: (*left*) Calibration plot for our foraging model. The *x*-axis gives the largest weight assigned by the model while the *y*-axis shows how often that target was actually selected by a human participant. (*right*) This plot shows how often the 2nd and 3rd ranked items are selected based on the weights assigned by the model."}
 
 ggplot(a_cut, aes(b_bin, acc, colour = condition, fill = condition)) + 
   geom_point() + 
@@ -193,7 +195,7 @@ rm(a_cut, my_breaks, plt1, plt2)
 
 How often does each participant select the target with the largest weight? 
 
-```{r, fig.height=3.5, fig.cap = "Prediction scores for participants. Boxplots show quartile range and the grey lines indicate individual participants. (The dots indicate outliers.)", echo= TRUE}
+```{r, fig.height=3.5, fig.cap = "Figure 3: Prediction scores for participants. Boxplots show quartile range and the grey lines indicate individual participants. (The dots indicate outliers.)", echo= TRUE}
 
 a_agg %>% group_by(observer, condition) %>%
   summarise(accuracy = mean(prop_best), .groups = "drop") -> a_acc
@@ -209,7 +211,7 @@ plt_a
 
 Is this explained by differences in proximity weighting? i.e., are participants with weaker proximity biases harder to predict? Yes! 
 
-```{r fig.height = 6, fig.cap = "Accuracy of our model varies with the strength of an individual's model parameters. We can see two clear outlier participants (marked with an X). "}
+```{r fig.height = 6, fig.cap = "Figure 4: Accuracy of our model varies with the strength of an individual's model parameters. We can see two clear outlier participants (marked with an X). "}
 # computed in scripts/extract_item_weights_using_model_clarke.R
 fit <- readRDS("scratch/qjep_model_fit.rda") %>%
   full_join(a_acc, by = c("observer", "condition")) %>%
@@ -243,7 +245,7 @@ ggsave("../Figures/qjep_indiv_diff.pdf",
 
 As the two outlier participants appear to be doing something different, not captured especially well by our model, we will remove them from the rest of this analysis.
 
-After removing them, we can see that individual differences in proximity tuning account for nearly all of the differences in predictability from person to person, and also between the *feature* and *conjunction* conditions.
+After removing them, we can see that individual differences in proximity tuning account for nearly all of the differences in predictability from person to person, and also between the *feature* and *conjunction* conditions (see Figure 4).
 
 ```{r, echo = TRUE}
 dm <- filter(fit, is_outlier == 0)
@@ -270,7 +272,7 @@ Both $p_A$ and $b_M$ also have an effect on our model's accuracy, but note there
 
 It seems like shorter trials are easier for the model to predict, in both the feature and conjunction case (though the relationship appears to be clearer in the feature condition).
 
-```{r, message = FALSE, warning = FALSE, fig.cap="The relationship between the time taken to complete a trial and how predictable it is. Dots show empirical data, and the shaded ribbon shows the fixed-effects of a multi-level model. The lines give posterior samples from each indivdiaul observer."}
+```{r, message = FALSE, warning = FALSE, fig.cap="The relationship between the time taken to complete a trial and how predictable it is. Dots show empirical data, and the shaded ribbon shows the fixed-effects of a multi-level model. The lines give posterior samples from each individual observer."}
 
 a %>% select(observer, condition, trial, found, selected_max) %>%
   full_join(d, by = c("observer", "condition", "trial", "found")) %>%
@@ -291,7 +293,7 @@ fixef(m) %>% knitr::kable()
 ```
 
 
-```{r, message = FALSE, warning = FALSE, fig.cap="The relationship between the time taken to complete a trial and how predictible it is. Dots show empirical data, and the shaded ribbon shows the fixed-effects of a multi-level model. The lines give posterior samples from each individual observer."}
+```{r, message = FALSE, warning = FALSE, fig.cap="The relationship between the time taken to complete a trial and how predictable it is. Dots show empirical data, and the shaded ribbon shows the fixed-effects of a multi-level model. The lines give posterior samples from each individual observer."}
 
 timedat %>% data_grid(condition, time_taken_s = seq_range(time_taken_s, 5)) %>%
   add_epred_draws(m, re_formula = NA, ndraws = 100) %>%
@@ -318,10 +320,10 @@ plt + geom_path(data  = d_pred,
 ggsave("../Figures/trial_time.png", plt + theme_bw() + theme(legend.position = "none"), width = 4, height = 6)
 
 ```
-This relationship appears to hold true if you look at how long it takes participants to select individual targets as well.
+This relationship appears to hold true if you look at how long it takes participants to select individual targets as well (Figure 5).
 
 
-```{r, message = FALSE, warning = FALSE, fig.cap = "The relationship between the time taken to complete a single target selection and how predictible it is."}
+```{r, message = FALSE, warning = FALSE, fig.cap = "Figure 5: The relationship between the time taken to complete a single target selection and how predictable it is."}
 breaks = c(seq(0.1, 0.8,0.1),1, 1.5, 2, 3, 4, 5, 6)
 
 a %>% select(observer, condition, trial, found, selected_max) %>%
@@ -361,7 +363,7 @@ rm(dm)
 
 ## Examples of Trials
 
-Let's score every trial by how well the model captures behaviour, and then plot some different examples.
+Let's score every trial by how well the model captures behaviour (Figure 6), and then plot some different examples.
 
 ```{r, echo = TRUE}
 a %>% filter(!(observer %in% c(35, 45))) %>%
@@ -371,13 +373,13 @@ a %>% filter(!(observer %in% c(35, 45))) %>%
   ungroup() -> a_trl
 ```
 
-```{r fig.height=3.5, fig.cap = "Histogram of how predictiable individual trials are, defined as how often the model assigned the largest weight to the target that was then selected."}
+```{r fig.height=3.5, fig.cap = "Figure 6: Histogram of how predictiable individual trials are, defined as how often the model assigned the largest weight to the target that was then selected."}
 ggplot(a_trl, aes(prop_max)) + 
   geom_histogram(fill = "#d04e00", breaks = seq(0, 1, 0.025), alpha = 0.5) +
   scale_x_continuous("trial predictability")
 ```
 
-Let's plot some examples oh highly predictable (top 5%), typical (middle 10%) and unpredictable (bottom 5%) trials.
+Let's plot some examples of highly predictable (top 5%), typical (middle 10%) and unpredictable (bottom 5%) trials.
 
 ```{r, echo = TRUE}
 qs <- quantile(a_trl$prop_max, c(0.05, 0.40, 0.60, 0.95))
@@ -387,9 +389,9 @@ trls_mid  <- filter(a_trl, prop_max > qs[2], prop_max < qs[3]) %>% sample_n(3)
 trls_easy <- filter(a_trl, prop_max > qs[4]) %>% sample_n(3)
 ```
 
-We can see that for these highly predictable trials, we make very few mistakes, and those mistakes that we do make appear to be related to some sort of shortest-path optimization on the part of the participant. 
+We can see that for these highly predictable trials (Figure 7), we make very few mistakes, and those mistakes that we do make appear to be related to some sort of shortest-path optimization on the part of the participant. 
 
-```{r fig.cap = "A random selection of *good* trials. When participants diverge from the model's prediction, it appears to be due to some form of path-length optimisation."}
+```{r fig.cap = "Figure 7: A random selection of *good* trials. When participants diverge from the model's prediction, it appears to be due to some form of path-length optimisation."}
 
 source("functions/plot_trial.R")
 plts1 <- map(1:3, plot_trial, trls_easy, a, d)
@@ -401,9 +403,9 @@ plts1[[1]] + plts1[[2]] +
    theme(text=element_text(size=14,  family="serif"))
 ```
 
-Here are some typical trials. Possible we have the path-length minimization issue again. 
+Here are some typical trials (Figure 8). Possible we have the path-length minimization issue again. 
 
-```{r fig.cap = "A random selection of *typical* trials. Along with path-minimising behaviour, we can also see some disagreement around switching item type."}
+```{r fig.cap = "Figure 8: A random selection of *typical* trials. Along with path-minimising behaviour, we can also see some disagreement around switching item type."}
 plts2 <- map(1:3, plot_trial, trls_mid, a, d)
 
 plts2[[1]] + plts2[[2]] +
@@ -413,9 +415,9 @@ plts2[[1]] + plts2[[2]] +
    theme(text=element_text(size=14,  family="serif"))
 ```
 
-Now let's look at less predictable (bottom 5%-tile) trials. Even here, the model does a relatively good job. 
+Now let's look at less predictable (bottom 5%-tile) trials (Figure 9). Even here, the model does a relatively good job. 
 
-```{r fig.cap = "A random selection of *hard* trials. It is harder to make out much of a pattern here, but we can see that the human participants jump around more."}
+```{r fig.cap = "Figure 9: A random selection of *hard* trials. It is harder to make out much of a pattern here, but we can see that the human participants jump around more."}
 plts3 <- map(1:3, plot_trial, trls_hard, a, d)
 
 plts3[[1]] + plts3[[2]] +
@@ -455,9 +457,9 @@ ggplot(a_trl, aes(trial, meanb, group = observer)) + geom_jitter(alpha = 0.25) +
 
 It looks like some of the target selections that our model fails to capture are when participants select a further away target in order to minimise overall path length. Here we will compare our model's predicted path length against the empirical paths. 
 
-- We will provide the model/simulation with the initial target selection.
+We will provide the model/simulation with the initial target selection.
 
-```{r, fig.height=3.5, fig.cap = "(*left*) Histogram comparing the empirical path lengths to simulations from our fitted model. Difference indicates the human path length - the simulated path length. (*right*) Histogram comparing the median path lengths per participant.", message=FALSE}
+```{r, fig.height=3.5, fig.cap = "Figure 10: (*left*) Histogram comparing the empirical path lengths to simulations from our fitted model. Difference indicates the human path length - the simulated path length. (*right*) Histogram comparing the median path lengths per participant.", message=FALSE}
 # see scripts/compute_empirical_paths.R
 path_lengths <- readRDS("scratch/path_lengths.rda") %>%
   rename(observer = "obs",
@@ -498,11 +500,11 @@ path_lengths %>% group_by(observer, type) %>%
   scale_fill_manual(values = col3) -> plt2
 ```
 
-We can see that overall, the model is not making substantially longer paths through the items than our human participants. However, there is some variability in that some participants routinely select paths shorter than our model would, and others do not.
+We can see that overall, the model is not making substantially longer paths through the items than our human participants (Figure 10). However, there is some variability in that some participants routinely select paths shorter than our model would, and others do not.
 
-Perhaps this is related to predictability (i.e., how well the model can predict a participant's trial level behaviour)?
+Perhaps this is related to predictability (i.e., how well the model can predict a participant's trial level behaviour - Figure 11)?
 
-```{r fig.height=3, fig.cap = "(*left*) A histogram showing the proportion of trials on which each participant managed a shorter path through the targets than the model's prediction. (*right*) Scatter plot showing the relationship between predictability (accuracy) and whether the model over or under estimates path length. Xs mark the outlier participants discussed above."}
+```{r fig.height=3, fig.cap = "Figure 11: (*left*) A histogram showing the proportion of trials on which each participant managed a shorter path through the targets than the model's prediction. (*right*) Scatter plot showing the relationship between predictability (accuracy) and whether the model over or under estimates path length. Xs mark the outlier participants discussed above."}
 path_lengths %>% filter(type == "difference") %>%
   mutate(shorter = path_length < 0) %>%
   group_by(observer, condition) %>%
@@ -538,7 +540,7 @@ rm(path_lengths, plt1, plt2)
 
 # Initial Selection
 
-Previous work (Clarke and Tatler, 2014) has demonstrated that the initial fixation in scene viewing can be well described with truncated Gaussian distribution. Here we explore using a similar idea to account for starting locations. 
+Previous work (Clarke and Tatler, 2014) has demonstrated that the initial fixation in scene viewing can be well described with truncated Gaussian distribution. Here we explore using a similar idea to account for starting locations (Figure 12). 
 
 ```{r echo = TRUE}
 # Reimport data again (as we removed the initial target selection earlier)
@@ -547,7 +549,7 @@ d <- read_csv("data/clarke_2020_qjep.csv", show_col_types = FALSE) %>%
   mutate(condition = as_factor(condition))
 ```
 
-```{r fig.height = 3.5, fig.cap="(*left*) Density plot for initial target selections, over all participants and all trials. (*right*) Median $x$ and $y$ coordinates for the initial target selection for each participant."}
+```{r fig.height = 3.5, fig.cap="Figure 12: (*left*) Density plot for initial target selections, over all participants and all trials. (*right*) Median $x$ and $y$ coordinates for the initial target selection for each participant."}
 my_theme <- theme(axis.line=element_blank(),axis.text.x=element_blank(),
           axis.text.y=element_blank(),axis.ticks=element_blank(),
           axis.title.x=element_blank(),
@@ -577,9 +579,9 @@ rm(plt_all, plt_med)
 
 ## Multi-level Model
 
-Can we model this as multi-level beta distribution? Yes, although it seems like people are in one of two clusters. 
+Can we model this as multi-level beta distribution? Yes, although it seems like people are in one of two clusters (Figure 13). 
 
-```{r fig.cap = "The mean posterior plot for the truncated normal distriubtions for (*left*) $x$ and (*right*) $y$. We can see that a two component mixture model will capture most of the variance in intial target selection.", warning = FALSE}
+```{r fig.cap = "Figure 13: The mean posterior plot for the truncated normal distriubtions for (*left*) $x$ and (*right*) $y$. We can see that a two component mixture model will capture most of the variance in intial target selection.", warning = FALSE}
 
 # see scripts/testing_init_selection.R
 m <- readRDS("scratch/init_sel_model.rds")
@@ -668,9 +670,9 @@ d %>% group_by(observer, condition, trial) %>%
 
 ## Mixture Model
 
-It looks like we can simplify the model somewhat by using a two component mixture model instead!
+It looks like we can simplify the model somewhat by using a two component mixture model instead (Figure 14).
 
-```{r, fig.height = 6, fig.cap = "(*top*) Beta distributions for $x$ and $y$ coordinated"}
+```{r, fig.height = 6, fig.cap = "Figure 14: (*top*) Beta distributions for $x$ and $y$ coordinated"}
 
 m <- readRDS("scratch/init_sel_model2.rds")
 
@@ -729,9 +731,9 @@ ggsave("../Figures/init_sel2_mdl.pdf", width = 10, height = 3.5)
 
 ## Posterior Predictions
 
-Both models give a similar distribution of target weights and accuracies, and in both cases, participants who start in a corner are easier to predict.
+Both models give a similar distribution of target weights and accuracies, and in both cases, participants who start in a corner are easier to predict (Figure 15).
 
-```{r, fig.cap = "(Top): a count of initial weight values predicted from both methods (mixture and multi-level). (Bottom left): the proportion of times the first selection was correct for both methods. (Bottom right): as lambda (the model parameter underlying initial weight) increases, accuracy increases ie. the model is moore accurate for the cases where participants are selecting a corner as their initial target selection."}
+```{r, fig.cap = "Figure 15:(Top): a count of initial weight values predicted from both methods (mixture and multi-level). (Bottom left): the proportion of times the first selection was correct for both methods. (Bottom right): as lambda (the model parameter underlying initial weight) increases, accuracy increases ie. the model is moore accurate for the cases where participants are selecting a corner as their initial target selection."}
 gather_draws(m, a_x[c], b_x[c], a_y[c], b_y[c]) %>%
   group_by(c, .variable) %>%
   summarise(value = mean(.value), .groups = "drop") %>%

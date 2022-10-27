@@ -204,7 +204,8 @@ ggplot(a_acc, aes(x= condition, y = accuracy, fill = condition)) +
   geom_boxplot() +
   geom_line(aes(group = observer), alpha = 0.25, colour = "sienna4") +
   scale_y_continuous("model accuracy",  
-                     limits = c(0.35, 0.8), breaks = seq(0.3, 0.8, 0.1)) -> plt_a
+                     limits = c(0.35, 0.8), breaks = seq(0.3, 0.8, 0.1)) + 
+  theme(legend.position="none")-> plt_a
 
 plt_a
 ```
@@ -221,26 +222,28 @@ fit <- readRDS("scratch/qjep_model_fit.rda") %>%
 fit_plt <- pivot_longer(fit, c(pA, pS, bP, bM), 
                      names_to = "parameter", values_to = "value") 
 
-ggplot(fit_plt, aes(value, accuracy, colour = condition)) + 
+plt_b <- ggplot(fit_plt, aes(value, accuracy, colour = condition)) + 
   geom_point(aes(shape = is_outlier)) +
   geom_smooth(data = filter(fit_plt, is_outlier == 0), method = "lm", formula = y ~ x, se = FALSE) + 
   scale_shape_manual(values = c(19, 4), guide = "none") + 
-  facet_wrap(~parameter, scales = "free") +
-  theme(legend.position = "bottom")
+  facet_wrap(~parameter, scales = "free") #+
+  #theme(legend.position = "bottom")
 
-plt_b <- ggplot(filter(fit_plt, parameter == "bP"), 
-                aes(value, accuracy, colour = condition)) + 
-  geom_point(aes(shape = is_outlier)) +
-  geom_smooth(data = filter(fit_plt, is_outlier == 0, parameter == "bP"), method = "lm", formula = y ~ x, se = FALSE) + 
-  scale_shape_manual(values = c(19, 4), guide = "none") + 
-  xlab("bP parameter value") +
-  theme(legend.position = "none") + 
-   scale_y_continuous("model accuracy",  
-                     limits = c(0.35, 0.8), breaks = seq(0.3, 0.8, 0.1))
+plt_b
+
+#plt_b <- ggplot(filter(fit_plt, parameter == "bP"), 
+#                aes(value, accuracy, colour = condition)) + 
+#  geom_point(aes(shape = is_outlier)) +
+#  geom_smooth(data = filter(fit_plt, is_outlier == 0, parameter == "bP"), method = "lm", formula = y ~ x, se = FALSE) + 
+#  scale_shape_manual(values = c(19, 4), guide = "none") + 
+#  xlab("bP parameter value") +
+#  theme(legend.position = "none") + 
+#   scale_y_continuous("model accuracy",  
+#                     limits = c(0.35, 0.8), breaks = seq(0.3, 0.8, 0.1))
 
 ggsave("../Figures/qjep_indiv_diff.pdf", 
        plt_a + plt_b + 
-         plot_layout(guides = "collect") & theme(legend.position = "right"), width = 8, height = 4)
+         plot_layout(widths = c(1, 2)), width = 12, height = 4)
 ```
 
 As the two outlier participants appear to be doing something different, not captured especially well by our model, we will remove them from the rest of this analysis.

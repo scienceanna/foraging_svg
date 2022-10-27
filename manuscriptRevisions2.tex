@@ -156,7 +156,7 @@ $d(i,j)$ is simply the Euclidean distance between items $i$ and $j$, while $\the
 \end{equation}
 \end{linenomath}
 
-with $f(\phi_1, \phi_2) = \text{min}((\phi_1 - \phi_2) \% 2\pi, (\phi_2 - \phi_1) \% 2\pi)$ calculating the angular difference. $\text{atan2}$ is the direction of travel\footnote{For some reason, the editor insisted that re define atan2. This seems odd, as this is a simple funciton that children learn at school. But, it is a strange and varied world out there, so who knows.} This model is implemented in a multi-level framework, allowing each of the four parameters to vary from participant to participant. Further details including priors and full code can be found with \cite{clarke2022foraging}.
+with $f(\phi_1, \phi_2) = \text{min}((\phi_1 - \phi_2) \% 2\pi, (\phi_2 - \phi_1) \% 2\pi)$ calculating the angular difference. $\text{atan2}$ is the direction of travel from i to j.  This model is implemented in a multi-level framework, allowing each of the four parameters to vary from participant to participant. Further details including priors and full code can be found with \cite{clarke2022foraging}.
 
 Note: while our model returns estimates of full posterior probability distribution for each parameter, to reduce computational complexity and make it easier to compare to the empirical data, we will work with the means of these distributions for our parameter values. 
 
@@ -181,7 +181,7 @@ We summarise accuracy for each person by calculating the mean proportion of time
 \begin{figure}[H]
 \centering
 \includegraphics[width=12 cm]{Figures/qjep_indiv_diff.pdf}
-\caption{(\textit{left}) Prediction scores for participants. Boxplots show quartile range and the grey lines indicate individual participants. The dots indicate outliers. (\textit{right}) Accuracy of our model varies with the strength of an individual’s \textit{bP} parameter. We can see two clear outlier participants (marked with an X).}
+\caption{(\textit{left}) Prediction scores for participants. Boxplots show quartile range and the grey lines indicate individual participants. The dots indicate outliers. (\textit{right}) How accuracy of our model varies with the strength of an individual’s \textit{bM}, \textit{bP}, \textit{pA} and \textit{pS} parameters. We can see two clear outlier participants (marked with an X).}
 \label{fig:cal2}
 \end{figure}   
 

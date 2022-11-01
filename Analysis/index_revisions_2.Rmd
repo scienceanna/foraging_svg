@@ -30,12 +30,12 @@ library(brms)
 
 ```{r}
 # set ggplot2 options
-#theme_set(ggthemes::theme_tufte() + 
-#            theme(plot.background = element_rect(fill = "#fffff8", colour = "#fffff8")))
+theme_set(ggthemes::theme_tufte() + 
+            theme(plot.background = element_rect(fill = "#fffff8", colour = "#fffff8")))
 
 # for saving graphs for paper
-theme_set(ggthemes::theme_tufte(base_size = 16) + 
-            theme(plot.background = element_rect(fill = "#ffffff", colour = "#ffffff")))
+#theme_set(ggthemes::theme_tufte(base_size = 16) + 
+#            theme(plot.background = element_rect(fill = "#ffffff", colour = "#ffffff")))
 
 # some more colours
 col3 = c("#d04e00", "#ddc000","#34b6c6",  "#79ad41", "#4063a3")
@@ -180,10 +180,10 @@ ggplot(a_agg, aes(x = found, y = meanb, colour = condition, fill = condition)) +
   guides(color = "none", fill = "none") -> plt_b2
  
 
-ggsave("../Figures/qjep_preds.pdf", 
-       plt_b2 / (plt1 + plt2) + 
-       plot_layout(guides = "collect") & theme(legend.position = 'bottom'),
-       width = 10, height = 10)
+#ggsave("../Figures/qjep_preds.pdf", 
+#       plt_b2 / (plt1 + plt2) + 
+#       plot_layout(guides = "collect") & theme(legend.position = 'bottom'),
+#       width = 10, height = 10)
 
 ```
 
@@ -241,9 +241,9 @@ plt_b
 #   scale_y_continuous("model accuracy",  
 #                     limits = c(0.35, 0.8), breaks = seq(0.3, 0.8, 0.1))
 
-ggsave("../Figures/qjep_indiv_diff.pdf", 
-       plt_a + plt_b + 
-         plot_layout(widths = c(1, 2)), width = 12, height = 4)
+#ggsave("../Figures/qjep_indiv_diff.pdf", 
+#       plt_a + plt_b + 
+#         plot_layout(widths = c(1, 2)), width = 12, height = 4)
 ```
 
 As the two outlier participants appear to be doing something different, not captured especially well by our model, we will remove them from the rest of this analysis.
@@ -320,7 +320,7 @@ plt + geom_path(data  = d_pred,
                     group = interaction(condition, observer)),
                 alpha = 0.25) -> plt
 
-ggsave("../Figures/trial_time.png", plt + theme_bw() + theme(legend.position = "none"), width = 4, height = 6)
+#ggsave("../Figures/trial_time.png", plt + theme_bw() + theme(legend.position = "none"), width = 4, height = 6)
 
 ```
 This relationship appears to hold true if you look at how long it takes participants to select individual targets as well (Figure 5).
@@ -355,7 +355,7 @@ a %>% select(observer, condition, trial, found, selected_max) %>%
   stat_smooth(method = glm, method.args = list(family = "binomial"), se = FALSE, alpha = 0.5) +
   theme_bw() + theme(legend.position = "none")
 
-ggsave("../Figures/targ_time.png", width = 7, height = 4)
+#ggsave("../Figures/targ_time.png", width = 7, height = 4)
 
 ```
 
@@ -534,7 +534,7 @@ plt1 + plt2b + plot_layout(guides = "collect")  &
 ```
 
 ```{r}
-ggsave("../Figures/path_length.pdf", plt2 + plt2b, width = 8, height = 3)
+#ggsave("../Figures/path_length.pdf", plt2 + plt2b, width = 8, height = 3)
 ```
 
 ```{r}
@@ -632,7 +632,7 @@ am %>% mutate(mu = a/(a+b)) %>%
 
 
 create_post_plot("x") + create_post_plot("y") + plt_mu #& theme_bw()
-ggsave("../Figures/init_sel_mdl.pdf", width = 10, height = 3.5)
+#ggsave("../Figures/init_sel_mdl.pdf", width = 10, height = 3.5)
 ```
 
 
@@ -728,7 +728,7 @@ gather_draws(m, lambda[observer]) %>%
 
 (plt_x + plt_y) + plt_lambdas 
 
-ggsave("../Figures/init_sel2_mdl.pdf", width = 10, height = 3.5)
+#ggsave("../Figures/init_sel2_mdl.pdf", width = 10, height = 3.5)
 ```
 
 
@@ -808,8 +808,8 @@ weights2 %>% group_by(observer) %>%
 
 plt1 / (plt2 + plt3)  + plot_layout(guides = "collect")
 
-ggsave("../Figures/qjep_init_sel_preds.pdf",
-       width = 8, height = 4)
+#ggsave("../Figures/qjep_init_sel_preds.pdf",
+#       width = 8, height = 4)
 
 dw %>% group_by(method, observer) %>%
   summarise(score = median(init_weight,),

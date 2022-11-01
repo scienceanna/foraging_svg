@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.8.28) (preloaded format=pdflatex 2022.9.22)  27 OCT 2022 12:06
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.8.28) (preloaded format=pdflatex 2022.9.22)  31 OCT 2022 13:47
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1671,16 +1671,13 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-5.38797pt}.
 
 [13] (manuscriptRevisions2.aux)
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
 Package rerunfilecheck Info: File `manuscriptRevisions2.out' has not changed.
 (rerunfilecheck)             Checksum: 271E5D64A7EF4FFA86969E91CF06335A;2220.
  ) 
 Here is how much of TeX's memory you used:
  31932 strings out of 475389
  605040 string characters out of 2774134
- 974816 words of memory out of 3000000
+ 974845 words of memory out of 3000000
  52139 multiletter control sequences out of 15000+600000
  547794 words of font info for 448 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1695,7 +1692,7 @@ ta/Local/Programs/MiKTeX 2.9/fonts/type1/urw/palatino/uplb8a.pfb><C:/Users/ah19
 679/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/urw/palatino/uplr8a.pfb><C:/U
 sers/ah19679/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/urw/palatino/uplri8a
 .pfb>
-Output written on manuscriptRevisions2.pdf (13 pages, 726760 bytes).
+Output written on manuscriptRevisions2.pdf (13 pages, 727018 bytes).
 PDF statistics:
  369 PDF objects out of 1000 (max. 8388607)
  66 named destinations out of 1000 (max. 500000)

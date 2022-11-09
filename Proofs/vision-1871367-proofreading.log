@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.8.28) (preloaded format=pdflatex 2022.9.22)  8 NOV 2022 15:33
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.8.28) (preloaded format=pdflatex 2022.9.22)  9 NOV 2022 14:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1589,10 +1589,6 @@ nitions/logo-updates-eps-converted-to.pdf> <./Definitions/logo-ccby-eps-convert
 ed-to.pdf> <./Definitions/vision-logo-eps-converted-to.pdf> <./Definitions/logo
 -mdpi-eps-converted-to.pdf> <./Definitions/logo-orcid.pdf>]
 
-Package natbib Warning: Citation `thornton2022' on page 2 undefined on input li
-ne 113.
-
-
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 18.18001pt, for example:
 (fancyhdr)                \setlength{\headheight}{18.18001pt}.
@@ -1601,19 +1597,19 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-6.18001pt}.
 
 [2]
-<Figures/qjep_preds.pdf, id=157, 722.7pt x 722.7pt>
+<Figures/qjep_preds.pdf, id=159, 722.7pt x 722.7pt>
 File: Figures/qjep_preds.pdf Graphic file (type pdf)
 <use Figures/qjep_preds.pdf>
-Package pdftex.def Info: Figures/qjep_preds.pdf  used on input line 178.
+Package pdftex.def Info: Figures/qjep_preds.pdf  used on input line 179.
 (pdftex.def)             Requested size: 506.45914pt x 506.45998pt.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 9.37807pt on input line 180.
+(Font)              scaled to size 9.37807pt on input line 181.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 7.29405pt on input line 180.
+(Font)              scaled to size 7.29405pt on input line 181.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 9.37807pt on input line 180.
+(Font)              scaled to size 9.37807pt on input line 181.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 7.29405pt on input line 180.
+(Font)              scaled to size 7.29405pt on input line 181.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1633,15 +1629,15 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-6.18001pt}.
 
 [4 <./Figures/qjep_preds.pdf>]
-<Figures/qjep_indiv_diff.pdf, id=189, 867.24pt x 289.08pt>
+<Figures/qjep_indiv_diff.pdf, id=191, 867.24pt x 289.08pt>
 File: Figures/qjep_indiv_diff.pdf Graphic file (type pdf)
 <use Figures/qjep_indiv_diff.pdf>
-Package pdftex.def Info: Figures/qjep_indiv_diff.pdf  used on input line 199.
+Package pdftex.def Info: Figures/qjep_indiv_diff.pdf  used on input line 200.
 (pdftex.def)             Requested size: 384.1122pt x 128.03809pt.
-<Figures/qjep_ex_paths.pdf, id=190, 578.16pt x 578.16pt>
+<Figures/qjep_ex_paths.pdf, id=192, 578.16pt x 578.16pt>
 File: Figures/qjep_ex_paths.pdf Graphic file (type pdf)
 <use Figures/qjep_ex_paths.pdf>
-Package pdftex.def Info: Figures/qjep_ex_paths.pdf  used on input line 210.
+Package pdftex.def Info: Figures/qjep_ex_paths.pdf  used on input line 211.
 (pdftex.def)             Requested size: 341.43306pt x 341.42903pt.
 
 
@@ -1653,10 +1649,10 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-6.18001pt}.
 
 [5 <./Figures/qjep_indiv_diff.pdf>]
-<Figures/path_length.pdf, id=206, 578.16pt x 216.81pt>
+<Figures/path_length.pdf, id=208, 578.16pt x 216.81pt>
 File: Figures/path_length.pdf Graphic file (type pdf)
 <use Figures/path_length.pdf>
-Package pdftex.def Info: Figures/path_length.pdf  used on input line 220.
+Package pdftex.def Info: Figures/path_length.pdf  used on input line 221.
 (pdftex.def)             Requested size: 384.1122pt x 144.0412pt.
 
 
@@ -1668,10 +1664,10 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-6.18001pt}.
 
 [6 <./Figures/qjep_ex_paths.pdf>]
-<Figures/init_sel_hex_plot.pdf, id=221, 578.16pt x 289.08pt>
+<Figures/init_sel_hex_plot.pdf, id=223, 578.16pt x 289.08pt>
 File: Figures/init_sel_hex_plot.pdf Graphic file (type pdf)
 <use Figures/init_sel_hex_plot.pdf>
-Package pdftex.def Info: Figures/init_sel_hex_plot.pdf  used on input line 235.
+Package pdftex.def Info: Figures/init_sel_hex_plot.pdf  used on input line 236.
 
 (pdftex.def)             Requested size: 341.43306pt x 170.71451pt.
 
@@ -1683,11 +1679,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-6.18001pt}.
 
-[7 <./Figures/path_length.pdf> <./Figures/init_sel_hex_plot.pdf>]
-<Figures/init_sel_mdl.pdf, id=240, 722.7pt x 252.945pt>
+[7 <./Figures/path_length.pdf>]
+<Figures/init_sel_mdl.pdf, id=239, 722.7pt x 252.945pt>
 File: Figures/init_sel_mdl.pdf Graphic file (type pdf)
 <use Figures/init_sel_mdl.pdf>
-Package pdftex.def Info: Figures/init_sel_mdl.pdf  used on input line 258.
+Package pdftex.def Info: Figures/init_sel_mdl.pdf  used on input line 259.
 (pdftex.def)             Requested size: 497.92322pt x 174.27364pt.
 
 
@@ -1698,18 +1694,18 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-6.18001pt}.
 
-[8 <./Figures/init_sel_mdl.pdf>]
-<Figures/init_sel2_mdl.pdf, id=263, 722.7pt x 252.945pt>
+[8 <./Figures/init_sel_hex_plot.pdf> <./Figures/init_sel_mdl.pdf>]
+<Figures/init_sel2_mdl.pdf, id=265, 722.7pt x 252.945pt>
 File: Figures/init_sel2_mdl.pdf Graphic file (type pdf)
 <use Figures/init_sel2_mdl.pdf>
-Package pdftex.def Info: Figures/init_sel2_mdl.pdf  used on input line 286.
+Package pdftex.def Info: Figures/init_sel2_mdl.pdf  used on input line 287.
 (pdftex.def)             Requested size: 512.663pt x 179.43396pt.
-<Figures/qjep_init_sel_preds.pdf, id=268, 578.16pt x 289.08pt>
+<Figures/qjep_init_sel_preds.pdf, id=267, 722.7pt x 433.62pt>
 File: Figures/qjep_init_sel_preds.pdf Graphic file (type pdf)
 <use Figures/qjep_init_sel_preds.pdf>
 Package pdftex.def Info: Figures/qjep_init_sel_preds.pdf  used on input line 30
-6.
-(pdftex.def)             Requested size: 392.64812pt x 196.32477pt.
+0.
+(pdftex.def)             Requested size: 392.64812pt x 235.5871pt.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1748,7 +1744,13 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-6.18001pt}.
 
-[12] 
+[12]
+Underfull \hbox (badness 10000) in paragraph at lines 359--359
+\T1/ppl/m/n/9 (+20) osf . io / y 6 qbv/$[][], []ac[]-[]cessed[] [][][]on[] [][]
+[]25th[] [][][]April[] [][][]2022, and
+ []
+
+
 AED: lastpage setting LastPage
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1758,23 +1760,19 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-6.18001pt}.
 
-[13]
-
-Package natbib Warning: There were undefined citations.
-
-(vision-1871367-proofreading.aux)
+[13] (vision-1871367-proofreading.aux)
 Package rerunfilecheck Info: File `vision-1871367-proofreading.out' has not cha
 nged.
 (rerunfilecheck)             Checksum: C453BE8EF74A15E399EB2DC1A53E01D6;2092.
  ) 
 Here is how much of TeX's memory you used:
- 31836 strings out of 475389
- 604347 string characters out of 2774134
- 975448 words of memory out of 3000000
+ 31872 strings out of 475389
+ 604662 string characters out of 2774134
+ 974892 words of memory out of 3000000
  52121 multiletter control sequences out of 15000+600000
- 542005 words of font info for 400 fonts, out of 8000000 for 9000
+ 543613 words of font info for 424 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 123i,13n,120p,1810b,691s stack positions out of 10000i,1000n,20000p,200000b,80000s
+ 123i,13n,120p,1810b,639s stack positions out of 10000i,1000n,20000p,200000b,80000s
 {C:/Users/ah19679/AppData/Local/Programs/MiKTeX 2.9/fonts/enc/dvips/base/8r.e
 nc}<C:/Users/ah19679/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfo
 nts/cm/cmr10.pfb><C:/Users/ah19679/AppData/Local/Programs/MiKTeX 2.9/fonts/type
@@ -1783,9 +1781,9 @@ nts/cm/cmr10.pfb><C:/Users/ah19679/AppData/Local/Programs/MiKTeX 2.9/fonts/type
 grams/MiKTeX 2.9/fonts/type1/urw/palatino/uplb8a.pfb><C:/Users/ah19679/AppData/
 Local/Programs/MiKTeX 2.9/fonts/type1/urw/palatino/uplr8a.pfb><C:/Users/ah19679
 /AppData/Local/Programs/MiKTeX 2.9/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on vision-1871367-proofreading.pdf (13 pages, 800434 bytes).
+Output written on vision-1871367-proofreading.pdf (13 pages, 799477 bytes).
 PDF statistics:
- 374 PDF objects out of 1000 (max. 8388607)
+ 378 PDF objects out of 1000 (max. 8388607)
  60 named destinations out of 1000 (max. 500000)
  99510 words of extra memory for PDF output out of 106986 (max. 10000000)
 
